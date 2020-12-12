@@ -1,0 +1,162 @@
+$00[0x10] = Work RAM (Temporary ram used in various routines)
+
+$10[0x03] = ? used in various routines to do indirect read LONG and LOCAL
+
+$13[0x03] = ? used in various routines to do indirect read LONG and LOCAL
+
+$16[0x02] = ? 71C0, STA in $1805, X (X = 0x28) get stored in 182D
+
+$18 = ? never triggered in bsnes+, might be part of $16 (bank) but never used?
+
+$19[0x02] = ? used in varous routines  to do indirect read LOCAL
+
+$1A = ? never triggered in bsnes+, might be part of $19 (bank) but never used?
+
+$1C[0x02] = ? used in varous routines  to do indirect read LOCAL
+
+$1E = ? never triggered in bsnes+, might be part of $1C (bank) but never used?
+
+$1F[0x02] = ? used in sprite routine to read sprite tiles as indirect local
+
+$1F also sprite index? ??
+
+$21[0x02] = ? used as an index/address for something?
+$22 is also used not sure if only for getting/setting high byte
+$23 <- seems to be used with $22
+$24 = ? never triggered in bsnes+
+
+$25[0x02] = Stack Current Location
+
+$27[0x01] = ??
+
+$28[0x02] = ?? used for indexed read local (end up being used for DMA size) and other DMA related variables
+$2A = ??
+
+$2B[0x02] = ??  used for indexed read local DMA related variables used to set the VRAM Address ($2116)
+$2D = ??
+
+$2E[0x02] = ?? used for indexed read local (end up being used for DMA size) and other DMA related variables
+
+$30[0x03] = indirect long read, used to set $3C, $38 and 7F6800+ (getting set from a table at $8FFEA0)
+
+$34[0x02] = ?? used to set $7F0014+
+
+
+$44[0x02] = Controller1 Current Input [axlr0000 byetUDLR] 
+$46[0x02] = Controller1 Last Input [axlr0000 byetUDLR]
+$48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
+
+$4A[0x02] = Controller2 Current Input [axlr0000 byetUDLR] 
+$4C[0x02] = Controller2 Last Input [axlr0000 byetUDLR]
+$4E[0x02] = Controller2 Pressed Filtered Input [axlr0000 byetUDLR]
+
+$70 = mirror of $2100 (INIDISP - Screen Display)
+$74 = mirror of $210D BG Scroll Registers (BG1) Horizontal
+$75 = mirror of $210D BG Scroll Registers (BG1) Horizontal
+
+$76 = mirror of $210E BG Scroll Registers (BG1) Vertical
+$77 = mirror of $210E BG Scroll Registers (BG1) Vertical
+
+$78 = mirror of $210F BG Scroll Registers (BG2) Horizontal
+$79 = mirror of $210F BG Scroll Registers (BG2) Horizontal
+
+$7A = mirror of $2110 BG Scroll Registers (BG2) Vertical
+$7B = mirror of $2110 BG Scroll Registers (BG2) Vertical
+
+$7C = mirror of $2111 BG Scroll Registers (BG3) Horizontal
+$7D = mirror of $2111 BG Scroll Registers (BG3) Horizontal
+
+$7E = mirror of $2112 BG Scroll Registers (BG3) Vertical
+$7F = mirror of $2112 BG Scroll Registers (BG3) Vertical
+
+$80 = Mirror of $212C Screen Destination Registers
+$81 = Mirror of $212D
+$82 = Mirror of $212E
+$83 = Mirror of $212F
+
+$84 = mirror of $2130 (CGWSEL)
+$85 = mirror of $2131 (CGADSUB)
+$86 = mirror of $2132 (COLDATA)
+$87 = mirror of $2132 (COLDATA)
+$88 = mirror of $2132 (COLDATA)
+
+$89 = HDMAs Trigger
+
+$8A[0x02] = mirror of $4218 (Controller1 [byetUDLR axlr0000])
+$8C[0x02] = mirror of $421A (Controller2 [byetUDLR axlr0000])
+
+$9A = tell if nmi need to be executed this frame
+$9B
+$9C = frame counter?
+
+$27
+$51
+$59
+
+$A0 game mode?
+$A1 also used as index for jmp to routines
+$A2 = used for loading routines
+$AB Pause
+
+$B3 sprite index ?
+$B4[0x02] = sprite index/address to read/write into buffer ($1AA0)
+$B6 = level id in
+$B7 = map id in
+$BD = player count - 1 = 1Player, 3 = 2Player
+$F0 = frame counting down from 60 to 0
+$F1 = seconds
+$F2 = minutes
+$F3 = hours
+$F4 = Total fames played
+$F5 = Total Seconds played
+$F6 = Total Minutes played
+$F7 = Total Hours played
+
+
+$0100[0x02] = pointer for something?
+$0102[0x02] = pointer for jumptable in main routine
+$0103 used as pointer for jumptable as well
+
+$0110[0x02] = Xpos P1 (2b)
+$0113[0x02] = Ypos P1 (2b)
+
+$011D = P1 Hearts
+$0157 = P1 Lives
+$0140 = P1 ItemsCount, 00 or 02
+$0141 = P1 Item Slot Used, 00 or 02
+$0142 = P1 Item1 - 0x02 = Hookshot, 0x04 = Candle, 0x06 = Small Key, 0x08 = Boss Key, 0x0A = Shovel, 0x0C = Bell, 0x0E = Plank ;higher are invalid
+$0143 = P1 Item2 - same as above
+$014E = P1 Item related
+
+
+$0146 = p1 direction? 02 up, 04 right, 06 down, 08 left
+$0147 = p1 direction facing without moving same as above -2
+
+
+$0160 used as pointer for jumptable
+$016C = offseted XLowPos
+$016E = offseted YLowpos
+
+
+$0160[0x02] = Controller1 Current Input [byetaxlr 0000UDLR] 
+$0162[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
+$0164[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
+
+$01E0[0x02] = Controller1 Current Input [byetaxlr 0000UDLR] 
+$01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
+$01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
+
+
+$021C = "Current(?) boss HP"
+$021D = "Current(?) boss HP"
+
+$1144 =  Doors unlocked
+$1145 = Doors unlocked too
+
+$1A58 = RNG?????? <- not from me
+
+
+
+$1AA0 = sprites OAM data mirror
+
+$1F10 flashing timer for PRESS START 2nd player
