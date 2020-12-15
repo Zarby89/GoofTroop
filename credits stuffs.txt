@@ -17,6 +17,6 @@ self[offset] = spacing  # Nb de returns (vertical spacing)
                 assert offset <= 0x5FDFF, "Too much text added"  # This is the check to make sure we don't pass the allowed range.
                 self[offset] = value
 
-Il y a une valeur à la toute fin qui va caller le "THE END" ainsi que le temps complet si pas de password used.
+0xFF à la toute fin qui va caller le "THE END" qui semble être un tilemap??? ainsi que le temps complet qui est du texte si pas de password used.
 
 Note : Underlines are simply a repeated line with "¨"
