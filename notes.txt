@@ -1,0 +1,13 @@
+Hearts losses related stuffs
+
+80dd17 ... 80DD41 ; Hit an enemy routine
+
+80DD75 ... 80dd8f ; hit a fireball routine
+
+80D4E5 ... 80D4F3 ; kicked starry stone routine
+
+80D78D .. 80D79B ; hit by a bomb routine
+
+80DD43 .. 80DD5D ; hit by a flame routine
+
+81D625 .. 81D65F ; hit by pete while hookshotting.

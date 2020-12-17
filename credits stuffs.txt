@@ -1,0 +1,22 @@
+Je n'ai plus le lieu dans l'assembly, mais le fonctionnement du code impliqué est le suivant (sera utile si vous voulez changer la générique)
+
+self[offset] = spacing  # Nb de returns (vertical spacing)
+            self[offset + 1] = Horizontal Alignement
+            self[offset + 2] = # nombre de lettres
+            self[offset + 3] = color & properties
+                    # bit 0 displayed the text weirdly (jap?)
+                    # bit 1 displayed nothing => If set, always display nothing?
+                    # bit 2 - 5 : Color stuffs
+                    # byte 6-7 : Mirrors stuffs
+
+            Pour le sprochains offsets, on ajoute la lettre correspondante
+            for letter in text:
+                self[offset] = ord(letter.upper())
+            for value in stats:
+                offset += 1
+                assert offset <= 0x5FDFF, "Too much text added"  # This is the check to make sure we don't pass the allowed range.
+                self[offset] = value
+
+0xFF à la toute fin qui va caller le "THE END" qui semble être un tilemap??? ainsi que le temps complet qui est du texte si pas de password used.
+
+Note : Underlines are simply a repeated line with "¨"
