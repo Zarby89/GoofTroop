@@ -1081,7 +1081,7 @@ RTI                 ;808380
 808857   PLP                      
 808858   RTL                      
 ----------------         
---------sub start--------
+GetRandomInt:
 808859   REP #$20                 
 80885B   LDA $1A58                
 80885E   ASL                      
@@ -1247,7 +1247,7 @@ RTI                 ;808380
 8089D4   SEP #$10                 
 8089D6   RTL                      
 ----------------         
---------sub start--------
+;Routine that is used alots in the game TODO *MIGHT BE SPAWN ITEM/SPRITE ROUTINE*
 8089D7   XBA
 8089D8   TYA
 8089D9   REP #$30
@@ -1265,22 +1265,23 @@ RTI                 ;808380
 8089F2   LDA $0001,Y              
 8089F5   BIT #$0080               
 8089F8   BEQ $8089FE              
-8089FA   LDA $0000,X              
+8089FA   LDA $0000,X
+
 8089FD   TAX                      
-8089FE   STX $06                  
+8089FE   STX $06 ;$0106   
 808A00   SEP #$20                 
 808A02   LDA $0001,X              
 808A05   AND #$7F                 
-808A07   STA $08                  
+808A07   STA $08 ;$0108
 808A09   REP #$21                 
 808A0B   LDA $0000,X              
 808A0E   AND #$00FF               
 808A11   ADC #$0003               
-808A14   ADC $06                  
+808A14   ADC $06 
 808A16   TAX                      
 808A17   SEP #$20                 
 808A19   LDA $0000,X              
-808A1C   STA $23                  
+808A1C   STA $23 ;Setting the address $0123 ?
 808A1E   SEP #$10                 
 808A20   RTL                      
 ----------------         
@@ -1838,7 +1839,7 @@ RTI                 ;808380
 808F17   INY                      
 808F18   STY $119B                
 808F1B   INC $00FB                
---------sub start--------
+;Kill the Current sprite?
 808F1E   STZ $00                  
 808F20   STZ $01                  
 808F22   STZ $02                  
@@ -3256,7 +3257,7 @@ RTS                 ;809A22
 --------unidentified--------
 809A50  .db $8D $C8 $00          
 ----------------         
-PressedStartRoutine:
+PressedStartRoutine: ;Not Right that is used everywhere in the game !! TODO
 {
 809A53   LDX $00C7                
 809A56   BNE $809A69 ;Return
@@ -4953,7 +4954,7 @@ GameRoutineNormalLONGJUMP1:
 80AA90   JSR ControllerUpdate ;$BDFF                
 80AA93   JSL $828130              
 80AA97   JSL $818000              
-80AA9B   JSL $81825E              
+80AA9B   JSL $81825E ;Set addresses/OAM for each sprites
 80AA9F   JSL $82A238              
 80AAA3   JSL $82ADDD              
 80AAA7   JSL $82AFA0              
@@ -7750,20 +7751,20 @@ ControllerUpdate:
 80BF97  .db $00 $1E $00 $1F $00 $20 $00 $21
 ----------------         
 --------sub start--------
-80BF9F   STY $18                  
-80BFA1   STA $19                  
+80BF9F   STY $18 ;??
+80BFA1   STA $19 ;??                 
 --------sub start--------
-80BFA3   LDA $0D                  
+80BFA3   LDA $0D ;??
 80BFA5   REP #$30                 
 80BFA7   AND #$00FF               
 80BFAA   ASL                      
 80BFAB   ASL                      
-80BFAC   ADC $18                  
+80BFAC   ADC $18 ;??
 80BFAE   TAX                      
 80BFAF   LDA $0000,X              
-80BFB2   STA $28                  
+80BFB2   STA $28 ;HSpeed
 80BFB4   LDA $0002,X              
-80BFB7   STA $2A                  
+80BFB7   STA $2A ;Vspeed
 80BFB9   SEP #$30                 
 80BFBB   RTL                      
 ----------------         
@@ -7810,29 +7811,29 @@ ControllerUpdate:
 80C004   SEP #$10                 
 80C006   RTL                      
 ----------------         
---------sub start--------
+MoveSprite:
 80C007   REP #$21                 
-80C009   LDA $10                  
+80C009   LDA $10 ;Xsubpixel?
 80C00B   ADC $28                  
-80C00D   STA $10                  
+80C00D   STA $10 ;Xsubpixel?                  
 80C00F   SEP #$20                 
 80C011   LDA #$00                 
-80C013   LDX $29                  
+80C013   LDX $29 ;HSpeed
 80C015   BPL $80C018              
 80C017   DEC                      
-80C018   ADC $12                  
-80C01A   STA $12                  
+80C018   ADC $12 ;XHigh?
+80C01A   STA $12 ;XHigh?                   
 80C01C   REP #$21                 
-80C01E   LDA $13                  
-80C020   ADC $2A                  
-80C022   STA $13                  
+80C01E   LDA $13 ;Ysubpixel? 
+80C020   ADC $2A ;VSpeed
+80C022   STA $13 ;Ysubpixel?
 80C024   SEP #$20                 
 80C026   LDA #$00                 
 80C028   LDX $2B                  
 80C02A   BPL $80C02D              
 80C02C   DEC                      
-80C02D   ADC $15                  
-80C02F   STA $15                  
+80C02D   ADC $15 ;YHigh
+80C02F   STA $15 ;YHigh           
 80C031   RTL                      
 ----------------         
 --------sub start--------
@@ -10716,10 +10717,11 @@ ControllerUpdate:
 80E4DF  .db $E3 $E4 $06 $E5      
 ----------------         
 --------sub start--------
-80E4E3   LDA #$02                 
-80E4E5   STA $02                  
-80E4E7   DEC                      
-80E4E8   STA $01                  
+80E4E3   LDA #$02
+
+80E4E5   STA $02
+80E4E7   DEC 
+80E4E8   STA $01      
 80E4EA   LDA $00B7                
 80E4ED   CMP #$04                 
 80E4EF   BNE $80E4F3              
@@ -14012,146 +14014,169 @@ VectorIRQ:
 818254  .db $E8 $C8 $C8 $C6 $1A $D0 $F1 $E2
 81825C  .db $30 $60              
 ----------------         
---------sub start--------
-81825E   LDA $0200                
-818261   BEQ $81826B              
+;Sprite Update Routine... set the right bank/address for each sprites
+81825E   LDA $0200
+818261   BEQ $81826B ;Branch if there's no sprite at that spot goto next sprite             
 818263   LDA #$02                 
 818265   XBA                      
 818266   LDA #$00                 
-818268   JSR $8397                
+818268   JSR $8397
+
 81826B   LDA $0250                
 81826E   BEQ $818278              
 818270   LDA #$02                 
 818272   XBA                      
 818273   LDA #$50                 
-818275   JSR $8397                
+818275   JSR $8397 
+
 818278   LDA $02A0                
 81827B   BEQ $818285              
 81827D   LDA #$02                 
 81827F   XBA                      
 818280   LDA #$A0                 
-818282   JSR $8397                
+818282   JSR $8397
+
 818285   LDA $02F0                
 818288   BEQ $818292              
 81828A   LDA #$02                 
 81828C   XBA                      
 81828D   LDA #$F0                 
-81828F   JSR $8397                
+81828F   JSR $8397  
+
 818292   LDA $0340                
 818295   BEQ $81829F              
 818297   LDA #$03                 
 818299   XBA                      
 81829A   LDA #$40                 
-81829C   JSR $8397                
+81829C   JSR $8397  
+
 81829F   LDA $0390                
 8182A2   BEQ $8182AC              
 8182A4   LDA #$03                 
 8182A6   XBA                      
 8182A7   LDA #$90                 
-8182A9   JSR $8397                
+8182A9   JSR $8397
+
 8182AC   LDA $03E0                
 8182AF   BEQ $8182B9              
 8182B1   LDA #$03                 
 8182B3   XBA                      
 8182B4   LDA #$E0                 
-8182B6   JSR $8397                
+8182B6   JSR $8397    
+
 8182B9   LDA $0430                
 8182BC   BEQ $8182C6              
 8182BE   LDA #$04                 
 8182C0   XBA                      
 8182C1   LDA #$30                 
-8182C3   JSR $8397                
+8182C3   JSR $8397
+
 8182C6   LDA $0480                
 8182C9   BEQ $8182D3              
 8182CB   LDA #$04                 
 8182CD   XBA                      
 8182CE   LDA #$80                 
-8182D0   JSR $8397                
+8182D0   JSR $8397 
+
 8182D3   LDA $04D0                
 8182D6   BEQ $8182E0              
 8182D8   LDA #$04                 
 8182DA   XBA                      
 8182DB   LDA #$D0                 
-8182DD   JSR $8397                
+8182DD   JSR $8397   
+
 8182E0   LDA $0520                
 8182E3   BEQ $8182ED              
 8182E5   LDA #$05                 
 8182E7   XBA                      
 8182E8   LDA #$20                 
-8182EA   JSR $8397                
+8182EA   JSR $8397 
+
 8182ED   LDA $0570                
 8182F0   BEQ $8182FA              
 8182F2   LDA #$05                 
 8182F4   XBA                      
 8182F5   LDA #$70                 
-8182F7   JSR $8397                
+8182F7   JSR $8397 
+
 8182FA   LDA $05C0                
 8182FD   BEQ $818307              
 8182FF   LDA #$05                 
 818301   XBA                      
 818302   LDA #$C0                 
-818304   JSR $8397                
+818304   JSR $8397 
+
 818307   LDA $0610                
 81830A   BEQ $818314              
 81830C   LDA #$06                 
 81830E   XBA                      
 81830F   LDA #$10                 
-818311   JSR $8397                
+818311   JSR $8397   
+
 818314   LDA $0660                
 818317   BEQ $818321              
 818319   LDA #$06                 
 81831B   XBA                      
 81831C   LDA #$60                 
-81831E   JSR $8397                
+81831E   JSR $8397 
+
 818321   LDA $06B0                
 818324   BEQ $81832E              
 818326   LDA #$06                 
 818328   XBA                      
 818329   LDA #$B0                 
-81832B   JSR $8397                
+81832B   JSR $8397  
+
 81832E   LDA $0700                
 818331   BEQ $81833B              
 818333   LDA #$07                 
 818335   XBA                      
 818336   LDA #$00                 
-818338   JSR $8397                
+818338   JSR $8397 
+
 81833B   LDA $0750                
 81833E   BEQ $818348              
 818340   LDA #$07                 
 818342   XBA                      
 818343   LDA #$50                 
-818345   JSR $8397                
+818345   JSR $8397 
+
 818348   LDA $07A0                
 81834B   BEQ $818355              
 81834D   LDA #$07                 
 81834F   XBA                      
 818350   LDA #$A0                 
-818352   JSR $8397                
+818352   JSR $8397
+
 818355   LDA $07F0                
 818358   BEQ $818362              
 81835A   LDA #$07                 
 81835C   XBA                      
 81835D   LDA #$F0                 
-81835F   JSR $8397                
+81835F   JSR $8397 
+
 818362   LDA $0840                
 818365   BEQ $81836F              
 818367   LDA #$08                 
 818369   XBA                      
 81836A   LDA #$40                 
-81836C   JSR $8397                
+81836C   JSR $8397 
+
 81836F   LDA $0890                
 818372   BEQ $81837C              
 818374   LDA #$08                 
 818376   XBA                      
 818377   LDA #$90                 
-818379   JSR $8397                
+818379   JSR $8397  
+
 81837C   LDA $08E0                
 81837F   BEQ $818389              
 818381   LDA #$08                 
 818383   XBA                      
 818384   LDA #$E0                 
-818386   JSR $8397                
-818389   LDA $0930                
+818386   JSR $8397 
+
+818389   LDA $0930 ;24 sprites total
 81838C   BEQ $818396              
 81838E   LDA #$09                 
 818390   XBA                      
@@ -17062,52 +17087,60 @@ VectorIRQ:
 81B0A7  .db $C2 $10 $A6 $36 $9E $35 $00 $BD
 81B0AF  .db $11 $00 $85 $11 $BD $14 $00 $85
 81B0B7  .db $14 $9E $01 $00 $E2 $10 $60
-----------------         
-81B0BE   LDX $02                  
+;Code for BOSS1        
+81B0BE   LDX $02 ;Sprite Index Maybe?
 81B0C0   JMP ($B0C3,X)            
 --------data--------     
-81B0C3  .db $CB $B0 $BA $B1 $56 $B4 $BC $B4
+81B0C3
+dw $B0CB ;00 ;INITS ROUTINES?
+dw $B1BA ;02 ;NORMAL BOSS1 ROUTINE?
+dw $B456 ;04 ;NORMAL ROUTINE FOR BOSS1
+dw $B4BC ;06
 ----------------         
 81B0CB   LDX $03                  
-81B0CD   JMP ($B0D0,X)            
+81B0CD   JMP ($B0D0,X)
 --------data--------     
-81B0D0  .db $D6 $B0 $1C $B1 $3A $B1
+81B0D0
+;[$02] Sprites Init routines ?
+dw $B0D6 ;Sprite Init 00
+dw $B11C ;Sprite Init 02
+dw $B13A ;Sprite Init 04
 ----------------         
 81B0D6   JSL $808EE9              
 81B0DA   BCS $81B117              
-81B0DC   LDA #$02                 
-81B0DE   STA $03                  
+81B0DC   LDA #$02
+81B0DE   STA $03 ;Set Sprite State
 81B0E0   DEC                      
-81B0E1   STA $00                  
-81B0E3   STA $1F                  
-81B0E5   STA $1C                  
-81B0E7   STA $1D                  
-81B0E9   STZ $42                  
-81B0EB   STZ $30                  
-81B0ED   STZ $44                  
+81B0E1   STA $00 ;Is sprite alive or active? if non-zero then yes
+81B0E3   STA $1F ;??
+81B0E5   STA $1C ;Set HP to 01, Spawning Sprite function?
+81B0E7   STA $1D ;Set Cmp HP to 01
+81B0E9   STZ $42 ;??
+81B0EB   STZ $30 ;??                 
+81B0ED   STZ $44 ;??                 
 81B0EF   LDA #$2F                 
-81B0F1   STA $1B                  
+81B0F1   STA $1B ;VHOOPPPC OAM                 
 81B0F3   LDA #$06                 
-81B0F5   STA $22                  
-81B0F7   LDA #$30                 
-81B0F9   STA $3A                  
-81B0FB   JSL $808A53              
-81B0FF   LDA $B32A                
-81B102   LDY $B329                
+81B0F5   STA $22 ;Where GFX is Written to/from?
+81B0F7   LDA #$30
+81B0F9   STA $3A ;??                 
+81B0FB   JSL $808A53 ;Set OAM data
+81B0FF   LDA $B32A 
+81B102   LDY $B329 
 81B105   JSL $8089D7              
-81B109   JSL $808A21              
+81B109   JSL $808A21 ;Set OAM Data
 81B10D   LDA #$01                 
-81B10F   STA $0E                  
-81B111   LDA $00F8                
+81B10F   STA $0E ;?
+81B111   LDA $00F8 
 81B114   BNE $81B159              
 81B116   RTS                      
 ----------------         
 --------unidentified--------
 81B117  .db $22 $0F $8F $80 $60  
 ----------------         
-81B11C   LDA #$04                 
-81B11E   STA $03                  
-81B120   LDA $25                  
+81B11C   LDA #$04
+81B11E   STA $03 ;Set Init routine to 04                  
+81B120   LDA $25 ;OAM Related
 81B122   BNE $81B139              
 81B124   JSL $808FA9              
 81B128   BCS $81B137              
@@ -17117,24 +17150,29 @@ VectorIRQ:
 81B131   STA $000A,X              
 81B134   STZ $000B,X              
 81B137   SEP #$10                 
-81B139   RTS                      
-----------------         
-81B13A   LDX $04                  
+81B139   RTS       
+
+;[$03] INIT ROUTINE 04 = Intro substate
+81B13A   LDX $04 ;Sprite State?
 81B13C   JSR ($B148,X)            
 81B13F   JSL $808A25              
 81B143   JSL $8088CE              
 81B147   RTS                      
 ----------------         
---------data--------     
-81B148  .db $50 $B1 $83 $B1 $97 $B1 $A8 $B1
+;INTRO ROUTINE FOR BOSS1     
+;81B148
+dw $B150 ;00
+dw $B183 ;02
+dw $B197 ;04
+dw $B1A8 ;06
 ----------------         
---------sub start--------
-81B150   LDX $25                  
-81B152   LDA $00FE                
+;Sprite State 00
+81B150   LDX $25 ;OAM Related
+81B152   LDA $00FE ;Load Boss State <- 
 81B155   CMP #$08                 
-81B157   BNE $81B162              
+81B157   BNE $81B162 ;<- IF != 08 Play intro 
 81B159   LDA #$02                 
-81B15B   STA $02                  
+81B15B   STA $02 ;We are leaving the intro                  
 81B15D   STZ $03                  
 81B15F   STZ $04                  
 81B161   RTS                      
@@ -17142,61 +17180,67 @@ VectorIRQ:
 81B162   AND $80B8,X              
 81B165   BEQ $81B182              
 81B167   LDA #$02                 
-81B169   STA $04                  
-81B16B   STA $01                  
+81B169   STA $04 ;Set Sprite state on state 02
+81B16B   STA $01 
 81B16D   TXA                      
 81B16E   ASL                      
 81B16F   TAX                      
 81B170   LDA $A250,X              
-81B173   STA $11                  
+81B173   STA $11 ;X Position
 81B175   LDA $A251,X              
-81B178   STA $14                  
-81B17A   LDA #$E0                 
-81B17C   STA $17                  
-81B17E   LDA #$10                 
-81B180   STA $43                  
+81B178   STA $14 ;Y Position                 
+81B17A   LDA #$E0 
+81B17C   STA $17 ;Height
+81B17E   LDA #$10 
+81B180   STA $43 ;Set 43 i think this is a height timer for next routine?
 81B182   RTS                      
 ----------------         
---------sub start--------
+;Sprite State 02 ;INTRO_ExitingHole
 81B183   REP #$21                 
-81B185   LDA $16                  
-81B187   ADC #$0180               
-81B18A   STA $16                  
+81B185   LDA $16 ;height of the sprite
+81B187   ADC #$0180 ;+0x180
+81B18A   STA $16 ;height of the sprite
 81B18C   SEP #$20                 
-81B18E   DEC $43                  
-81B190   BNE $81B196              
-81B192   LDA #$04                 
-81B194   STA $04                  
+81B18E   DEC $43
+81B190   BNE $81B196 ;if $43 != 0 do not change state yet
+81B192   LDA #$04 
+81B194   STA $04 ;Set Sprite State on state 04
 81B196   RTS                      
 ----------------         
---------sub start--------
-81B197   LDA $00FE                
-81B19A   BEQ $81B1A0              
-81B19C   CMP #$08                 
-81B19E   BNE $81B196              
-81B1A0   LDA #$06                 
-81B1A2   STA $04                  
-81B1A4   LDA #$06                 
-81B1A6   STA $43                  
---------sub start--------
+;Sprite State 04 lINTRO_InitEnteringHole
+81B197   LDA $00FE ;<- check if we are in intro mode
+81B19A   BEQ $81B1A0 
+81B19C   CMP #$08 
+81B19E   BNE $81B196 ;IF we're not on the intro anymore just return 
+81B1A0   LDA #$06 
+81B1A2   STA $04 ;Go sprite state 06
+81B1A4   LDA #$06 
+81B1A6   STA $43 ;Height Timer?
+
+;Fall directly in 06 state the same frame
+;Sprite State 06 ;INTRO_EnteringBackHole
 81B1A8   REP #$21                 
-81B1AA   LDA $16                  
-81B1AC   SBC #$03FF               
-81B1AF   STA $16                  
-81B1B1   SEP #$20                 
-81B1B3   DEC $43                  
+81B1AA   LDA $16 ;height of the sprite
+81B1AC   SBC #$03FF ;-0x03FF
+81B1AF   STA $16 ;height of the sprite
+81B1B1   SEP #$20
+81B1B3   DEC $43
 81B1B5   BNE $81B1B9              
-81B1B7   STZ $04                  
-81B1B9   RTS                      
-----------------         
-81B1BA   LDA $1D                  
-81B1BC   CMP $1C                  
-81B1BE   BEQ $81B1C9              
+81B1B7   STZ $04 ;Set Sprite State to 00 when fully entered in hole
+81B1B9   RTS       
+
+;Sprite SubRoutine2        
+81B1BA   LDA $1D ;Check if last hp
+81B1BC   CMP $1C ;are still the same as current HP                  
+81B1BE   BEQ $81B1C9 ;Branch do not end the sprite
+;------------------------------
+;Kill the sprite?
 81B1C0   LDA #$04                 
 81B1C2   STA $02                  
 81B1C4   STZ $03                  
-81B1C6   JMP $B456                
-81B1C9   LDA $00AC                
+81B1C6   JMP $B456 
+;------------------------------
+81B1C9   LDA $00AC; What is $AC !!               
 81B1CC   BNE $81B1DB              
 81B1CE   LDX $03                  
 81B1D0   JSR ($B1DC,X)            
@@ -17204,34 +17248,39 @@ VectorIRQ:
 81B1D7   JSL $8088CE              
 81B1DB   RTS                      
 ----------------         
---------data--------     
-81B1DC  .db $E8 $B1 $66 $B2 $9A $B2 $ED $B2
-81B1E4  .db $AA $B3 $E3 $B3      
+;Normal Boss1 Routines :    
+81B1DC
+dw $B1E8 ;00 ;DecideWhatToDoRoutine?
+dw $B266 ;02 ;Pop Out and Back In Routine without Items
+dw $B29A ;04 ;Pop Out and Back In Routine fake barrel
+dw $B2ED ;06 ;Pop Out and Back In Routine throwing random item
+dw $B3AA ;08 ;Going Down
+dw $B3E3 ;0A ;Going UP or Wait?  
 ----------------         
---------sub start--------
-81B1E8   DEC $3A                  
+;Boss1_Normal_00
+81B1E8   DEC $3A ;Wait Timer before sprite actually do something i think
 81B1EA   BNE $81B265              
 81B1EC   LDA #$14                 
-81B1EE   STA $3A                  
-81B1F0   STZ $38                  
-81B1F2   SEP #$10                 
-81B1F4   LDA $38                  
+81B1EE   STA $3A ;Set timer back to 0x14 for next routine
+81B1F0   STZ $38 ;??
+81B1F2   SEP #$10
+81B1F4   LDA $38 ;??
 81B1F6   CMP #$01                 
-81B1F8   BEQ $81B265              
-81B1FA   INC $38                  
-81B1FC   JSL $808859              
+81B1F8   BEQ $81B265 ;if == 01 a condition to the timer
+81B1FA   INC $38
+81B1FC   JSL $808859; GetRandomInt
 81B200   AND #$1F                 
 81B202   TAX                      
-81B203   LDY $A19A,X              
+81B203   LDY $A19A,X ;??
 81B206   REP #$10                 
 81B208   LDX #$0200               
-81B20B   LDA $0000,X              
-81B20E   BEQ $81B21D              
-81B210   LDA $000A,X              
+81B20B   LDA $0000,X ;Byte00 of the sprite?
+81B20E   BEQ $81B21D ;
+81B210   LDA $000A,X ;Byte0A of the sprite?
 81B213   CMP #$28                 
 81B215   BNE $81B21D              
 81B217   TYA                      
-81B218   CMP $0037,X              
+81B218   CMP $0037,X 
 81B21B   BEQ $81B1F2              
 81B21D   REP #$21                 
 81B21F   TXA                      
@@ -17241,104 +17290,115 @@ VectorIRQ:
 81B226   CPX #$0980               
 81B229   BNE $81B20B              
 81B22B   SEP #$10                 
-81B22D   STY $37                  
+81B22D   STY $37 ;??
 81B22F   LDA $A1BA,Y              
-81B232   STA $11                  
+81B232   STA $11 ; XPosition  
 81B234   LDA $A1BB,Y              
-81B237   STA $14                  
+81B237   STA $14 ; YPosition
 81B239   LDA #$E0                 
-81B23B   STA $17                  
-81B23D   JSL $808859              
+81B23B   STA $17 ; ZPosition                 
+81B23D   JSL $808859 ;GetRandomInt              
 81B241   AND #$0F                 
-81B243   TAX                      
-81B244   LDA $00FC                
-81B247   BNE $81B24E              
-81B249   LDA $A1C8,X              
+81B243   TAX 
+81B244   LDA $00FC ;Boss related Variable!!
+81B247   BNE $81B24E ;if FC != 0
+81B249   LDA $A1C8,X ;Load from that table if FC == 0 contains some 02,04,06 
 81B24C   BRA $81B251              
-81B24E   LDA $A1D8,X              
-81B251   STA $03                  
-81B253   STA $01                  
-81B255   STZ $04                  
-81B257   STZ $1F                  
-81B259   STZ $30                  
-81B25B   STZ $32                  
-81B25D   STZ $3D                  
+81B24E   LDA $A1D8,X ;Load from that table if FC !=0 contains few 04, mostly filled with 06
+81B251   STA $03 ;Change Sprite State to randomly selected from table
+81B253   STA $01 ;??                 
+81B255   STZ $04 ;Another State                 
+81B257   STZ $1F ;??
+81B259   STZ $30 ;??
+81B25B   STZ $32 ;??                  
+81B25D   STZ $3D ;Timer Related?        
 81B25F   LDA #$FF                 
-81B261   STA $34                  
-81B263   STZ $44                  
+81B261   STA $34 ;??
+81B263   STZ $44 ;??
 81B265   RTS                      
 ----------------         
 --------sub start--------
 81B266   LDX $04                  
 81B268   JMP ($B26B,X)            
 --------data--------     
-81B26B  .db $6F $B2 $8A $B2      
-----------------         
+81B26B ;[$03 = 02] Routine
+dw $B26F ;00 Wait Routine going out? then fall on 02 after wait
+dw $B28A ;02 Wait Routine going BackIn then fall on 00 after wait
+
+;00 WaitRoutineGoingOut?       
 81B26F   LDA $B32A                
 81B272   LDY $B329                
-81B275   JSL $8089D7              
-81B279   LDA #$20                 
-81B27B   STA $3C                  
-81B27D   LDA #$C0                 
-81B27F   STA $3E                  
-81B281   STZ $3F                  
-81B283   LDA #$1E                 
-81B285   STA $3B                  
-81B287   JMP $B3A0                
-81B28A   DEC $3C                  
-81B28C   BNE $81B299              
-81B28E   LDA #$FE                 
-81B290   STA $3F                  
-81B292   LDA #$80                 
-81B294   STA $3E                  
+81B275   JSL $8089D7 ;??              
+81B279   LDA #$20
+81B27B   STA $3C ;Timer
+81B27D   LDA #$C0
+81B27F   STA $3E ;Z
+81B281   STZ $3F ;Z
+81B283   LDA #$1E
+81B285   STA $3B ;??
+81B287   JMP $B3A0 ;Set $03 to 08 ? and $04 to 02 while 3B is != 0
+
+;02 ?    
+81B28A   DEC $3C ;Wait for timer to reach 00
+81B28C   BNE $81B299
+81B28E   LDA #$FE 
+81B290   STA $3F
+81B292   LDA #$80
+81B294   STA $3E ;Set 3E to #$FE80
 81B296   JMP $B3DF                
 81B299   RTS                      
 ----------------         
---------sub start--------
 81B29A   LDX $04                  
-81B29C   JMP ($B29F,X)            
---------data--------     
-81B29F  .db $A3 $B2 $DF $B2      
-----------------         
+81B29C   JMP ($B29F,X)
+
+ ;[$03 = 04] Routine   
+81B29F 
+$B2A3 ;00 goup
+$B2DF ;02 godown    
+;00     
 81B2A3   LDA $B32A                
 81B2A6   LDY $B329                
-81B2A9   JSL $8089D7              
-81B2AD   JSL $808859              
+81B2A9   JSL $8089D7 ; ??               
+81B2AD   JSL GetRandomInt;$808859              
 81B2B1   AND #$0F                 
 81B2B3   TAX                      
 81B2B4   REP #$20                 
 81B2B6   LDA #$1990               
-81B2B9   AND $80C0,X              
+81B2B9   AND $80C0,X ;Bitwise Table?
 81B2BC   SEP #$20                 
 81B2BE   BEQ $81B2CE              
-81B2C0   INC $3D                  
-81B2C2   STZ $34                  
+81B2C0   INC $3D ; ??                  
+81B2C2   STZ $34 ; ??                   
 81B2C4   LDA $B60B                
 81B2C7   LDY $B60A                
-81B2CA   JSL $8089D7              
+81B2CA   JSL $8089D7 ; ??               
 81B2CE   LDA #$30                 
-81B2D0   STA $3C                  
+81B2D0   STA $3C ;Timer Related               
 81B2D2   LDA #$C0                 
-81B2D4   STA $3E                  
-81B2D6   STZ $3F                  
+81B2D4   STA $3E ; ??                   
+81B2D6   STZ $3F ; ??                   
 81B2D8   LDA #$20                 
-81B2DA   STA $3B                  
-81B2DC   JMP $B3A0                
-81B2DF   DEC $3C                  
-81B2E1   BNE $81B2EC              
-81B2E3   STZ $3E                  
+81B2DA   STA $3B ; ??                   
+81B2DC   JMP $B3A0 ;Fall on the go up routine
+;02
+81B2DF   DEC $3C ;Decrease Timer 
+81B2E1   BNE $81B2EC ;if timer != 0 
+81B2E3   STZ $3E ;Z Speed?
 81B2E5   LDA #$FD                 
-81B2E7   STA $3F                  
-81B2E9   JMP $B3DF                
+81B2E7   STA $3F ;Z Speed?                  
+81B2E9   JMP $B3DF ;Moving down i think
 81B2EC   RTS                      
 ----------------         
---------sub start--------
+;Routine pirate poping out and throwing an item
 81B2ED   LDX $04                  
 81B2EF   JMP ($B2F2,X)            
---------data--------     
-81B2F2  .db $F8 $B2 $33 $B3 $83 $B3
+;Subroutines 
+81B2F2
+dw $B2F8
+dw $B333
+dw $B383
 ----------------         
-81B2F8   JSL $808859              
+81B2F8   JSL GetRandomInt;$808859              
 81B2FC   AND #$1F                 
 81B2FE   TAX                      
 81B2FF   LDA $A1E8,X              
@@ -17348,21 +17408,24 @@ VectorIRQ:
 81B309   SEC                      
 81B30A   SBC #$08                 
 81B30C   STA $33                  
-81B30E   LDA $A228,X              
-81B311   STA $34                  
-81B313   BMI $81B31D              
-81B315   LDA $B60B                
+81B30E   LDA $A228,X ;This is the ITEM Array
+81B311   STA $34 ;Set the ITEM
+81B313   BMI $81B31D ;Branch if Minus ;donot have item
+         ;if item is positive
+81B315   LDA $B60B
 81B318   LDY $B60A                
-81B31B   BRA $81B323              
+81B31B   BRA $81B323
+         ;if item == negative (bit 7 setted)    
 81B31D   LDA $B32A                
 81B320   LDY $B329                
-81B323   JSL $8089D7              
+81B323   JSL $8089D7 ;Might be sprite spawn routine?
 81B327   LDA #$01                 
 81B329   STA $3F                  
 81B32B   STZ $3E                  
 81B32D   LDA #$18                 
 81B32F   STA $3B                  
-81B331   BRA $81B3A0              
+81B331   BRA $81B3A0 ;Goto goup/down routine
+
 81B333   DEC $36                  
 81B335   BNE $81B382              
 81B337   LDA $44                  
@@ -17391,7 +17454,7 @@ VectorIRQ:
 81B371   LDA #$20                 
 81B373   STA $0017,X              
 81B376   LDA #$FF                 
-81B378   STA $34                  
+81B378   STA $34 ;Nullify the item
 81B37A   STZ $44                  
 81B37C   SEP #$10                 
 81B37E   LDA #$04                 
@@ -17411,69 +17474,72 @@ VectorIRQ:
 81B398   LDY $B329                
 81B39B   JSL $8089D7              
 81B39F   RTS                      
-----------------         
-81B3A0   LDA $03                  
-81B3A2   STA $39                  
-81B3A4   LDA #$08                 
-81B3A6   STA $03                  
-81B3A8   STZ $30                  
---------sub start--------
-81B3AA   DEC $3B                  
-81B3AC   BNE $81B3C8              
+
+;PiratesBoss Part of 02 Routine:        
+81B3A0   LDA $03 ;??
+81B3A2   STA $39 ;Save current sprite state
+81B3A4   LDA #$08
+81B3A6   STA $03 ;Set State to 08 but that's stored in $39 and restored further
+81B3A8   STZ $30 ;??
+
+;PirateBoss Part of 08 Routine: (Wait routine until $3B == 0)
+81B3AA   DEC $3B ;??
+81B3AC   BNE $81B3C8 ;While $3B != 0 we stay in state #$08 ?
 81B3AE   LDA $39                  
-81B3B0   STA $03                  
-81B3B2   LDA #$02                 
-81B3B4   STA $04                  
-81B3B6   LDA $34                  
+81B3B0   STA $03 ;Restore previously saved state
+81B3B2   LDA #$02
+81B3B4   STA $04 ;State04 to #$02
+81B3B6   LDA $34 ; ??
 81B3B8   BMI $81B3C7              
 81B3BA   JSR $B4D1                
 81B3BD   LDA $B5EC                
 81B3C0   LDY $B5EB                
 81B3C3   JSL $8089D7              
 81B3C7   RTS                      
-----------------         
-81B3C8   REP #$20                 
-81B3CA   LDA $16                  
-81B3CC   ADC $3E                  
-81B3CE   STA $16                  
-81B3D0   SEP #$21                 
-81B3D2   LDA #$E0                 
-81B3D4   SBC $17                  
-81B3D6   EOR #$FF                 
-81B3D8   INC                      
-81B3D9   LSR                      
-81B3DA   ADC #$02                 
-81B3DC   STA $30                  
-81B3DE   RTS                      
-----------------         
+
+;IF 3B != 0      
+81B3C8   REP #$20 
+81B3CA   LDA $16 ;Z Position
+81B3CC   ADC $3E ;Increase Z Position (go up)
+81B3CE   STA $16 ;Z Position
+81B3D0   SEP #$21 
+81B3D2   LDA #$E0 
+81B3D4   SBC $17;remove z Position from #$E0 ??
+81B3D6   EOR #$FF 
+81B3D8   INC ;+1
+81B3D9   LSR ;>> 1
+81B3DA   ADC #$02 
+81B3DC   STA $30 ; ??
+81B3DE   RTS 
+
+;PirateBoss Part of 02 Routine        
 81B3DF   LDA #$0A                 
-81B3E1   STA $03                  
---------sub start--------
+81B3E1   STA $03 ;Set State to #$0A so loop until Z Position is done moving then $03 = 00
+;PirateBoss Part of 0A Routine 
 81B3E3   REP #$21                 
-81B3E5   LDA $16                  
-81B3E7   ADC $3E                  
-81B3E9   STA $16                  
+81B3E5   LDA $16 ;Z Position
+81B3E7   ADC $3E ;
+81B3E9   STA $16 ;Z Position                 
 81B3EB   SEP #$20                 
 81B3ED   XBA                      
-81B3EE   CMP #$E0                 
-81B3F0   BCS $81B410              
-81B3F2   STZ $30                  
-81B3F4   LDA $3D                  
+81B3EE   CMP #$E0
+81B3F0   BCS $81B410 ;IF Z >= E0
+81B3F2   STZ $30 ;??
 81B3F6   BEQ $81B40A              
 81B3F8   STZ $44                  
 81B3FA   LDA #$04                 
-81B3FC   STA $09                  
-81B3FE   PHD                      
-81B3FF   LDA $32                  
+81B3FC   STA $09 ;??    
+81B3FE   PHD ;PHD!!!!!!! WHAT ; hope i didn't missed any other
+81B3FF   LDA $32
 81B401   XBA                      
-81B402   LDA $31                  
-81B404   TCD                      
-81B405   JSL $808F4C              
-81B409   PLD                      
-81B40A   LDA #$E0                 
+81B402   LDA $31
+81B404   TCD 
+81B405   JSL $808F4C ;Not sure yet
+81B409   PLD ;Set it back to $0200
+81B40A   LDA #$E0 ; set height to that position if we're lower?
 81B40C   STA $17                  
-81B40E   STZ $03                  
-81B410   BRA $81B3D2              
+81B40E   STZ $03 ;Set State to 00
+81B410   BRA $81B3D2 ;Basically remove the remains of Z and return
 --------sub start--------
 81B412   LDA #$FF                 
 81B414   STA $0000                
@@ -17509,43 +17575,48 @@ VectorIRQ:
 ----------------         
 81B453   LDA #$00                 
 81B455   RTS                      
-----------------         
-81B456   LDX $03                  
+;Sprite SubRoutine4      
+81B456   LDX $03
 81B458   JSR ($B464,X)            
 81B45B   JSL $808A25              
 81B45F   JSL $8088CE              
 81B463   RTS                      
 ----------------         
 --------data--------     
-81B464  .db $6A $B4 $88 $FC $A9 $FC
+81B464
+dw $B46A ;00
+dw $FC88 ;02
+dw $FCA9 ;04
 ----------------         
---------sub start--------
+;Init Sprite Routine?
 81B46A   LDA #$02                 
-81B46C   STA $03                  
+81B46C   STA $03 ;Goto next state
 81B46E   INC                      
-81B46F   STA $00                  
-81B471   STZ $1C                  
-81B473   STZ $1D                  
-81B475   STZ $0D                  
-81B477   STZ $17                  
-81B479   LDA #$B5                 
-81B47B   LDY #$58                 
-81B47D   JSL $8089D7              
-81B481   LDA $44                  
-81B483   BEQ $81B4A4              
-81B485   REP #$10                 
-81B487   LDA #$04                 
-81B489   STA $09                  
-81B48B   LDX $31                  
-81B48D   LDA #$06                 
-81B48F   STA $0002,X              
+81B46F   STA $00 ;Set IsAlive to #$03
+81B471   STZ $1C ;?? Sprite HP to 00
+81B473   STZ $1D ;?? Sprite HP Cmp to 00
+81B475   STZ $0D ;Direction
+81B477   STZ $17 ;Height
+81B479   LDA #$B5 
+81B47B   LDY #$58 
+81B47D   JSL $8089D7 ;OAM Related            
+81B481   LDA $44 ;Sprite Work RAM
+81B483   BEQ $81B4A4
+
+81B485   REP #$10 ;X/Y 16 bit
+81B487   LDA #$04 
+81B489   STA $09 ;??
+81B48B   LDX $31 ;??
+81B48D   LDA #$06
+81B48F   STA $0002,X 
 81B492   STZ $0003,X              
 81B495   LDA $000B,X              
 81B498   CMP #$1A                 
 81B49A   BNE $81B4A2              
 81B49C   LDA $002C,X              
 81B49F   STA $001A,X              
-81B4A2   SEP #$10                 
+81B4A2   SEP #$10
+
 81B4A4   INC $00F8                
 81B4A7   LDA $00F8                
 81B4AA   CMP #$07                 
@@ -17557,7 +17628,7 @@ VectorIRQ:
 81B4B7   BCC $81B4BB              
 81B4B9   INC $42                  
 81B4BB   RTS                      
-----------------         
+;Sprite Subroutine4     
 81B4BC   JSL $808F0F              
 81B4C0   LDA $42                  
 81B4C2   BNE $81B4CD              
@@ -17579,7 +17650,7 @@ VectorIRQ:
 81B4E2   LDA #$02                 
 81B4E4   STA $0004,X              
 81B4E7   STA $0000,X              
-81B4EA   LDA $34                  
+81B4EA   LDA $34 ;Set $0B to item index
 81B4EC   STA $000B,X              
 81B4EF   LDA #$80                 
 81B4F1   STA $000D,X              
@@ -19466,7 +19537,7 @@ VectorIRQ:
 81E13A   JSL $808A21              
 81E13E   LDA $0D                  
 81E140   STA $3A                  
-81E142   JSL $808859              
+81E142   JSL GetRandomInt;$808859              
 81E146   AND #$07                 
 81E148   TAX                      
 81E149   LDA $AD11,X              
@@ -19540,11 +19611,11 @@ VectorIRQ:
 81E22A   LDA #$02                 
 81E22C   STA $03                  
 81E22E   STZ $04                  
-81E230   JSR $FD03                
-81E233   BCC $81E240              
-81E235   LDA #$02                 
-81E237   STA $03                  
-81E239   STZ $04                  
+81E230   JSR $FD03          
+81E233   BCC $81E240 ;IF Carry is clear pirates are not aggroing
+81E235   LDA #$02
+81E237   STA $03 ;$0253 ;??
+81E239   STZ $04 ;$0254 ;??
 81E23B   LDA #$20                 
 81E23D   JMP $E34A                
 81E240   RTS                      
@@ -19553,7 +19624,7 @@ VectorIRQ:
 81E241  .db $47 $E2 $AD $E2 $EF $E2
 ----------------         
 --------sub start--------
-81E247   JSL $808859              
+81E247   JSL GetRandomInt;$808859              
 81E24B   BIT #$03                 
 81E24D   BEQ $81E264              
 --------sub start--------
@@ -19580,7 +19651,7 @@ VectorIRQ:
 81E26E   AND #$03                 
 81E270   STA $0D                  
 81E272   STZ $3E                  
-81E274   JSL $808859              
+81E274   JSL GetRandomInt;$808859              
 81E278   AND #$07                 
 81E27A   STA $37                  
 81E27C   LDA $0B                  
@@ -19626,7 +19697,7 @@ VectorIRQ:
 81E2D2   BEQ $81E2EE              
 81E2D4   JSR $FE00                
 81E2D7   LDX #$01                 
-81E2D9   JSL $808859              
+81E2D9   JSL GetRandomInt;$808859              
 81E2DD   BMI $81E2E1              
 81E2DF   DEX                      
 81E2E0   DEX                      
@@ -19678,7 +19749,7 @@ VectorIRQ:
 81E330  .db $38 $E3 $7A $E3 $F6 $E3 $54 $E4
 ----------------         
 --------sub start--------
-81E338   JSL $808859              
+81E338   JSL GetRandomInt;$808859              
 81E33C   AND #$07                 
 81E33E   STA $37                  
 81E340   LDA $0B                  
@@ -19686,26 +19757,27 @@ VectorIRQ:
 81E343   ASL                      
 81E344   ADC $37                  
 81E346   TAX                      
-81E347   LDA $AD39,X              
-81E34A   XBA                      
-81E34B   LDA #$00                 
-81E34D   REP #$20                 
+81E347   LDA $AD39,X
+
+81E34A   XBA
+81E34B   LDA #$00  ;turn A into 2000                
+81E34D   REP #$20 
 81E34F   LSR                      
 81E350   LSR                      
 81E351   LSR                      
-81E352   LSR                      
-81E353   STA $3E                  
+81E352   LSR   ;turn A into 0200   
+81E353   STA $3E ;$028E and $028F ?
 81E355   SEP #$20                 
 81E357   LDA #$02                 
-81E359   STA $04                  
-81E35B   STZ $3C                  
-81E35D   STZ $36                  
-81E35F   STZ $35                  
-81E361   LDA #$18                 
-81E363   STA $32                  
+81E359   STA $04 ;$0254 to 02
+81E35B   STZ $3C ;$028C to 00                  
+81E35D   STZ $36 ;$0286 to 00                       
+81E35F   STZ $35 ;$0285 to 00                      
+81E361   LDA #$18
+81E363   STA $32 ;$0282 to 18     
 81E365   LDA #$FF                 
-81E367   STA $3A                  
-81E369   JSR $E4E5                
+81E367   STA $3A ;$028A to FF
+81E369   JSR $E4E5
 81E36C   LDA $0B                  
 81E36E   TAX                      
 81E36F   LDA $ADC2,X              
@@ -19774,7 +19846,7 @@ VectorIRQ:
 81E3F8   BNE $81E417              
 81E3FA   LDA #$06                 
 81E3FC   STA $04                  
-81E3FE   JSL $808859              
+81E3FE   JSL GetRandomInt;$808859              
 81E402   AND #$07                 
 81E404   STA $37                  
 81E406   LDA $0B                  
@@ -19899,11 +19971,11 @@ VectorIRQ:
 81E4E4  .db $60                  
 ----------------         
 --------sub start--------
-81E4E5   LDA #$01                 
-81E4E7   XBA                      
-81E4E8   LDA $3B                  
-81E4EA   REP #$10                 
-81E4EC   TAX                      
+
+81E4E5   LDA #$01 
+81E4E7   XBA 
+81E4E8   LDA $3B ;$028B ? A = 01XX
+81E4EC   TAX ;X = 01XX
 81E4ED   JSL $808B0E              
 81E4F1   PHA                      
 81E4F2   INC                      
@@ -19933,7 +20005,7 @@ VectorIRQ:
 81E511   STA $0E                  
 81E513   LDA $B368,X              
 81E516   LDY $B367,X              
-81E519   JSL $8089D7              
+81E519   JSL $8089D7 ;Used alots not sure for what
 81E51D   RTS                      
 ----------------         
 --------sub start-------- ;When small pirate see you?
@@ -20742,7 +20814,7 @@ VectorIRQ:
 81EB8D   BNE $81EBA1              
 81EB8F   STZ $03                  
 81EB91   STZ $47                  
-81EB93   JSL $808859              
+81EB93   JSL GetRandomInt;$808859              
 81EB97   AND #$07                 
 81EB99   TAX                      
 81EB9A   LDA $AF81,X              
@@ -20902,7 +20974,7 @@ VectorIRQ:
 81ECFD   LDA #$FF                 
 81ECFF   STA $45                  
 81ED01   STA $44                  
-81ED03   JSL $808859              
+81ED03   JSL GetRandomInt;$808859              
 81ED07   AND #$07                 
 81ED09   TAX                      
 81ED0A   LDA $AF89,X              
@@ -20958,7 +21030,7 @@ VectorIRQ:
 81ED70   JSL $808A21              
 81ED74   LDA $0D                  
 81ED76   STA $3A                  
-81ED78   JSL $808859              
+81ED78   JSL GetRandomInt;$808859              
 81ED7C   AND #$07                 
 81ED7E   TAX                      
 81ED7F   LDA $AFE1,X              
@@ -21031,7 +21103,7 @@ VectorIRQ:
 81EE5E  .db $64 $EE $D7 $EE $19 $EF
 ----------------         
 --------sub start--------
-81EE64   JSL $808859              
+81EE64   JSL GetRandomInt;$808859              
 81EE68   BIT #$03                 
 81EE6A   BEQ $81EE81              
 --------sub start--------
@@ -21052,7 +21124,7 @@ VectorIRQ:
 81EE85   BEQ $81EF01              
 81EE87   DEC                      
 81EE88   BEQ $81EE9C              
-81EE8A   JSL $808859              
+81EE8A   JSL GetRandomInt;$808859              
 81EE8E   LDX $0D                  
 81EE90   INX                      
 81EE91   AND #$80                 
@@ -21062,7 +21134,7 @@ VectorIRQ:
 81EE97   TXA                      
 81EE98   AND #$03                 
 81EE9A   STA $0D                  
-81EE9C   JSL $808859              
+81EE9C   JSL GetRandomInt;$808859              
 81EEA0   AND #$07                 
 81EEA2   STA $37                  
 81EEA4   LDA $0B                  
@@ -21109,7 +21181,7 @@ VectorIRQ:
 81EEFC   BEQ $81EF18              
 81EEFE   JSR $FE00                
 81EF01   LDX #$01                 
-81EF03   JSL $808859              
+81EF03   JSL GetRandomInt;$808859              
 81EF07   BMI $81EF0B              
 81EF09   DEX                      
 81EF0A   DEX                      
@@ -21161,7 +21233,7 @@ VectorIRQ:
 81EF5A  .db $62 $EF $A6 $EF $22 $F0 $80 $F0
 ----------------         
 --------sub start--------
-81EF62   JSL $808859              
+81EF62   JSL GetRandomInt;$808859              
 81EF66   AND #$07                 
 81EF68   STA $37                  
 81EF6A   LDA $0B                  
@@ -21258,7 +21330,7 @@ VectorIRQ:
 81F024   BNE $81F043              
 81F026   LDA #$06                 
 81F028   STA $04                  
-81F02A   JSL $808859              
+81F02A   JSL GetRandomInt;$808859              
 81F02E   AND #$07                 
 81F030   STA $37                  
 81F032   LDA $0B                  
@@ -22167,34 +22239,35 @@ VectorIRQ:
 81FC7A  .db $18 $6D $04 $00 $38 $FD $14 $01
 81FC82  .db $CD $06 $00 $E2 $20 $60
 ----------------         
---------sub start--------
+;Boss1 State 02
 81FC88   LDA #$01                 
-81FC8A   STA $01                  
-81FC8C   LDA $03                  
+81FC8A   STA $01 ;Set MainState to 01
+81FC8C   LDA $03 
 81FC8E   CLC                      
-81FC8F   ADC #$02                 
+81FC8F   ADC #$02 ;Increase Secondary State by 02
 81FC91   STA $03                  
-81FC93   LDA #$A0                 
-81FC95   STA $3E                  
+81FC93   LDA #$A0
+81FC95   STA $3E ;ZSpeed/Gravity
 81FC97   LDA #$03                 
-81FC99   STA $3F                  
+81FC99   STA $3F ;ZSpeed/Gravity                
 81FC9B   LDA #$12                 
 81FC9D   JSL $809A53              
 81FCA1   LDA #$B6                 
 81FCA3   LDY #$AB                 
-81FCA5   JSL $80BF9F              
---------sub start--------
-81FCA9   JSL $80C007              
+81FCA5   JSL $80BF9F ;Move Routine?
+;Boss1 State 03:
+81FCA9   JSL $80C007 ;Move Sprite with speeds
+;Gravity Code i think ?
 81FCAD   REP #$21                 
-81FCAF   LDA $16                  
-81FCB1   ADC $3E                  
-81FCB3   STA $16                  
-81FCB5   LDA $3E                  
-81FCB7   SEC                      
+81FCAF   LDA $16 ;Height
+81FCB1   ADC $3E ;ZSpeed
+81FCB3   STA $16 ;Height                  
+81FCB5   LDA $3E ;ZSpeed
+81FCB7   SEC
 81FCB8   SBC #$001E               
-81FCBB   STA $3E                  
+81FCBB   STA $3E ;ZSpeed
 81FCBD   SEP #$20                 
-81FCBF   LDA $17                  
+81FCBF   LDA $17 ;Height Lowbyte                 
 81FCC1   BPL $81FCCB              
 81FCC3   LDA #$06                 
 81FCC5   STA $02                  
@@ -22233,15 +22306,15 @@ VectorIRQ:
 ----------------         
 --------sub start--------
 81FD03   LDA $1A4F                
-81FD06   BNE $81FD0A              
+81FD06   BNE $81FD0A ;IF Pirate aggro is not zero
 81FD08   CLC                      
 81FD09   RTS                      
-----------------         
-81FD0A   CMP $31                  
+;Pirate aggroing? ;We are in DP 0250 here
+81FD0A   CMP $31 ;$0281
 81FD0C   BEQ $81FD08              
-81FD0E   STA $31                  
-81FD10   CMP #$01                 
-81FD12   BNE $81FD18              
+81FD0E   STA $31 
+81FD10   CMP #$01 
+81FD12   BNE $81FD18 
 81FD14   STZ $3B                  
 81FD16   SEC                      
 81FD17   RTS                      
@@ -23836,9 +23909,9 @@ SpriteRelatedRoutine:; ??
 828224   BNE $828213
 828226   JSR $9571                
 828229   JSR $991A                
-82822C   LDX $03                  
-82822E   JSR ($8254,X)            
-828231   JSR $98F6                
+82822C   LDX $03 ;$0103 Here checking for the item currently used
+82822E   JSR ($8254,X) ;Items Use ?? 
+828231   JSR $98F6 ;item use again??
 828234   JSL $808A25              
 828238   JSR $966A                
 82823B   JSR $958C                
@@ -23851,19 +23924,19 @@ SpriteRelatedRoutine:; ??
 828253   RTS                      
 ----------------
 ;828254         
-JumpTable03_TODO:
+ItemCurrentlyUsedTable:
 {     
-dw $826A ;00
-dw $835E ;02
-dw $853E ;04
-dw $858E ;06
-dw $8651 ;08
-dw $8758 ;0A
-dw $87D2 ;0C
-dw $87D2 ;0E
-dw $87D2 ;10
-dw $87D3 ;12
-dw $8876 ;14
+dw $826A ;00 ;Normal Routine
+dw $835E ;02 ;Lifting
+dw $853E ;04 ;Holding
+dw $858E ;06 ;Throwing
+dw $8651 ;08 ;Kicking
+dw $8758 ;0A ;Hookshot
+dw $87D2 ;0C ;Nothing - would be smallkey defined elsewhere
+dw $87D2 ;0E ;Nothing - would be bosskey defined elsewhere
+dw $87D2 ;10 ;Nothing - would be plank defined elsewhere
+dw $87D3 ;12 ;Digging
+dw $8876 ;14 Bell?
 } 
       
 JumpTable03_00_TODO:
@@ -24543,33 +24616,36 @@ JumpTable03_00_TODO:
 828872  .db $0E $4C $1A $86      
 ----------------         
 --------sub start--------
-828876   LDA $00CA                
+828876   LDA $00CA ;Dont Know yet :TODORAM
 828879   BEQ $828883              
 82887B   JSR $8CE0                
 --------unidentified--------
 82887E  .db $A6 $33 $FC $97 $82  
 ----------------         
-828883   LDX $04                  
+828883   LDX $04 ;0104 ??
 828885   JMP ($8888,X)            
 --------data--------     
-828888  .db $8E $88 $B3 $88 $1A $86
+828888
+dw $888E
+dw $88B3
+dw $861A
 ----------------         
-82888E   LDA #$02                 
-828890   STA $04                  
-828892   LDA $47                  
-828894   CLC                      
-828895   ADC $0B                  
-828897   TAX                      
+82888E   LDA #$02 
+828890   STA $04
+828892   LDA $47 ;0147 P1 facing direction
+828894   CLC
+828895   ADC $0B 
+828897   TAX
 828898   LDY $BA2F,X              
 82889B   LDA $BA30,X              
-82889E   JSL $8089D7              
-8288A2   LDA $0A                  
+82889E   JSL $8089D7 ;Routine used everywhere to set $0123 ?
+8288A2   LDA $0A ;010A?
 8288A4   LSR                      
 8288A5   INC                      
 8288A6   ORA $1A4F                
-8288A9   STA $1A4F                
+8288A9   STA $1A4F ;Set all pirates on chase mode
 8288AC   LDA #$0A                 
-8288AE   JSL $809A53              
+8288AE   JSL $809A53 ;Another Routine used everywhere to set $0123 ?
 8288B2   RTS                      
 ----------------         
 8288B3   JSL $8089DE              
@@ -24582,7 +24658,7 @@ JumpTable03_00_TODO:
 8288C1   LDA $0A                  
 8288C3   LSR                      
 8288C4   INC                      
-8288C5   EOR #$FF                 
+8288C5   EOR #$FF 
 8288C7   AND $1A4F                
 8288CA   STA $1A4F                
 8288CD   RTS                      
@@ -25303,8 +25379,8 @@ JumpTable03_00_TODO:
 828F83   BEQ $828F8B              
 828F85   LDA $65                  
 828F87   BIT $77                  
-828F89   BNE $828F91              
-828F8B   RTS                      
+828F89   BNE $828F91 ;Goto item use routine if we're pressing Y button
+828F8B   RTS 
 ----------------         
 828F8C   LDA #$02                 
 828F8E   STA $03                  
@@ -25326,18 +25402,16 @@ JumpTable03_00_TODO:
 828FAD   BEQ $828FB1              
 828FAF   LDX $43                  
 828FB1   JMP ($8FB2,X)            
---------data--------     
-828FB4  .db $D2 $8F              
-----------------         
---------unidentified--------
-828FB6  .db $E5 $8F $E6 $8F $EB $8F $D9 $8F
-----------------         
---------data--------     
-828FBE  .db $DF $8F              
-----------------         
---------unidentified--------
-828FC0  .db $F0 $8F              
-----------------         
+;Using Item Table 2   
+828FB4
+dw $8FD2 ;0x02 Hookshot
+dw $8FE5 ;0x04 Candle
+dw $8FE6 ;0x06 Small Key
+dw $8FEB ;0x08 Boss Key
+dw $8FD9 ;0x0A Shovel 
+dw $8FDF ;0x0C Bell   
+dw $8FF0 ;0x0E Plank  
+    
 ;Using Item Table    
 828FC2
 dw $8FF3 ;0x00 Nothing?
@@ -25355,18 +25429,21 @@ dw $9005 ;0x0E Plank
 828FD6   BNE $828FDF              
 828FD8   RTS                      
 ----------------         
---------unidentified--------
+ItemUseShovel2:
 828FD9  .db $A5 $47 $29 $02 $F0 $06
+
+ItemUseBell2:
+828FDF   TXA ;? 
+828FE0   CLC ;?                     
+828FE1   ADC #$08 
+828FE3   STA $03 ;that function return $0103 ($0103 here = 0x0C+0x08 = 0x14)
+828FE5   RTS ;jumpback to 828231
 ----------------         
-828FDF   TXA                      
-828FE0   CLC                      
-828FE1   ADC #$08                 
-828FE3   STA $03                  
-828FE5   RTS                      
-----------------         
---------unidentified--------
-828FE6  .db $A9 $00 $4C $3A $9B $A9 $80 $4C
-828FEE  .db $3A $9B $4C $A5 $9C  
+ItemUseSmallKey2:
+828FE6  .db $A9 $00 $4C $3A $9B 
+828FEB  .db $A9 $80 $4C
+828FEE  .db $3A $9B 
+828FF0  .db $4C $A5 $9C  
 ----------------
 ;828FF3         
 ItemUseReturn:
@@ -26069,21 +26146,21 @@ dw $9031 ;1E
 82956F   SEC                      
 829570   RTS                      
 ----------------         
---------sub start--------
-829571   LDA $03                  
-829573   CMP #$0A                 
-829575   BCS $82958B              
-829577   LDA $40                  
-829579   BEQ $82958B              
-82957B   LDA $65                  
+;Routine checking for what item we're currently using
+829571   LDA $03 ;(Item ID+08)
+829573   CMP #$0A ;0A would be hookshot?
+829575   BCS $82958B ;return if >= 0A ??
+829577   LDA $40
+829579   BEQ $82958B ;if item count == 0 then return
+82957B   LDA $65 ;???
 82957D   BIT #$03                 
-82957F   BEQ $82958B              
-829581   LDA $41                  
+82957F   BEQ $82958B 
+829581   LDA $41 
 829583   INC                      
 829584   INC                      
-829585   AND #$02                 
-829587   STA $41                  
-829589   STZ $3F                  
+829585   AND #$02               
+829587   STA $41  ;change item slot used?  
+829589   STZ $3F ;013F ?
 82958B   RTS                      
 ----------------         
 --------sub start--------
@@ -26509,7 +26586,7 @@ dw $9031 ;1E
 ----------------         
 --------sub start--------
 8298F6   LDA $23                  
-8298F8   CMP $24                  
+8298F8   CMP $24
 8298FA   BEQ $829919              
 8298FC   LDA $56                  
 8298FE   LSR                      
@@ -26733,7 +26810,7 @@ dw $9031 ;1E
 829BDE   BCS $829C11              
 829BE0   TAX                      
 829BE1   LDY $B948,X              
-829BE4   JSL $808859              
+829BE4   JSL GetRandomInt;$808859              
 829BE8   AND #$1E                 
 829BEA   TAX                      
 829BEB   REP #$20                 
@@ -26760,7 +26837,7 @@ dw $9031 ;1E
 829C17   STA $000A,X              
 829C1A   LDA $0C                  
 829C1C   STA $000C,X              
-829C1F   JSL $808859              
+829C1F   JSL GetRandomInt;$808859              
 829C23   AND #$0F                 
 829C25   XBA                      
 829C26   LDA #$00                 
@@ -27709,7 +27786,7 @@ RTS
 ----------------         
 82A41B   LDA #$02                 
 82A41D   STA $03                  
-82A41F   JSL $808859              
+82A41F   JSL GetRandomInt;$808859              
 82A423   AND #$0F                 
 82A425   ASL                      
 82A426   TAX                      
@@ -28420,9 +28497,9 @@ RTS
 82ACCC   BNE $82ACDE              
 82ACCE   LDA #$04                 
 82ACD0   STA $04                  
-82ACD2   LDX $1A                  
+82ACD2   LDX $1A ;<
 82ACD4   LDA $C4BB,X              
-82ACD7   STA $00FE                
+82ACD7   STA $00FE ;Part of Pirate Intro Routine?
 82ACDA   LDA #$10                 
 82ACDC   STA $18                  
 82ACDE   RTS                      
@@ -28446,7 +28523,7 @@ RTS
 82ACFF   LDA #$04                 
 82AD01   STA $02                  
 82AD03   STZ $00AC                
-82AD06   INC $00FE                
+82AD06   INC $00FE ;Increase FE ?
 82AD09   JMP $ADC9                
 82AD0C   LDX $04                  
 82AD0E   JMP ($AD11,X)            
@@ -28492,16 +28569,19 @@ RTS
 82AD55   STA $03                  
 82AD57   LDA #$06                 
 82AD59   STA $04                  
-82AD5B   RTS                      
-----------------         
+82AD5B   RTS                            
 --------unidentified--------
 82AD5C  .db $BD $AB $C4 $F0 $04 $E6 $0B $80
-82AD64  .db $B6 $20 $C9 $AD $A9 $04 $85 $02
-82AD6C  .db $A9 $08 $8D $FE $00 $9C $AC $00
-82AD74  .db $9C $89 $00          
-----------------         
-82AD77   RTS                      
-----------------         
+82AD64  .db $B6
+;SKIP BOSS INTRO ROUTINE (WHEN YOU PRESS START IN BOSS ROOM) for boss1 at least
+82AD65   JSR $ADC9
+82AD68   LDA #$04
+82AD6A   STA $02 ;$0A02 ;Prevent Text from showing up
+82AD6C   LDA #$08
+82AD6E   STA $00FE ;Boss mode (prevent boss from playing his intro)
+82AD71   STZ $00AC ;Allow you to move again
+82AD74   STZ $0089 ;HDMA Settings, do not reset for dark room bosses    
+82AD77   RTS                            
 --------unidentified--------
 82AD78  .db $A9 $04 $80 $9F $A9 $08 $80 $9B
 ----------------         
@@ -28535,13 +28615,13 @@ RTS
 82ADB8   RTS                      
 ----------------         
 --------sub start--------
-82ADB9   LDA $0165                
-82ADBC   ORA $01E5                
-82ADBF   BIT #$10                 
+82ADB9   LDA $0165 ;Controller1 filtered
+82ADBC   ORA $01E5 ;ora Controller2 filtered             
+82ADBF   BIT #$10 ;IF Either of the player press Start
 82ADC1   BEQ $82ADC8              
-82ADC3   PLA                      
-82ADC4   PLA                      
-82ADC5   JMP $AD65                
+82ADC3   PLA ;Remove the RTS
+82ADC4   PLA ;Remove the RTS
+82ADC5   JMP $AD65 ;Go to skip boss intro routine
 82ADC8   RTS                      
 ----------------         
 82ADC9   JSL $80856E              

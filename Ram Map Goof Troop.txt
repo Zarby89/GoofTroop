@@ -103,6 +103,9 @@ $B4[0x02] = sprite index/address to read/write into buffer ($1AA0)
 $B6 = level id in
 $B7 = map id in
 $BD = player count - 1 = 1Player, 3 = 2Player
+
+$C8?
+
 $F0 = frame counting down from 60 to 0
 $F1 = seconds
 $F2 = minutes
@@ -112,13 +115,17 @@ $F5 = Total Seconds played
 $F6 = Total Minutes played
 $F7 = Total Hours played
 
+$FE = boss state? or something like that
 
 $0100[0x02] = pointer for something?
 $0102[0x02] = pointer for jumptable in main routine
-$0103 used as pointer for jumptable as well
+$0103 used as pointer for jumptable as well / item being used + 08?? action the P1 is doing
+
+$0103 = 0x02 = lifting, 0x04 = holding up, 0x06 = throwing, 0x08 = kicking, 0x0A = crounching/hookshot, 0x0C=?, 0x0E=?,0x10=?,0x12 = digging, 0x14 bell
 
 $0110[0x02] = Xpos P1 (2b)
 $0113[0x02] = Ypos P1 (2b)
+
 
 $011D = P1 Hearts
 $0157 = P1 Lives
@@ -141,18 +148,29 @@ $016E = offseted YLowpos
 $0160[0x02] = Controller1 Current Input [byetaxlr 0000UDLR] 
 $0162[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $0164[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
+$48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
+
 
 $01E0[0x02] = Controller1 Current Input [byetaxlr 0000UDLR] 
 $01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
 
+$0200 ;Pirate00
+$0250 ;Pirate01
+
+
+
+
 
 $021C = "Current(?) boss HP"
 $021D = "Current(?) boss HP"
 
+$0A1A
+
 $1144 =  Doors unlocked
 $1145 = Doors unlocked too
 
+$1A4F = if non-zero make all pirate in "chase you mode"
 $1A58 = RNG?????? <- not from me
 
 
@@ -160,3 +178,6 @@ $1A58 = RNG?????? <- not from me
 $1AA0 = sprites OAM data mirror
 
 $1F10 flashing timer for PRESS START 2nd player
+
+
+
