@@ -1,0 +1,28 @@
+Collision Tiles Types :
+0x00 = Passable
+0xC0 = NoHookNotPassable
+0xD0 = DoorLock
+0xF0 = CanHook, NotPassable Water
+0x94 = NPCTiles?
+
+0x40 = UpperLeft DiggeableDirt
+0x42 = UpperRight DiggeableDirt
+0x44 = BottomLeft DiggeableDirt
+0x46 = BottomRight DiggeableDirt
+
+0x80 = WoodNonPassable
+0xB0 = UpperLeft PlantLiftObject
+0xB2 = UpperRight PlantLiftObject
+0xB4 = BottomLeft PlantLiftObject
+0xB6 = BottomRight PlantLiftObject
+
+0xA0 = UpperLeft StarBlockObject
+0xA2 = UpperRight StarBlockObject
+0xA4 = BottomLeft StarBlockObject
+0xA6 = BottomRight StarBlockObject
+
+
+
+
+
+

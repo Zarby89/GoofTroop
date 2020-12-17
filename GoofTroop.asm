@@ -2160,8 +2160,8 @@ GetRandomInt:
 809187   BCC $809181              
 809189   JSL $80E50B              
 80918D   REP #$20                 
-80918F   STZ $1144                
-809192   STZ $1146                
+80918F   STZ $1144 ;Clear Locked Doors Data
+809192   STZ $1146 ;Clear Locked Doors Data?
 809195   SEP #$20                 
 809197   STZ $CE                  
 809199   RTS                      
@@ -9369,13 +9369,13 @@ MoveSprite:
 80D4AD   SEP #$20                 
 80D4AF   RTS                      
 ----------------         
---------unidentified--------
+--------unidentified-------- ;Contains code for kicked starry blocks (TODO:need to disassemble that)
 80D4B0  .db $68 $68 $E2 $20 $A9 $02 $85 $00
 80D4B8  .db $A9 $04 $85 $02 $64 $03 $64 $04
 80D4C0  .db $BD $00 $01 $3A $F0 $03 $64 $05
 80D4C8  .db $60 $A9 $02 $9D $00 $01 $A9 $04
 80D4D0  .db $9D $02 $01 $9E $04 $01 $9E $05
-80D4D8  .db $01 $A5 $05 $64 $05 $F0 $06 $A9
+80D4D8  .db $01 $A5 $05 $64 $05 $F0 $06 $A9 
 80D4E0  .db $02 $9D $03 $01 $60 $9E $03 $01
 80D4E8  .db $BD $1D $01 $F0 $07 $9E $1D $01
 80D4F0  .db $9E $3F $01 $60 $9E $1C $01 $A5
@@ -9682,8 +9682,8 @@ MoveSprite:
 80D787   LDA #$02                 
 80D789   STA $0103,X              
 80D78C   RTS                      
-----------------         
-80D78D   STZ $0103,X              
+;Hit by a bomb routine     
+80D78D   STZ $0103,X
 80D790   LDA $011D,X              
 80D793   BEQ $80D79C              
 80D795   STZ $011D,X              
@@ -10188,12 +10188,12 @@ MoveSprite:
 80DBB6   JSR $DBBA                
 80DBB9   RTS                      
 ----------------         
---------sub start--------
-80DBBA   TCD                      
-80DBBB   LDA $32                  
-80DBBD   BNE $80DBB9              
-80DBBF   LDA $1E                  
-80DBC1   ASL                      
+;Door Setting?
+80DBBA   TCD ;Set DP to #$0100 ?
+80DBBB   LDA $32 ;$0132??
+80DBBD   BNE $80DBB9 ;Return
+80DBBF   LDA $1E ;$011E                
+80DBC1   ASL ;*2          
 80DBC2   TAX                      
 80DBC3   LDA $9417,X              
 80DBC6   STA $114E                
@@ -10363,7 +10363,8 @@ MoveSprite:
 80DD01  .db $22 $53 $9A $80 $60 $B9 $0B $00
 80DD09  .db $C9 $08 $F0 $07 $B9 $39 $00 $C9
 80DD11  .db $02 $D0 $03 $E2 $10 $60
-----------------         
+
+;Hit an enemy routine       
 80DD17   LDA $1D                  
 80DD19   BEQ $80DD21              
 80DD1B   STZ $1D                  
@@ -10389,7 +10390,7 @@ MoveSprite:
 80DD40   STZ $05                  
 80DD42   RTS                      
 ----------------         
---------unidentified--------
+;Hit by flame routine (TODO: need to disassemble that)
 80DD43  .db $A5 $1D $F0 $DA $64 $1D $64 $3F
 80DD4B  .db $A9 $02 $85 $00 $A9 $04 $85 $02
 80DD53  .db $A9 $04 $85 $03 $64 $04 $64 $05
@@ -10406,7 +10407,7 @@ MoveSprite:
 80DD6D   STA $0000,Y              
 80DD70   LDA #$04                 
 80DD72   STA $0002,Y              
-80DD75   LDA $1D                  
+80DD75   LDA $1D ;Hit a fireball routine?
 80DD77   BEQ $80DD21              
 80DD79   STZ $1D                  
 80DD7B   STZ $3F                  
@@ -19088,7 +19089,7 @@ dw $FCA9 ;04
 81D60F  .db $80 $20 $C5 $D7 $A5 $14 $C5 $3E
 81D617  .db $B0 $46 $A4 $11 $A5 $0D $10 $06
 81D61F  .db $88 $C4 $3D $90 $05 $60 $C4 $3D
-81D627  .db $90 $36 $20 $C6 $D5 $A6 $3C $BD
+81D627  .db $90 $36 $20 $C6 $D5 $A6 $3C $BD;Code ? Hit by pete hookshot
 81D62F  .db $2C $01 $F0 $2C $BD $00 $01 $3A
 81D637  .db $D0 $26 $BD $1D $01 $F0 $08 $9E
 81D63F  .db $1D $01 $9E $3F $01 $80 $08 $9E
@@ -26722,87 +26723,93 @@ dw $9031 ;1E
 829B38   PLA                      
 829B39   RTS                      
 ----------------         
---------sub start--------
-829B3A   STA $6E                  
-829B3C   LDA $47                  
-829B3E   ASL                      
-829B3F   TAX                      
-829B40   REP #$31                 
-829B42   LDA $11                  
-829B44   ADC $B967,X              
-829B47   CMP #$0100               
-829B4A   BCS $829B71              
+;Check if we need to unlock a door
+CollisionWithLockedDoor:
+{
+829B3A   STA $6E ;$016E <- #$80 (offseted YLowpos?)
+829B3C   LDA $47 ;p1 direction facing without moving same as above
+829B3E   ASL 
+829B3F   TAX 
+829B40   REP #$31 
+829B42   LDA $11 ;$0111 (P1 XPos)
+829B44   ADC $B967,X ;Add Direction Offset
+829B47   CMP #$0100 ;Check if X difference is smaller than 0x100
+829B4A   BCS $829B71 ;If it's bigger then CLC and RTS
 829B4C   LSR                      
 829B4D   LSR                      
 829B4E   LSR                      
-829B4F   STA $68                  
-829B51   LDA $14                  
+829B4F   STA $68 ;???
+829B51   LDA $14 ;$0114 (P1 YPos)
 829B53   CLC                      
-829B54   ADC $B969,X              
-829B57   CMP #$00E0               
-829B5A   BCS $829B71              
+829B54   ADC $B969,X ;Add Direction Offset              
+829B57   CMP #$00E0  ;Check if X difference is smaller than 0xE0              
+829B5A   BCS $829B71 ;If it's bigger then CLC and RTS             
 829B5C   AND #$00F8               
 829B5F   ASL                      
 829B60   ASL                      
-829B61   ADC $68                  
+829B61   ADC $68 ; ??? Tilemap data??
 829B63   TAY                      
-829B64   LDA $1400,Y              
-829B67   SEP #$30                 
-829B69   STA $6A                  
-829B6B   AND #$F0                 
-829B6D   CMP #$D0                 
-829B6F   BEQ $829B75              
+829B64   LDA $1400,Y ;Load Tile Type at that position?
+829B67   SEP #$30
+829B69   STA $6A ;Store it in $016A ?
+829B6B   AND #$F0
+829B6D   CMP #$D0 ;Check if Tile is D0 (door lock)                 
+829B6F   BEQ KeyUsedOnLockedDoor ;$829B75
 829B71   SEP #$30                 
 829B73   CLC                      
-829B74   RTS                      
-----------------         
+829B74   RTS   
+}    
+
+KeyUsedOnLockedDoor:
+{        
 829B75   PEA #$8382               
-829B78   PLB                      
-829B79   LDX $00B6                
-829B7C   LDA $C461,X              
-829B7F   CLC                      
-829B80   ADC $00B7                
-829B83   TAX                      
-829B84   LDA $6A                  
-829B86   AND #$0F                 
+829B78   PLB ;Set Databank to $82
+829B79   LDX $00B6 ;Load LEVEL Index
+829B7C   LDA $C461,X 
+829B7F   CLC 
+829B80   ADC $00B7 ;Load Map Index
+829B83   TAX 
+829B84   LDA $6A ;Restore Tiletype we encountered (0xD0?) ;Note this routine might be used for something else!!
+829B86   AND #$0F
 829B88   ASL                      
 829B89   ASL                      
-829B8A   LDY $C461,X              
-829B8D   ADC $C4D7,Y              
-829B90   REP #$31                 
-829B92   AND #$00FF               
-829B95   ADC #$C4D9               
-829B98   TAY                      
-829B99   LDA $0000,Y              
-829B9C   STA $0013                
+829B8A   LDY $C461,X ;Locked Door Array (one value per map 00 = no key door, non-zero = door id)
+829B8D   ADC $C4D7,Y ;Add value for that door??? [00 10 15 1A 1F 24 29 2E 33 38 3D 42 47 4C 51 56 5B] <- all doors values
+829B90   REP #$31 ;reset Carry
+829B92   AND #$00FF
+829B95   ADC #$C4D9 ;Add that means C4D9
+829B98   TAY          ;?? ?? ?? ID  ?? ?? ?? ID  ?? ?? ?? ID           
+829B99   LDA $0000,Y ;[0E 00 00 00][4E 03 04 00][0E 00 00 82]
+829B9C   STA $0013 ;Store in $13 the 1st 2bytes ;$000E/$034E ??
 829B9F   SEP #$20                 
-829BA1   LDA $0002,Y              
+829BA1   LDA $0002,Y ;3rd byte in $0A ;No idea either $00/$04
 829BA4   STA $000A                
-829BA7   LDA $0003,Y              
+829BA7   LDA $0003,Y ;4th byte in ;$0168? Door ID ($0168 = bitmask) not sure about bit 7
 829BAA   STA $68                  
 829BAC   AND #$7F                 
 829BAE   LSR                      
 829BAF   LSR                      
 829BB0   LSR                      
-829BB1   TAX                      
-829BB2   LDA $68                  
-829BB4   AND #$07                 
-829BB6   SEP #$10                 
-829BB8   PLB                      
-829BB9   TAY                      
-829BBA   LDA $68                  
+829BB1   TAX ;Used to get upper bits?
+829BB2   LDA $68 ;Reload unmodified byte4
+829BB4   AND #$07 ;And lower bits
+829BB6   SEP #$10 
+829BB8   PLB ;Set DataBank back to $83
+829BB9   TAY
+829BBA   LDA $68 ;? 4th byte modified
 829BBC   AND #$80                 
-829BBE   CMP $6E                  
-829BC0   BNE $829B73              
-829BC2   LDA $80B8,Y              
-829BC5   ORA $1144,X              
-829BC8   STA $1144,X              
-829BCB   JSL $82C3B4              
-829BCF   JSR $9C82                
-829BD2   LDA #$0C                 
-829BD4   JSL $809A53              
+829BBE   CMP $6E ;?? ;$016E ?? if bit7 is set we compare with that 
+829BC0   BNE $829B73 ; CLC : Return             
+829BC2   LDA $80B8,Y ;Bitmask table ;Only the 4 lowest values are possible (00, 02, 04, 08)
+829BC5   ORA $1144,X ;Keep currently unlocked doors
+829BC8   STA $1144,X ;Save new unlocked door with the previously unlocked doors             
+829BCB   JSL $82C3B4 ;Unknown Yet
+829BCF   JSR $9C82 ;Place Plank Routine?? :thinking:
+829BD2   LDA #$0C
+829BD4   JSL $809A53 ;Unknown Yet
 829BD8   SEC                      
-829BD9   RTS                      
+829BD9   RTS
+}
 ----------------         
 --------sub start--------
 829BDA   LDA $57                  
