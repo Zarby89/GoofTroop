@@ -41,6 +41,7 @@ $30[0x03] = indirect long read, used to set $3C, $38 and 7F6800+ (getting set fr
 
 $34[0x02] = ?? used to set $7F0014+
 
+$3C[0x02] ; used in loading sprite routine?? *5
 
 $44[0x02] = Controller1 Current Input [axlr0000 byetUDLR] 
 $46[0x02] = Controller1 Last Input [axlr0000 byetUDLR]
@@ -49,6 +50,8 @@ $48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
 $4A[0x02] = Controller2 Current Input [axlr0000 byetUDLR] 
 $4C[0x02] = Controller2 Last Input [axlr0000 byetUDLR]
 $4E[0x02] = Controller2 Pressed Filtered Input [axlr0000 byetUDLR]
+
+
 
 $70 = mirror of $2100 (INIDISP - Screen Display)
 $74 = mirror of $210D BG Scroll Registers (BG1) Horizontal
@@ -155,29 +158,28 @@ $01E0[0x02] = Controller1 Current Input [byetaxlr 0000UDLR]
 $01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
 
-$0200 ;Pirate00
-$0250 ;Pirate01
-
-
-
-
-
-$021C = "Current(?) boss HP"
-$021D = "Current(?) boss HP"
+$0200 to $0980 = sprites ram
+$1400 to $1800 = tile map collision
 
 $0A1A
+
+$1141 = 1st Sprite Sheet Loaded
+$1142 = 2nd Sprite Sheet Loaded
+$1143 = 3rd Sprite Sheet Loaded
 
 $1144 =  Doors unlocked
 $1145 = Doors unlocked too
 
 $1A4F = if non-zero make all pirate in "chase you mode"
 $1A58 = RNG?????? <- not from me
-
+$1A5E - Next Sound Effect Position in RAM
 
 
 $1AA0 = sprites OAM data mirror
 
+$1E00 - 1FFF Palettes Buffer
+
 $1F10 flashing timer for PRESS START 2nd player
 
-
+$???? - $1DFF = Stack
 
