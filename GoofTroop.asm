@@ -7822,7 +7822,7 @@ ControllerUpdate:
 80BFD4   ASL
 80BFD5   ADC $18
 80BFD7   TAX
-80BFD8   LDA $0000,X
+80BFD8   LDA $0000,X  ;  Fetch X acceleration?
 80BFDB   ADC $10  ; X position
 80BFDD   STA $10  ; X position
 80BFDF   SEP #$20
@@ -8237,7 +8237,7 @@ MoveSprite:
 80C302   ADC $0000
 80C305   STA $2A  
 80C307   LDA #$8F9B   
-80C30A   BRA $80C322  
+80C30A   BRA $80C322
 80C30C   LDA #$FFEA   
 80C30F   STA $38  
 80C311   LDA #$FFD0   ; DO means high throw gravity. No idea what FF means.
@@ -8247,7 +8247,7 @@ MoveSprite:
 80C31A   ADC $0000
 80C31D   STA $2A  
 80C31F   LDA #$8FA7   
-80C322   STA $18  
+80C322   STA $18  ; Set pointer for Stuffs (Example : X velocity of thrown item)
 80C324   SEP #$20 
 80C326   RTS
 ----------------   
