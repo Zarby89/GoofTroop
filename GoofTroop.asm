@@ -7814,34 +7814,35 @@ ControllerUpdate:
 80BFCB   RTL
      
 --------sub start--------
-80BFCC   LDA $0D  
-80BFCE   REP #$30 
-80BFD0   AND #$00FF   
+; Boss 0 related.
+80BFCC   LDA $0D
+80BFCE   REP #$30
+80BFD0   AND #$00FF
 80BFD3   ASL
 80BFD4   ASL
-80BFD5   ADC $18  
+80BFD5   ADC $18
 80BFD7   TAX
-80BFD8   LDA $0000,X  
-80BFDB   ADC $10  
-80BFDD   STA $10  
-80BFDF   SEP #$20 
-80BFE1   LDA #$00 
+80BFD8   LDA $0000,X
+80BFDB   ADC $10  ; X position
+80BFDD   STA $10  ; X position
+80BFDF   SEP #$20
+80BFE1   LDA #$00
 80BFE3   LDY $0000,X  
 80BFE6   BPL $80BFE9  
 80BFE8   DEC
-80BFE9   ADC $12  
-80BFEB   STA $12  
+80BFE9   ADC $12  ; X position
+80BFEB   STA $12  ; X position
 80BFED   REP #$21 
 80BFEF   LDA $0002,X  
-80BFF2   ADC $13  
-80BFF4   STA $13  
+80BFF2   ADC $13  ; ????
+80BFF4   STA $13  ; ????
 80BFF6   SEP #$20 
 80BFF8   LDA #$00 
 80BFFA   LDY $0002,X  
 80BFFD   BPL $80C000  
 80BFFF   DEC
-80C000   ADC $15  
-80C002   STA $15  
+80C000   ADC $15  ; y position
+80C002   STA $15  ; y position
 80C004   SEP #$10 
 80C006   RTL
 ----------------   
@@ -8163,7 +8164,9 @@ MoveSprite:
 80C27D   REP #$21   ; Niamek : This seems to be the routine that manage the pot trajectory.
 80C27F   LDA $2A  ; Z position of the pot
 80C281   ADC $3A  ; Gravity for this specific pot (I think each pot will have it gravity)
+; Note that this gravity applies after a tiny amount of time after the throw. Not immediately.
 80C283   STA $2A  
+; I think the rest of the routine is for adjusting the Y position of the thrown item on screen according to Z.
 80C285   LDA $16  ; This is the Y position of the pot (B15 to B17 are Y related from what I understand)
 80C287   CLC
 80C288   ADC $2A  
@@ -8211,7 +8214,8 @@ MoveSprite:
 ----------------   
 --------sub start--------
 ; Boss 0 related too.
-80C2DA   LDA #$02 ; Looks like this section of code sets the properties of the thrown item.
+; Looks like this section of code sets the properties of the thrown item.
+80C2DA   LDA #$02
 80C2DC   STA $03  
 80C2DE   STA $1E  
 80C2E0   JSL $808859  ; I think this is the random thing that will decide if it's a fast or a high throw. The firs tbit will be the dealbreaker.
@@ -8223,10 +8227,11 @@ MoveSprite:
 80C2EF   REP #$20 
 80C2F1   TYA
 80C2F2   BEQ $80C30C  ; If A in accumulator is 1, the item will be a fast throw. if == to 0 : it will be an arching throw.
+; Looks like FF is the minimum of the throw and 00 the highest gravity possible.
 80C2F4   LDA #$FFEB   
 80C2F7   STA $38  
 80C2F9   LDA #$FFF0
-80C2FC   STA $3A  ; I have no idea what FF means, but F0 means "fast throw"
+80C2FC   STA $3A  ; I have no idea what FF means, but F0 means "fast throw gravity".
 80C2FE   LDA #$0100   
 80C301   CLC
 80C302   ADC $0000
@@ -8235,7 +8240,7 @@ MoveSprite:
 80C30A   BRA $80C322  
 80C30C   LDA #$FFEA   
 80C30F   STA $38  
-80C311   LDA #$FFD0   ; DO means high throw. No idea what FF means.
+80C311   LDA #$FFD0   ; DO means high throw gravity. No idea what FF means.
 80C314   STA $3A  
 80C316   LDA #$0250   
 80C319   CLC
