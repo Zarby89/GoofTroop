@@ -8221,7 +8221,7 @@ MoveSprite:
 80C2EE   TAY
 80C2EF   REP #$20 
 80C2F1   TYA
-80C2F2   BEQ $80C30C  
+80C2F2   BEQ $80C30C  ; If A in accumulator is 1, the item will be a fast throw. if == to 0 : it will be an arching throw.
 80C2F4   LDA #$FFEB   
 80C2F7   STA $38  
 80C2F9   LDA #$FFF0   
