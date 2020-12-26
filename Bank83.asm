@@ -1188,9 +1188,16 @@ db $00, $00, $09, $00, $09, $00, $09, $09, $2D, $09, $00, $00, $2D, $09, $00, $0
 838F7E  .db $29 $00 $50 $01 $06 $29 $00 $52
 838F86  .db $01 $76 $29 $00 $54 $00 $00 $80
 838F8E  .db $FB $80 $04 $00 $00 $00 $00 $80
-838F96  .db $04 $80 $FB $00 $00 $70 $00 $34
+838F96  .db $04 $80 $FB $00 $00 $70 $00 $34 ; Somewhere around here, there is a table for the Boss 0 Thrown items.
+    ; for example, I know that 838F9F is one of the X velocities values for the thrown items.
+    ; Currently, I can say that there are 3 X velocities in this area.
+    ; Formula : 838F9B + 4x where x is 0,1 or 2
 838F9E  .db $02 $00 $00 $40 $02 $90 $FF $34
-838FA6  .db $02 $4A $00 $78 $01 $00 $00 $80
+838FA6  .db $02 $4A $00 $78 $01 $00 $00 $80; Somewhere around here, there is a table for the Boss 0 Thrown items.
+    ; for example, I know that 838F9F is one of the X velocities values for the thrown items.
+    ; Currently, I can say that there are 3 X velocities in this area.
+    ; Formula : 838FA7 + 4x where x is 0,1 or 2
+
 838FAE  .db $01 $B6 $FF $78 $01 $00 $00 $00
 838FB6  .db $FE $6A $01 $96 $FE  
 ----------------         
