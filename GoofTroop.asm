@@ -8160,11 +8160,11 @@ MoveSprite:
 ----------------   
 --------sub start--------
 80C279   JSL $80BFCC  
-80C27D   REP #$21 
-80C27F   LDA $2A  
-80C281   ADC $3A  
+80C27D   REP #$21   ; Niamek : This seems to be the routine that manage the pot trajectory.
+80C27F   LDA $2A  ; Z position of the pot
+80C281   ADC $3A  ; Gravity for this specific pot (I think each pot will have it gravity)
 80C283   STA $2A  
-80C285   LDA $16  
+80C285   LDA $16  ; This is the Y position of the pot (B15 to B17 are Y related from what I understand)
 80C287   CLC
 80C288   ADC $2A  
 80C28A   STA $16  
