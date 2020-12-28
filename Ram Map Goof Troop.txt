@@ -43,6 +43,11 @@ $34[0x02] = ?? used to set $7F0014+
 
 $3C[0x02] ; used in loading sprite routine?? *5
 
+$40 = Number of DMAs to Do ;See $1800
+$41 = number of thing to do (DMA Related) ;See $1900
+$42 = number of thing to do (DMA Related) ;See $1380
+$43 = number of thing to do (DMA Related) ;See $1380
+
 $44[0x02] = Controller1 Current Input [axlr0000 byetUDLR] 
 $46[0x02] = Controller1 Last Input [axlr0000 byetUDLR]
 $48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
@@ -92,6 +97,7 @@ $9A = tell if nmi need to be executed this frame
 $9B
 $9C = frame counter?
 
+
 $27
 $51
 $59
@@ -118,6 +124,8 @@ $F5 = Total Seconds played
 $F6 = Total Minutes played
 $F7 = Total Hours played
 
+$F8 = ;Boss 1 used to check how many pirate we've kill so far
+$FB = ;Boss 1 used to set RNG depending on how much pirate we've killed
 $FE = boss state? or something like that
 
 $0100[0x02] = pointer for something?
@@ -125,6 +133,7 @@ $0102[0x02] = pointer for jumptable in main routine
 $0103 used as pointer for jumptable as well / item being used + 08?? action the P1 is doing
 
 $0103 = 0x02 = lifting, 0x04 = holding up, 0x06 = throwing, 0x08 = kicking, 0x0A = crounching/hookshot, 0x0C=?, 0x0E=?,0x10=?,0x12 = digging, 0x14 bell
+$0104 = item used subtype?
 
 $0110[0x02] = Xpos P1 (2b)
 $0113[0x02] = Ypos P1 (2b)
@@ -161,6 +170,22 @@ $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR]
 $0200 to $0980 = sprites ram
 $1400 to $1800 = tile map collision
 
+$0A00 - Door/Event Related?
+$0A0A = ID?
+$0A0B = UpperByte2>>3 (83C275
+$0A0D = LowerByte2
+$0A11 = Byte3
+$0A14 = Byte4
+
+$0A00 Doors infos
+$0A20 Doors infos
+$0A40 Doors infos
+$0A60 Doors infos
+
+$0E00 ??
+$0E20 ??
+
+
 $0A1A
 
 $1141 = 1st Sprite Sheet Loaded
@@ -169,6 +194,9 @@ $1143 = 3rd Sprite Sheet Loaded
 
 $1144 =  Doors unlocked
 $1145 = Doors unlocked too
+
+$1800-$18FF = DMA Waiting to Transfer in format (8bytes) [$4300, $2116(02), $4305(02), $4302(02), $4304]
+$1900-$19FF? = DMA Waiting to Transfer in format;(4bytes) + data [$2115, $2116, $2117, $4305(length)] + DATA(length)
 
 $1A4F = if non-zero make all pirate in "chase you mode"
 $1A58 = RNG?????? <- not from me
@@ -182,4 +210,18 @@ $1E00 - 1FFF Palettes Buffer
 $1F10 flashing timer for PRESS START 2nd player
 
 $???? - $1DFF = Stack
+
+$2000 - $757F GFX Max GFX
+$7580 - $F1FF GFX Goofy GFX
+$F200 - $FFFF GFX Objects GFX, barels, bombs, blocks, etc...
+
+
+
+BANK 7F ->
+
+$0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded twice no clue why...)
+$0E00 - $141F GFX Effects ?
+$1420 - $B000 GFX all loader gfx
+
+
 
