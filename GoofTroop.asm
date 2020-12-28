@@ -8146,8 +8146,8 @@ MoveSprite:
 --------sub start--------
 80C25D   JSL $80BFCC  
 80C261   REP #$21 
-80C263   LDA $2A  
-80C265   ADC $38  
+80C263   LDA $2A  ; Z position of the pot
+80C265   ADC $38  ; Initial Gravity of the pot 
 80C267   STA $2A  
 80C269   LDA $16  
 80C26B   CLC
@@ -8161,7 +8161,7 @@ MoveSprite:
 ----------------   
 --------sub start--------
 80C279   JSL $80BFCC
-80C27D   REP #$21   ; Niamek : This seems to be the routine that manage the pot trajectory.
+80C27D   REP #$21   ; Niamek : This seems to be the routine that manage the XZ pot trajectory.
 80C27F   LDA $2A  ; Z position of the pot
 80C281   ADC $3A  ; Gravity for this specific pot (I think each pot will have it gravity)
 ; Note that this gravity applies after a tiny amount of time after the throw. Not immediately.
