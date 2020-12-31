@@ -145,6 +145,8 @@ $0140 = P1 ItemsCount, 00 or 02
 $0141 = P1 Item Slot Used, 00 or 02
 $0142 = P1 Item1 - 0x02 = Hookshot, 0x04 = Candle, 0x06 = Small Key, 0x08 = Boss Key, 0x0A = Shovel, 0x0C = Bell, 0x0E = Plank ;higher are invalid
 $0143 = P1 Item2 - same as above
+$013C = P1 Item PositionX?
+$013E = P1 Item PositionY?
 $014E = P1 Item related
 
 
@@ -168,7 +170,7 @@ $01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR]
 $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
 
 $0200 to $0980 = sprites ram
-$1400 to $1800 = tile map collision
+
 
 $0A00 - Door/Event Related?
 $0A0A = ID?
@@ -182,6 +184,12 @@ $0A20 Doors infos
 $0A40 Doors infos
 $0A60 Doors infos
 
+
+
+$0D8A = PlayerOffsetter
+$0D80 = OffsettedPlayerRAM ?
+
+
 $0E00 ??
 $0E20 ??
 
@@ -192,11 +200,17 @@ $1141 = 1st Sprite Sheet Loaded
 $1142 = 2nd Sprite Sheet Loaded
 $1143 = 3rd Sprite Sheet Loaded
 
-$1144 =  Doors unlocked
+$1144 = Doors unlocked
 $1145 = Doors unlocked too
+$1180+ = Hookshots Ropes saves
+
+
+$1400 to $17FF = tile map collision
 
 $1800-$18FF = DMA Waiting to Transfer in format (8bytes) [$4300, $2116(02), $4305(02), $4302(02), $4304]
 $1900-$19FF? = DMA Waiting to Transfer in format;(4bytes) + data [$2115, $2116, $2117, $4305(length)] + DATA(length)
+
+
 
 $1A4F = if non-zero make all pirate in "chase you mode"
 $1A58 = RNG?????? <- not from me
@@ -223,5 +237,5 @@ $0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded tw
 $0E00 - $141F GFX Effects ?
 $1420 - $B000 GFX all loader gfx
 
-
-
+$E000 - $E7FF BG2 tiles8 data
+$E800 - $EFFF BG1 tiles8 data

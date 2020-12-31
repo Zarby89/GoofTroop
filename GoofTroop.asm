@@ -1178,8 +1178,7 @@ GetRandomInt:
 8088D8   STA $1241,X  
 8088DB   INC $00B9
 8088DE   RTL
-----------------   
---------sub start--------
+;
 8088DF   LDA $00BC
 8088E2   ASL
 8088E3   TAX
@@ -1281,29 +1280,73 @@ GetRandomInt:
 8089A4   TYA
 8089A5   REP #$30 
 8089A7   BRA $8089C8  
---------sub start--------
-8089A9   DEC $08  
-8089AB   BNE $8089D6  
+
+
+;Animation Timer (After investigation seems to contains only TILE data for OAM)
+;How it works
+;Read a word address from $06-$07
+;First Byte is indicating the number of bytes to skip+3
+;2nd Byte is indicating Timer, if bit 7 is setted will
+;read 2 next bytes as an address to put in $06-$07
+;I am guessing the bytes skipped are data read by the sprite somewhere else
+
+;Snake Animation (839831) : 
+;(00)  03 0A 4F   00 0C 1C
+;(01)  04 0A 4F   02 1D 20 0D
+;(02)  03 8A 4F   04 30 21 [31 98]<- return to (00)
+
+;Edgehog Animation (839637) :
+;(00)  05 04 2E   20 22 23 24 1D
+;(01)  05 04 2D   20 32 33 34 1D
+;(02)  05 04 2E   20 25 26 35 1D
+;(03)  05 84 2D   20 32 33 34 1D [37 96]<- return to (00)
+
+;Fish animation (83ACBD)
+;(00)  01 05 55   06
+;(01)  01 05 9A   06
+;(02)  01 05 55   06
+;(03)  01 05 55   0A
+;(04)  01 05 55   08
+;(05)  01 05 9A   0C
+;(06)  01 85 55   0C [D5 AC]<- goto (07)
+;83ACD5
+;(07)  01 85 55 0C [D5 AC]<- goto (07)
+
+;Pirate Flag Animation (83ACE3)
+;(00)  05 0A CC   06 08 24 34 25 
+;(01)  05 0A CC   0A 0C 24 34 25 
+;(02)  05 0A CC   20 22 24 34 25 
+;(03)  05 8A CC   0A 0C 24 34 25 [EF AC]<- return to (00)
+
+
+;this is a generic code used by alots of sprites
+
+
+8089A9   DEC $08 ;Timer?
+8089AB   BNE $8089D6 
 8089AD   REP #$31 
-8089AF   LDY $06  
-8089B1   LDA $0000,Y  
-8089B4   AND #$00FF   
-8089B7   ADC #$0003   
-8089BA   ADC $06  
-8089BC   TAX
-8089BD   LDA $0001,Y  
-8089C0   BIT #$0080   
-8089C3   BEQ $8089C9  
-8089C5   LDA $0000,X  
-8089C8   TAX
-8089C9   STX $06  
+8089AF   LDY $06 ;Load Position in Frame Array?
+8089B1   LDA $0000,Y ;Load Byte1 of Frame Array
+8089B4   AND #$00FF ;And FF (03)
+8089B7   ADC #$0003 ;ADC #$0003 (06)
+8089BA   ADC $06 ;ADC Position so Position+06
+8089BC   TAX ;Put it in X
+8089BD   LDA $0001,Y ;Load Byte2 of Frame Array
+8089C0   BIT #$0080 ;if bit 7 is unsetted skip loading byte1 (+6 position)
+8089C3   BEQ $8089C9
+8089C5   LDA $0000,X ;otherwise load byte1 and 2 (0A04)
+8089C8   TAX ;put that in X
+
+8089C9   STX $06 ;store new position in $06
+
 8089CB   SEP #$20 
-8089CD   LDA $0001,X  
+8089CD   LDA $0001,X 
 8089D0   AND #$7F 
-8089D2   STA $08  
+8089D2   STA $08 ;store byte2 in $08 (0A) ;Timer
 8089D4   SEP #$10 
 8089D6   RTL
-----------------   
+
+
 ;Routine that is used alots in the game TODO *MIGHT BE SPAWN ITEM/SPRITE ROUTINE*
 8089D7   XBA
 8089D8   TYA
@@ -1942,12 +1985,12 @@ GetRandomInt:
 808F6E   STZ $2D  
 808F70   STZ $0C  
 808F72   RTL
-----------------   
---------sub start--------
+
+GetNextEmptySprite:
 808F73   REP #$10 
 808F75   LDX #$0200   
 808F78   LDA $0000,X  
-808F7B   BEQ $808F8C  
+808F7B   BEQ $808F8C ;If sprite0 byte1 == 0 return
 808F7D   REP #$21 
 808F7F   TXA
 808F80   ADC #$0050   
@@ -2907,9 +2950,9 @@ GetRandomInt:
 80970A   JSR $8527
 80970D   JSR $AF2A
 809710   LDA #$00 
-809712   JSR $AEE1
+809712   JSR LoadBgGfxPointerFromA;$AEE1
 809715   LDA #$01 
-809717   JSR $AEE1
+809717   JSR LoadBgGfxPointerFromA;$AEE1
 80971A   JSR $8381
 80971D   LDA #$00 
 80971F   STA $7FFF12  
@@ -2988,7 +3031,7 @@ GetRandomInt:
 8097E0   LDA #$02 
 8097E2   JSR $AFD3
 8097E5   LDA #$0A 
-8097E7   JSR $AEE1
+8097E7   JSR LoadBgGfxPointerFromA;$AEE1
 8097EA   LDA #$02 
 8097EC   JMP $81BB
 --------data--------     
@@ -3403,7 +3446,7 @@ PlaySFX:
 809B04   LDX #$18 
 809B06   JSL $808136  
 809B0A   LDA #$07 
-809B0C   JSR $AEE1
+809B0C   JSR LoadBgGfxPointerFromA;$AEE1
 809B0F   LDA #$08 
 809B11   JSR $B165
 809B14   LDA #$00 
@@ -3621,7 +3664,7 @@ PlaySFX:
 809CF3   STA $1E01
 809CF6   JSR $8527
 809CF9   LDA #$0E 
-809CFB   JSR $AEE1
+809CFB   JSR LoadBgGfxPointerFromA;$AEE1
 809CFE   JSR $8CA7
 809D01   JSR $8CD6
 809D04   JSR $9306
@@ -3789,9 +3832,9 @@ dw $9EB4 ;08
 809E30   STA $A1  
 809E32   JSR $8527
 809E35   LDA #$0B 
-809E37   JSR $AEE1
+809E37   JSR LoadBgGfxPointerFromA;$AEE1
 809E3A   LDA #$0C 
-809E3C   JSR $AEE1
+809E3C   JSR LoadBgGfxPointerFromA;$AEE1
 809E3F   LDA #$05 
 809E41   JSR $B1D7
 809E44   JSR $8CA7
@@ -3874,7 +3917,7 @@ dw $9EB4 ;08
 809EE8   LDA #$01 
 809EEA   JSR $E6E3
 809EED   LDA #$08 
-809EEF   JSR $AEE1
+809EEF   JSR LoadBgGfxPointerFromA;$AEE1
 809EF2   LDA #$03 
 809EF4   JSR $ADC1
 809EF7   LDA $8AE520  
@@ -3963,7 +4006,7 @@ dw $9EB4 ;08
 809FB0   LDA #$03 
 809FB2   JSR $AFD3
 809FB5   LDA #$09 
-809FB7   JSR $AEE1
+809FB7   JSR LoadBgGfxPointerFromA;$AEE1
 809FBA   LDA #$04 
 809FBC   JSR $B165
 809FBF   LDA #$03 
@@ -4004,17 +4047,17 @@ dw $9EB4 ;08
 80A011   JSR $8527
 80A014   LDA #$00 
 80A016   JSR $AD7D
-80A019   LDA $B6  
+80A019   LDA $B6 ;Level Index
 80A01B   ASL
-80A01C   STA $0C  
+80A01C   STA $0C 
 80A01E   TAX
 80A01F   LDA $868F,X  
-80A022   JSR $AEE1
+80A022   JSR LoadBgGfxPointerFromA;$AEE1
 80A025   LDX $0C  
 80A027   LDA $8690,X  
 80A02A   CMP $868F,X  
 80A02D   BEQ $80A032  
-80A02F   JSR $AEE1
+80A02F   JSR LoadBgGfxPointerFromA;$AEE1
 80A032   LDA #$01 
 80A034   JSL $808142  
 80A038   LDA $B1  
@@ -4149,7 +4192,7 @@ SecondaryJumpTable:
 GameRoutineNormal:
 {
 80A13C   JSL $80AA8C  
-80A140   JSR $A8EA
+80A140   JSR $A8EA;??
 80A143   LDA $BD  
 80A145   BEQ $80A189  
 80A147   LDA $A8  
@@ -4297,7 +4340,7 @@ GameRoutineNormal:
 80A28D   STA $1E01
 80A290   JSR $8527
 80A293   LDA #$0E 
-80A295   JSR $AEE1
+80A295   JSR LoadBgGfxPointerFromA;$AEE1
 80A298   JSR $8CA7
 80A29B   JSR $8CD6
 80A29E   JSR $9317
@@ -4390,13 +4433,13 @@ GameRoutineNormal:
 80A366   STA $A1  
 80A368   STZ $CB  
 80A36A   LDA #$0B 
-80A36C   JSR $AEE1
+80A36C   JSR LoadBgGfxPointerFromA;$AEE1
 80A36F   LDA #$0C 
 80A371   LDX $B6  
 80A373   CPX #$03 
 80A375   BCC $80A379  
 80A377   LDA #$0D 
-80A379   JSR $AEE1
+80A379   JSR LoadBgGfxPointerFromA;$AEE1
 80A37C   LDA #$06 
 80A37E   LDX $B6  
 80A380   CPX #$03 
@@ -4569,7 +4612,7 @@ GameRoutineNormal:
 80A67F   JSR $E6E3
 80A682   JSL $809A2F  
 80A686   LDA #$08 
-80A688   JSR $AEE1
+80A688   JSR LoadBgGfxPointerFromA;$AEE1
 80A68B   JSR $853A
 80A68E   LDA #$02 
 80A690   JSR $B1D0
@@ -5028,7 +5071,7 @@ GameRoutineNormalLONGJUMP1:
 80AAC4   XBA
 80AAC5   LDA #$00 
 80AAC7   TCD
-80AAC8   JSL $80B8C9  
+80AAC8   JSL $80B8C9 ;??  
 80AACC   RTL
 }
 
@@ -5177,25 +5220,25 @@ GameRoutineNormalLONGJUMP1:
 80ABD4   TAX
 80ABD5   LDY $88DF,X  
 80ABD8   LDA $88E0,X  
-80ABDB   JSL $8089A3  
+80ABDB   JSL $8089A3  ;Set Animation?
 80ABDF   RTS
 ----------------   
 80ABE0   JSL $8088DF  
 80ABE4   RTS
-----------------   
---------sub start--------
-80ABE5   LDY $B6  
-80ABE7   LDX $8959,Y  
-80ABEA   LDA $8959,X  
-80ABED   STA $0E  
-80ABEF   BEQ $80ABFE  
-80ABF1   LDA $B7  
-80ABF3   CMP $895A,X  
-80ABF6   BEQ $80AC02  
+
+;Hookshot Hooks data
+80ABE5   LDY $B6 ;Level in (01)
+80ABE7   LDX $8959,Y ; 838959  .db $05 $06 $0D $12 $15 $00 $03 $07
+80ABEA   LDA $8959,X
+80ABED   STA $0E
+80ABEF   BEQ $80ABFE
+80ABF1   LDA $B7
+80ABF3   CMP $895A,X
+80ABF6   BEQ $80AC02
 80ABF8   INX
 80ABF9   INX
-80ABFA   DEC $0E  
-80ABFC   BNE $80ABF3  
+80ABFA   DEC $0E
+80ABFC   BNE $80ABF3
 80ABFE   STZ $1A48
 80AC01   RTS
 ----------------   
@@ -5595,10 +5638,10 @@ DoDynamicPaletteTransfer:
 80AEDB   MVN $8A,$83  
 80AEDE   SEP #$30 
 80AEE0   RTS
-----------------   
---------sub start--------
+
+LoadBgGfxPointerFromA:
 80AEE1   PHA
-80AEE2   JSR $B268
+80AEE2   JSR LoadBgGfxPointerJump;$B268 ;Load GFX Pointer
 80AEE5   PLA
 80AEE6   LDY $40  
 80AEE8   REP #$30 
@@ -5967,35 +6010,39 @@ DoDynamicPaletteTransfer:
 80B1D7   REP #$31 
 80B1D9   LDX #$F000   
 80B1DC   BRA $80B16A  
---------sub start--------
-80B1DE   REP #$31 
-80B1E0   AND #$00FF   
-80B1E3   ASL
-80B1E4   TAX
-80B1E5   LDA $8B7E,X  
-80B1E8   AND #$1F00   
-80B1EB   ASL
-80B1EC   ADC #$8000   
-80B1EF   STA $34  
-80B1F1   LDA $8B7E,X  
-80B1F4   AND #$00FF   
-80B1F7   STA $3C  
-80B1F9   ASL
-80B1FA   ASL
-80B1FB   ADC $3C  
-80B1FD   TAX
-80B1FE   LDA $8FFE00,X
-80B202   TAY
-80B203   LDA $8FFE02,X
-80B207   STA $32  
-80B209   LDA $8FFE03,X
-80B20D   CLC
-80B20E   ADC $34  
-80B210   STA $3E  
-80B212   SEP #$20 
-80B214   RTS
-----------------   
---------sub start--------
+
+
+LoadBgGfxPointer:
+{
+    80B1DE   REP #$31 
+    80B1E0   AND #$00FF 
+    80B1E3   ASL
+    80B1E4   TAX
+    80B1E5   LDA $8B7E,X ;Load GFX data? ;First value = $3D00
+    80B1E8   AND #$1F00 ; 1D00
+    80B1EB   ASL ;*2 = 3A00
+    80B1EC   ADC #$8000 ;+8000 = BA00
+    80B1EF   STA $34 
+    80B1F1   LDA $8B7E,X
+    80B1F4   AND #$00FF ;low byte $00  
+    80B1F7   STA $3C 
+    80B1F9   ASL
+    80B1FA   ASL
+    80B1FB   ADC $3C ;*5 
+    80B1FD   TAX 
+    80B1FE   LDA $8FFE00,X ;Load BG GFX Pointer
+    80B202   TAY
+    80B203   LDA $8FFE02,X
+    80B207   STA $32  
+    80B209   LDA $8FFE03,X
+    80B20D   CLC
+    80B20E   ADC $34  
+    80B210   STA $3E  
+    80B212   SEP #$20 
+    80B214   RTS
+}
+
+
 80B215   REP #$31 
 80B217   AND #$00FF   
 80B21A   ASL
@@ -6040,12 +6087,13 @@ SpritePrepSheetTransfer:
 80B263   STA $3E ;3E = size of the transfer,32 = Bank, Y = Addr
 80B265   SEP #$20 
 80B267   RTS
-----------------   
---------sub start--------
-80B268   JSR $B1DE
+
+LoadBgGfxPointerJump:
+80B268   JSR LoadBgGfxPointer;$B1DE
 80B26B   LDA #$7F 
 80B26D   BRA $80B2A0  
---------sub start--------
+
+
 80B26F   BNE $80B276  
 80B271   LDY #$8000   
 80B274   INC $32  
@@ -7138,7 +7186,9 @@ ClearOAMData:
 80BA4D   LDA $09,X
 80BA4F   BEQ $80B9D4  
 80BA51   CMP #$12 
-80BA53   BEQ $80BA0B  
+80BA53   BEQ $80BA0B
+
+;Related to Animation
 --------sub start--------
 80BA55   LDA $01,X
 80BA57   BEQ $80BA4B  
@@ -7842,14 +7892,14 @@ ControllerUpdate:
 80BF9F   STY $18 ;??
 80BFA1   STA $19 ;?? 
 --------sub start--------
-80BFA3   LDA $0D ;??
+80BFA3   LDA $0D ;?? Direction
 80BFA5   REP #$30 
 80BFA7   AND #$00FF   
 80BFAA   ASL
 80BFAB   ASL
-80BFAC   ADC $18 ;??
+80BFAC   ADC $18 ;*4 + address
 80BFAE   TAX
-80BFAF   LDA $0000,X  
+80BFAF   LDA $0000,X ;Sprites Speeds??
 80BFB2   STA $28 ;HSpeed
 80BFB4   LDA $0002,X  
 80BFB7   STA $2A ;Vspeed
@@ -7924,15 +7974,15 @@ MoveSprite:
 80C02D   ADC $15 ;YHigh
 80C02F   STA $15 ;YHigh     
 80C031   RTL
-----------------   
---------sub start--------
+
+MoveHorizontal:
 80C032   REP #$21 
 80C034   LDA $10  
-80C036   ADC $28  
-80C038   STA $10  
+80C036   ADC $28 ;HSpeed
+80C038   STA $10 
 80C03A   SEP #$20 
 80C03C   LDA #$00 
-80C03E   LDX $29  
+80C03E   LDX $29 
 80C040   BPL $80C043  
 80C042   DEC
 80C043   ADC $12  
@@ -8035,8 +8085,12 @@ MoveSprite:
 ----------------   
 80C0FD   LDX $02  
 80C0FF   JMP ($C102,X)
---------data--------     
-80C102  .db $0A $C1 $F0 $C1 $04 $C4 $42 $C5
+    
+80C102 
+dw $C10A
+dw $C1F0
+dw $C404
+dw $C542
 ----------------   
 80C10A   LDX $03  
 80C10C   JMP ($C10F,X)
@@ -8272,7 +8326,7 @@ MoveSprite:
 80C2DA   LDA #$02
 80C2DC   STA $03  
 80C2DE   STA $1E  
-80C2E0   JSL $808859  ; I think this is the random thing that will decide if it's a fast or a high throw. The firs tbit will be the dealbreaker.
+80C2E0   JSL GetRandomInt ;$808859  ; I think this is the random thing that will decide if it's a fast or a high throw. The firs tbit will be the dealbreaker.
 80C2E4   AND #$1F 
 80C2E6   STA $0000
 80C2E9   STZ $0001
@@ -8308,7 +8362,7 @@ MoveSprite:
 --------sub start--------
 80C327   LDA #$02 
 80C329   STA $03  
-80C32B   JSL $808859  
+80C32B   JSL GetRandomInt ;$808859  
 80C32F   AND #$0F 
 80C331   REP #$21 
 80C333   AND #$00FF   
@@ -8682,7 +8736,7 @@ MoveSprite:
 80C697   RTS
 ----------------   
 --------sub start--------
-80C698   JSL $80C032  
+80C698   JSL MoveHorizontal; $80C032  
 80C69C   RTS
 ----------------   
 80C69D   LDX $03  
@@ -10031,7 +10085,7 @@ MoveSprite:
 80D97E   BCC $80D933  
 80D980   CMP #$30 
 80D982   BCS $80D933  
-80D984   JSL $808859  
+80D984   JSL GetRandomInt ;$808859  
 --------unidentified--------
 80D988  .db $C9 $D0 $B0 $A7 $B9 $47 $00 $C9
 80D990  .db $02 $B0 $A0 $1A $99 $47 $00 $A9
@@ -12814,9 +12868,11 @@ VectorIRQ:
 ----------------   
 81802B   LDX $02  
 81802D   JMP ($8030,X)
---------data--------     
-818030  .db $34 $80 $55 $80
-----------------   
+   
+818030
+dw $8034
+dw $8055
+  
 818034   LDA #$02 
 818036   STA $02  
 818038   LDA $0B  
@@ -12843,7 +12899,7 @@ VectorIRQ:
 81805A   STX $1A  
 81805C   DEC $1C,X
 81805E   BPL $818091  
-818060   JSL $808F73  
+818060   JSL GetNextEmptySprite; $808F73  
 818064   BCS $818088  
 818066   LDA #$03 
 818068   STA $0000,X  
@@ -12889,53 +12945,59 @@ VectorIRQ:
 81811A  .db $E2 $10 $B9 $C4 $95 $A6 $1B $95
 818122  .db $1C $98 $18 $69 $06 $A8 $CA $10
 81812A  .db $C1 $60  
-----------------   
-81812C   LDX $02  
+
+
+;Jumping Fish Sprite HANDLER (not the actual fish)
+;DB = 0x1200 here
+81812C   LDX $02
 81812E   JMP ($8131,X)
---------data--------     
-818131  .db $35 $81 $57 $81
-----------------   
+
+818131 
+dw $8135 ;Init
+dw $8157 ;Main
+
 818135   LDA #$02 
 818137   STA $02  
-818139   LDA $0B  
+818139   LDA $0B ;0B ?
 81813B   LSR
 81813C   TAX
-81813D   LDY $95D7,X  
-818140   LDX $95D7,Y  
+81813D   LDY $95D7,X  ;02?
+818140   LDX $95D7,Y  ;0E?
 818143   STX $16  
 818145   STY $15  
 818147   INY
-818148   JSL $808859  
-81814C   STA $18,X
+818148   JSL GetRandomInt ;$808859  
+81814C   STA $18,X ; = timer for the fish to go out
 81814E   LDA #$01 
-818150   STA $19,X
+818150   STA $19,X ; hight byte timer for the fish to go out
 818152   DEX
 818153   DEX
 818154   BPL $818148  
 818156   RTS
-----------------   
-818157   LDA $00AC
+
+818157   LDA $00AC ;Gamestate sort of?
 81815A   BNE $81819B  
-81815C   LDY $15  
-81815E   INY
-81815F   LDX $16  
-818161   STX $17  
+81815C   LDY $15 ;04?
+81815E   INY 
+81815F   LDX $16 ;02?
+
+818161   STX $17 ;??
 818163   REP #$20 
-818165   DEC $18,X
+818165   DEC $18,X ;Decrease Timer in 16bit mode
 818167   SEP #$20 
-818169   BNE $818195  
-81816B   JSL $808F73  
-81816F   BCS $818187  
-818171   LDA #$03 
-818173   STA $0000,X  
+818169   BNE $818195 ;Branch if timer != 0  
+81816B   JSL GetNextEmptySprite;$808F73  
+81816F   BCS $818187 ;IF there's no space available set timer back  
+818171   LDA #$03
+818173   STA $0000,X  ;Set Sprite ID to 03
 818176   LDA #$50 
-818178   STA $000A,X  
-81817B   LDA $95D7,Y  
-81817E   STA $0011,X  
+818178   STA $000A,X ;?
+81817B   LDA $95D7,Y ;Bank 83
+81817E   STA $0011,X ;X Position
 818181   LDA $95D8,Y  
-818184   STA $0014,X  
+818184   STA $0014,X ;Y Position
 818187   SEP #$10 
-818189   JSL $808859  
+818189   JSL GetRandomInt ;$808859  
 81818D   LDX $17  
 81818F   STA $18,X
 818191   LDA #$01 
@@ -13317,50 +13379,75 @@ VectorIRQ:
 8186F9  .db $3A $60 $A5 $3B $F0 $10 $AD $06
 818701  .db $00 $29 $07 $49 $FF $18 $65 $11
 818709  .db $85 $11 $A9 $01 $64 $3A $60
-----------------   
+
+;Bee Sprite:? 
 818710   LDX $02  
 818712   JMP ($8715,X)
---------data--------     
-818715  .db $1D $87 $3A $87 $31 $89 $71 $89
-----------------   
+   
+818715  
+dw $871D ;0x00 ;Init Routine
+dw $873A ;0x02 ;Main Routine?
+dw $8931 ;0x04
+dw $8971 ;0x06
+
+Bee_Sprite_00:
+{ 
 81871D   LDA #$02 
-81871F   STA $02  
+81871F   STA $02 ;SpriteState1
 818721   DEC
-818722   STA $00  
-818724   STA $01  
-818726   STA $1C  
-818728   STA $1D  
-81872A   STA $33  
+818722   STA $00 ;ID? Alive?, on 01?
+818724   STA $01 ;SpriteState, ID, ALive? on 01
+818726   STA $1C ;HP
+818728   STA $1D ;Last HP
+81872A   STA $33 ;??
 81872C   LDA #$80 
-81872E   STA $1A  
+81872E   STA $1A ;OAM Address
 818730   LDA #$97 
 818732   LDY #$8F 
-818734   JSL $808942  
-818738   BRA $8187A3  
-81873A   LDA $1D  
+818734   JSL $808942 ;?
+818738   BRA $8187A3 
+}
+
+Bee_Sprite_02:
+{ 
+81873A   LDA $1D 
 81873C   CMP $1C  
-81873E   BEQ $818749  
+81873E   BEQ $818749 ;Check if HP == last HP  
+
+;Kill sprite probably?
 818740   LDA #$04 
 818742   STA $02  
 818744   STZ $03  
 818746   JMP $8931
-818749   LDA $00AC
-81874C   BNE $81875A  
+
+818749   LDA $00AC ;Check gamestate 
+81874C   BNE $81875A ;Branch if game is not active?  
+
 81874E   LDX $03  
 818750   JSR ($875F,X)
 818753   JSR $89A1
-818756   JSL $8089A9  
+818756   JSL $8089A9
+
 81875A   JSL $8088CE  
 81875E   RTS
-----------------   
---------data--------     
-81875F  .db $69 $87 $F5 $87 $A3 $88 $E0 $88
-818767  .db $21 $89  
-----------------   
---------sub start--------
+} 
+   
+81875F
+Bee_Main_Table:
+{
+dw $8769 ;0x00
+dw $87F5 ;0x02
+dw $88A3 ;0x04
+dw $88E0 ;0x06
+dw $8921 ;0x08
+}
+
+Bee_Main_00:
+{
 818769   DEC $3E  
 81876B   BEQ $818770  
-81876D   JMP $87F0
+81876D   JMP $87F0 ;Return?
+
 818770   JSR $87BB
 818773   LDA $33  
 818775   BNE $8187A0  
@@ -13372,20 +13459,22 @@ VectorIRQ:
 818783   BCC $81878B  
 818785   INC $3F  
 818787   LDA #$02 
-818789   STA $03  
+818789   STA $03 ;SpriteState2
 81878B   LDX #$80 
-81878D   LDA $0100,X  
-818790   BEQ $81879F  
+81878D   LDA $0100,X ;0180 ?
+818790   BEQ $81879F ;Return
 818792   JSR $8976
---------unidentified--------
+
+
 818795  .db $90 $08 $E6 $3F $E6 $3F $A9 $02
 81879D  .db $85 $03  
-----------------   
+
 81879F   RTS
-----------------   
+}
+
 8187A0   DEC $33  
 8187A2   RTS
-----------------   
+
 --------sub start--------
 8187A3   LDA #$97 
 8187A5   LDY #$97 
@@ -13397,13 +13486,15 @@ VectorIRQ:
 8187B5   STA $16  
 8187B7   SEP #$20 
 8187B9   STZ $3B  
+
+
 --------sub start--------
 8187BB   LDA $34  
 8187BD   BEQ $8187C5  
 8187BF   LDA $0D  
 8187C1   EOR #$08 
 8187C3   BRA $8187D4  
-8187C5   JSL $808859  
+8187C5   JSL GetRandomInt ;$808859  
 8187C9   AND #$0F 
 8187CB   TAX
 8187CC   LDA $97C2,X  
@@ -13429,13 +13520,15 @@ VectorIRQ:
 8187EE   STZ $34  
 8187F0   JSL $80C007  
 8187F4   RTS
-----------------   
---------sub start--------
+
+
 8187F5   LDX $04  
 8187F7   JMP ($87FA,X)
 --------data--------     
-8187FA  .db $FE $87 $88 $88
-----------------   
+8187FA
+dw $87FE 
+dw $8888
+
 8187FE   LDA #$02 
 818800   STA $04  
 818802   REP #$10 
@@ -13445,11 +13538,15 @@ VectorIRQ:
 818809   ASL
 81880A   TAX
 81880B   JMP ($880C,X)
---------data--------     
-81880E  .db $5D $88  
-----------------   
---------unidentified--------
-818810  .db $66 $88 $14 $88 $64 $39 $64 $3A
+
+81880C; JUMP ADDRESS SO X CAN NEVER BE 00!
+
+81880E
+dw $885D ;0x02
+dw $8866 ;0x04
+dw $8814 ;0x06
+
+818814  .db $64 $39 $64 $3A
 818818  .db $A2 $00 $00 $BD $00 $02 $F0 $16
 818820  .db $BD $0A $02 $C9 $02 $D0 $0F $BD
 818828  .db $3B $02 $F0 $0A $C9 $01 $D0 $04
@@ -13604,7 +13701,9 @@ VectorIRQ:
 ----------------   
 818971   JSL $808F1E  
 818975   RTS
-----------------   
+
+
+
 --------sub start--------
 818976   LDA $0100,X  
 818979   BEQ $81899D  
@@ -13758,30 +13857,43 @@ VectorIRQ:
 818A8C   SEP #$20 
 818A8E   BRA $818A44  
 818A90   RTS
-----------------   
+
+
+;Snake Sprite?
+Sprite_Snake:
+{
 818A91   LDX $02  
 818A93   JMP ($8A96,X)
---------data--------     
-818A96  .db $9E $8A $D5 $8A $45 $8C $66 $8C
-----------------   
+}
+
+818A96
+dw $8A9E ;0x00 Snake_Init
+dw $8AD5 ;0x02
+dw $8C45 ;0x04
+dw $8C66 ;0x06
+
+Sprite_Snake_Init:
+{
 818A9E   LDA #$02 
 818AA0   STA $02  
-818AA2   LDX $00B6
-818AA5   LDA $9860,X  
-818AA8   STA $1A  
-818AAA   LDA #$01 
-818AAC   STA $00  
-818AAE   STA $01  
-818AB0   STA $1C  
-818AB2   STA $1D  
+818AA2   LDX $00B6 ;Load LEVEL
+818AA5   LDA $9860,X ;Load value based on level [40,40,C0,40,C0]
+818AA8   STA $1A
+818AAA   LDA #$01
+818AAC   STA $00 ;Set Sprite Alive on #$01 
+818AAE   STA $01 ;Set SpriteState on #$01 
+818AB0   STA $1C ;Set HP on 01
+818AB2   STA $1D ;Set LastHP on 01 
 818AB4   LDA #$3B 
-818AB6   STA $1B  
+818AB6   STA $1B ;Set OAM Related VHOOPPPT palette mainly
 818AB8   LDA #$98 
 818ABA   LDY #$31 
-818ABC   JSL $8089A3  
+818ABC   JSL $8089A3 ;?
 818AC0   LDA $0D  
 818AC2   STA $0E  
---------sub start--------
+}
+
+
 818AC4   REP #$20 
 818AC6   LDA #$0080   
 818AC9   LDX $0D  
@@ -13790,7 +13902,9 @@ VectorIRQ:
 818AD0   STA $28  
 818AD2   SEP #$20 
 818AD4   RTS
-----------------   
+
+
+;Sprite_Main?_02
 818AD5   LDA $1D  
 818AD7   CMP $1C  
 818AD9   BEQ $818AE4  
@@ -13804,20 +13918,20 @@ VectorIRQ:
 818AEB   JSR ($8AF3,X)
 818AEE   JSL $8088CE  
 818AF2   RTS
-----------------   
---------data--------     
-818AF3  .db $01 $8B  
-----------------   
---------unidentified--------
-818AF5  .db $72 $8B  
-----------------   
---------data--------     
-818AF7  .db $86 $8B $A1 $8B $C2 $8B $10 $8C
-818AFF  .db $31 $8C  
-----------------   
---------sub start--------
-818B01   JSL $80C032  
-818B05   JSL $8089A9  
+
+ 
+818AF3  
+dw $8B01 ;0x00  
+dw $8B72 ;0x02
+dw $8B86 ;0x04
+dw $8BA1 ;0x06
+dw $8BC2 ;0x08
+dw $8C10 ;0x0A
+dw $8C31 ;0x0C
+
+
+818B01   JSL MoveHorizontal; $80C032  
+818B05   JSL $8089A9 ;Animation Timer
 818B09   LDX $0D  
 818B0B   JSR $8D2D
 818B0E   JSR $8D4A
@@ -13832,12 +13946,13 @@ VectorIRQ:
 818B22   STA $32  
 818B24   LDA #$98 
 818B26   LDY #$46 
-818B28   JSL $8089A3  
+818B28   JSL $8089A3 ;Animation thing
 818B2C   LDA #$0A 
 818B2E   STA $03  
 818B30   STZ $30  
 818B32   RTS
-----------------   
+
+
 818B33   STZ $3F  
 818B35   LDA #$FF 
 818B37   STA $33  
@@ -13880,7 +13995,7 @@ VectorIRQ:
 818B8E   STA $32  
 818B90   LDA #$98 
 818B92   LDY #$46 
-818B94   JSL $8089A3  
+818B94   JSL $8089A3 ;Animation thing 
 818B98   LDA #$0A 
 818B9A   STA $03  
 818B9C   LDA #$01 
@@ -13892,7 +14007,7 @@ VectorIRQ:
 818BA3   BNE $818BC1  
 818BA5   LDA #$98 
 818BA7   LDY #$4C 
-818BA9   JSL $8089A3  
+818BA9   JSL $8089A3 ;Animation thing
 818BAD   REP #$20 
 818BAF   LDA #$02C0   
 818BB2   LDX $0D  
@@ -13912,7 +14027,7 @@ VectorIRQ:
 818BCA   STA $32  
 818BCC   LDA #$98 
 818BCE   LDY #$31 
-818BD0   JSL $8089A3  
+818BD0   JSL $8089A3 ;Animation thing
 --------unidentified--------
 818BD4  .db $A9 $02 $85 $03 $60  
 ----------------   
@@ -13922,7 +14037,7 @@ VectorIRQ:
 818BDF   INX
 818BE0   JSR $8D2D
 818BE3   JSR $8D4A
-818BE6   JSL $80C032  
+818BE6   JSL MoveHorizontal; $80C032  
 818BEA   JSL $8089A9  
 818BEE   JSR $8D71
 818BF1   BCS $818BF7  
@@ -13935,7 +14050,7 @@ VectorIRQ:
 818BFF   STA $0D  
 818C01   LDA #$98 
 818C03   LDY #$46 
-818C05   JSL $8089A3  
+818C05   JSL $8089A3 ;Animation thing
 818C09   LDA #$0A 
 818C0B   STA $03  
 818C0D   STZ $30  
@@ -13948,7 +14063,7 @@ VectorIRQ:
 818C16   STA $0E  
 818C18   LDA #$98 
 818C1A   LDY #$46 
-818C1C   JSL $8089A3  
+818C1C   JSL $8089A3 ;Animation thing
 818C20   LDY #$05 
 818C22   LDX #$0C 
 818C24   LDA $30  
@@ -13964,7 +14079,7 @@ VectorIRQ:
 818C33   BNE $818C44  
 818C35   LDA #$98 
 818C37   LDY #$31 
-818C39   JSL $8089A3  
+818C39   JSL $8089A3 ;Animation thing
 818C3D   JSR $8AC4
 818C40   LDA #$00 
 818C42   STA $03  
@@ -14172,7 +14287,7 @@ VectorIRQ:
 818DA8   STA $01  
 818DAA   STA $1C  
 818DAC   STA $1D  
-818DAE   JSL $808859  
+818DAE   JSL GetRandomInt ;$808859  
 818DB2   TAX
 818DB3   AND #$07 
 818DB5   CLC
@@ -14636,7 +14751,7 @@ VectorIRQ:
 81937F   BCC $819391  
 819381   LDA #$04 
 819383   STA $04  
-819385   JSL $808859  
+819385   JSL GetRandomInt ;$808859  
 --------unidentified--------
 819389  .db $29 $0F $AA $BD $01 $9B $85 $3E
 ----------------   
@@ -14936,7 +15051,7 @@ VectorIRQ:
 --------sub start--------
 819986   DEC $4E  
 819988   BNE $819997  
-81998A   JSL $808859  
+81998A   JSL GetRandomInt ;$808859  
 81998E   BMI $819995  
 819990   LDA #$04 
 819992   STA $03  
@@ -14970,7 +15085,7 @@ VectorIRQ:
 ----------------   
 8199DF   LDA #$02 
 8199E1   STA $04  
-8199E3   JSL $808859  
+8199E3   JSL GetRandomInt ;$808859  
 8199E7   BMI $8199ED  
 8199E9   LDA #$01 
 8199EB   BRA $8199EF  
@@ -15018,13 +15133,13 @@ VectorIRQ:
 ----------------   
 819A3E   DEC $4E  
 819A40   BNE $819A78  
-819A42   JSL $808859  
+819A42   JSL GetRandomInt ;$808859  
 819A46   BMI $819A4D  
 819A48   STZ $03  
 819A4A   STZ $04  
 819A4C   RTS
 ----------------   
-819A4D   JSL $808859  
+819A4D   JSL GetRandomInt ;$808859  
 819A51   AND #$0F 
 819A53   TAX
 819A54   LDA $9CB3,X  
@@ -15390,7 +15505,7 @@ VectorIRQ:
 ----------------   
 --------sub start--------
 819E3E   JSR $9E50
-819E41   JSL $808859  
+819E41   JSL GetRandomInt ;$808859  
 819E45   AND #$0F 
 819E47   TAX
 819E48   LDA $9DC1,X  
@@ -16055,7 +16170,7 @@ VectorIRQ:
 dw $B0CB ;00 ;INITS ROUTINES?
 dw $B1BA ;02 ;NORMAL BOSS1 ROUTINE?
 dw $B456 ;04 ;NORMAL ROUTINE FOR BOSS1
-dw $B4BC ;06
+dw $B4BC ;06 ;Boss1 Loop
 ----------------   
 81B0CB   LDX $03  
 81B0CD   JMP ($B0D0,X)
@@ -16229,7 +16344,7 @@ dw $B3E3 ;0A ;Going UP or Wait?
 81B1F6   CMP #$01 
 81B1F8   BEQ $81B265 ;if == 01 a condition to the timer
 81B1FA   INC $38
-81B1FC   JSL $808859; GetRandomInt
+81B1FC   JSL GetRandomInt;$808859; GetRandomInt
 81B200   AND #$1F 
 81B202   TAX
 81B203   LDY $A19A,X ;??
@@ -16258,7 +16373,7 @@ dw $B3E3 ;0A ;Going UP or Wait?
 81B237   STA $14 ; YPosition
 81B239   LDA #$E0 
 81B23B   STA $17 ; ZPosition 
-81B23D   JSL $808859 ;GetRandomInt  
+81B23D   JSL GetRandomInt;$808859 ;GetRandomInt  
 81B241   AND #$0F 
 81B243   TAX 
 81B244   LDA $00FC ;Boss related Variable!!
@@ -19483,7 +19598,7 @@ dw $FCA9 ;04
 81E948   TXA
 81E949   AND #$0F 
 81E94B   STA $2E  
-81E94D   JSL $808F73  
+81E94D   JSL GetNextEmptySprite;$808F73  
 81E951   BCS $81E98E  
 81E953   LDA #$3E 
 81E955   STA $000A,X  

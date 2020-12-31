@@ -63,7 +63,7 @@
 8280C3   STA $01                  
 8280C5   STA $02                  
 8280C7   STZ $03                  
-8280C9   LDA #$0F                 
+8280C9   LDA #$0F ;Fish Entering/Exiting water sound
 8280CB   JSL PlaySFX ;$809A53
 8280CF   LDA #$21                 
 8280D1   STA $4F                  
@@ -577,7 +577,7 @@ JumpTable03_00_TODO:
 8284F5   BNE $828521              
 8284F7   LDA #$08                 
 8284F9   STA $04                  
-8284FB   LDA #$1F                 
+8284FB   LDA #$1F ;Grabbed Item SFX
 8284FD   JSL PlaySFX ;$809A53
 828501   LDA $23                  
 828503   PHA                      
@@ -954,8 +954,8 @@ JumpTable03_00_TODO:
 828872  .db $0E $4C $1A $86      
 ----------------         
 --------sub start--------
-828876   LDA $00CA ;Dont Know yet :TODORAM
-828879   BEQ $828883              
+828876   LDA $00CA ;Ice ? ;Dont Know yet :TODORAM
+828879   BEQ $828883
 82887B   JSR $8CE0                
 --------unidentified--------
 82887E  .db $A6 $33 $FC $97 $82  
@@ -965,9 +965,9 @@ JumpTable03_00_TODO:
 --------data--------     
 828888
 dw $888E
-dw $88B3
-dw $861A
-----------------         
+dw $88B3 ;Bell?
+dw $861A ;Bell2?
+---------------- 
 82888E   LDA #$02 
 828890   STA $04
 828892   LDA $47 ;0147 P1 facing direction
@@ -982,12 +982,12 @@ dw $861A
 8288A5   INC                      
 8288A6   ORA $1A4F                
 8288A9   STA $1A4F ;Set all pirates on chase mode
-8288AC   LDA #$0A                 
+8288AC   LDA #$0A ;Bell SFX
 8288AE   JSL PlaySFX ;$809A53
 8288B2   RTS                      
 ----------------         
-8288B3   JSL $8089DE              
-8288B7   LDA $08                  
+8288B3   JSL $8089DE ;?
+8288B7   LDA $08 ;$0108
 8288B9   CMP #$70                 
 8288BB   BNE $8288CD              
 8288BD   LDA #$04                 
@@ -1023,7 +1023,7 @@ dw $861A
 --------data--------     
 8288EB  .db $F1 $88 $63 $89 $B3 $89
 ----------------         
-8288F1   LDA #$0B                 
+8288F1   LDA #$0B ;Taking Damage SFX
 8288F3   JSL PlaySFX ;$809A53
 8288F7   LDA #$01                 
 8288F9   STA $01                  
@@ -1177,7 +1177,7 @@ dw $861A
 828A55   STA $00                  
 828A57   JSR $8DDE                
 828A5A   JSR $88C1                
-828A5D   LDA #$0D                 
+828A5D   LDA #$0D ;Knocked out of screen SFX
 828A5F   JSL PlaySFX ;$809A53
 828A63   LDX $56                  
 828A65   LDY $BA5F,X              
@@ -1203,7 +1203,7 @@ dw $861A
 ----------------         
 828A90   LDA #$02                 
 828A92   STA $04                  
-828A94   LDA #$0D                 
+828A94   LDA #$0D ;Knocked out of screen SFX                 
 828A96   JSL PlaySFX ;$809A53
 828A9A   LDY #$06                 
 828A9C   JSL $80BFC1              
@@ -3142,7 +3142,7 @@ KeyUsedOnLockedDoor:
 829BC8   STA $1144,X ;Save new unlocked door with the previously unlocked doors             
 829BCB   JSL $82C3B4 ;Unknown Yet
 829BCF   JSR $9C82 ;Place Plank Routine?? :thinking:
-829BD2   LDA #$0C
+829BD2   LDA #$0C ;Placing Plank/Block Hitting a wall
 829BD4   JSL PlaySFX ;$809A53
 829BD8   SEC                      
 829BD9   RTS
@@ -3375,9 +3375,14 @@ RTS
 829D87   SEP #$20                 
 829D89   LDX $02                  
 829D8B   JMP ($9D8E,X)            
---------data--------     
-829D8E  .db $96 $9D $FD $9D $B5 $9E $D1 $9E
-----------------         
+
+829D8E
+dw $9D96
+dw $9DFD
+dw $9EB5
+dw $9ED1
+
+
 829D96   LDA #$02                 
 829D98   STA $02                  
 829D9A   LDA $0D                  
@@ -3423,7 +3428,7 @@ RTS
 --------unidentified--------
 829DF1  .db $64 $38 $20 $27 $9F $A9 $06 $85
 829DF9  .db $02 $4C $74 $9F      
-----------------         
+;Hookshot Related?       
 829DFD   LDX $03                  
 829DFF   JSR ($9E7F,X)            
 829E02   JSR $9F15                
@@ -3457,7 +3462,7 @@ RTS
 ----------------         
 829E4A   LDA #$06                 
 829E4C   STA $02                  
-829E4E   LDA #$07                 
+829E4E   LDA #$07 ;Switch (unsure about that one)
 829E50   JSL PlaySFX ;$809A53
 829E54   RTS                      
 ----------------         
@@ -3595,7 +3600,7 @@ RTS
 829F48   BEQ $829F52              
 829F4A   DEC                      
 829F4B   BNE $829F42              
-829F4D   TXA                      
+829F4D   TXA ;1D? ;Stun with hookshot
 829F4E   JSL PlaySFX ;$809A53
 829F52   LDX $0A                  
 829F54   BEQ $829F58              
@@ -3696,15 +3701,15 @@ RTS
 82A022   BNE $82A014              
 82A024   CLC                      
 82A025   RTS                      
-----------------         
---------sub start--------
-82A026   LDX $1A48                
-82A029   BEQ $82A053              
-82A02B   LDY $1A47                
-82A02E   LDA $8977,X              
+
+;Hookshot checking for hook collisions
+82A026   LDX $1A48 ;838977 offset where to look next
+82A029   BEQ $82A053
+82A02B   LDY $1A47
+82A02E   LDA $8977,X
 82A031   DEC                      
-82A032   BEQ $82A055              
-82A034   LDA $1180,Y              
+82A032   BEQ $82A055 ;Branch if there's only 1 set of hooks found
+82A034   LDA $1180,Y 
 82A037   AND #$F0                 
 82A039   BNE $82A055              
 82A03B   INX                      
@@ -3720,18 +3725,21 @@ RTS
 82A053   CLC                      
 82A054   RTS                      
 ----------------         
-82A055   LDA $1180,Y              
-82A058   AND #$0F                 
-82A05A   BNE $82A053              
-82A05C   LDX $1A48                
-82A05F   JSR $A0A4                
-82A062   BCS $82A053              
-82A064   LDY $1A47                
+82A055   LDA $1180,Y 
+82A058   AND #$0F 
+82A05A   BNE $82A053 ;Already Setted so return
+82A05C   LDX $1A48 ;Contains the offset of set of hooks
+82A05F   JSR $A0A4 
+82A062   BCS $82A053
+
+82A064   LDY $1A47
 82A067   ORA $1180,Y              
-82A06A   STA $1180,Y              
-82A06D   JSL $80AC32              
-82A071   LDX $0A                  
-82A073   LDA $0140,X              
+82A06A   STA $1180,Y ;Store Hookshot Rope Save
+82A06D   JSL $80AC32 ;?
+82A071   LDX $0A   
+
+ ;Set a bunch of players related values
+82A073   LDA $0140,X
 82A076   BEQ $82A09F              
 82A078   STZ $013F,X              
 82A07B   STZ $0140,X              
@@ -3751,45 +3759,45 @@ RTS
 82A0A2   SEC                      
 82A0A3   RTS                      
 ----------------         
---------sub start--------
+;Compare if Hookshot position are matching?
 82A0A4   LDA $3C                  
 82A0A6   SEC                      
-82A0A7   SBC $8978,X              
+82A0A7   SBC $8978,X ;Byte01 X1
 82A0AA   CMP #$0C                 
 82A0AC   BCS $82A0CC              
 82A0AE   LDA $3E                  
 82A0B0   SEC                      
-82A0B1   SBC $8979,X              
+82A0B1   SBC $8979,X ;Byte02 Y1
 82A0B4   CMP #$0C                 
 82A0B6   BCS $82A0CC              
 82A0B8   LDA $11                  
 82A0BA   SEC                      
-82A0BB   SBC $897A,X              
+82A0BB   SBC $897A,X ;Byte03 X2
 82A0BE   CMP #$0C                 
 82A0C0   BCS $82A0CC              
 82A0C2   LDA $14                  
 82A0C4   SEC                      
-82A0C5   SBC $897B,X              
+82A0C5   SBC $897B,X ;Byte04 Y2
 82A0C8   CMP #$0C                 
-82A0CA   BCC $82A0F5              
+82A0CA   BCC $82A0F5
 82A0CC   LDA $11                  
 82A0CE   SEC                      
-82A0CF   SBC $8978,X              
+82A0CF   SBC $8978,X ;Byte01 X1
 82A0D2   CMP #$0C                 
 82A0D4   BCS $82A0F4              
 82A0D6   LDA $14                  
 82A0D8   SEC                      
-82A0D9   SBC $8979,X              
+82A0D9   SBC $8979,X ;Byte02 Y1
 82A0DC   CMP #$0C                 
 82A0DE   BCS $82A0F4              
 82A0E0   LDA $3C                  
 82A0E2   SEC                      
-82A0E3   SBC $897A,X              
+82A0E3   SBC $897A,X ;Byte03 X2
 82A0E6   CMP #$0C                 
 82A0E8   BCS $82A0F4              
 82A0EA   LDA $3E                  
 82A0EC   SEC                      
-82A0ED   SBC $897B,X              
+82A0ED   SBC $897B,X ;Byte04 Y2
 82A0F0   CMP #$0C                 
 82A0F2   BCC $82A0F5              
 82A0F4   RTS                      
@@ -4053,7 +4061,7 @@ dw $A305
 82A2E1   SEP #$10
 82A2E3   CMP #$A0 ;Check if it's A0 (A0 = starblock)
 82A2E5   BNE $82A304              
-82A2E7   LDA #$0C                 
+82A2E7   LDA #$0C ;Small gate opening
 82A2E9   JSL PlaySFX ;$809A53
 82A2ED   LDA #$04                 
 82A2EF   STA $02                  
@@ -4302,7 +4310,7 @@ dw $A305
 82A578   LDA $00FB                
 82A57B   CMP $1F                  
 82A57D   BNE $82A5A5              
-82A57F   LDA #$21                 
+82A57F   LDA #$21 ;door/trigger?
 82A581   JSL PlaySFX ;$809A53
 82A585   LDA #$04                 
 82A587   STA $02                  
@@ -4443,7 +4451,7 @@ RTS
 82A69F  .db $80 $26              
 ----------------         
 82A6A1   SEP #$10                 
-82A6A3   LDA #$21                 
+82A6A3   LDA #$21 ;door/trigger                
 82A6A5   JSL PlaySFX ;$809A53 (Door opening sound)
 82A6A9   REP #$10                 
 82A6AB   LDX $1C ;0A1C
@@ -5116,7 +5124,7 @@ RTS
 82AEE6   LDA #$04                 
 82AEE8   STZ $1E                  
 82AEEA   STA $1F                  
-82AEEC   LDA #$06                 
+82AEEC   LDA #$06 ;Moving in menu
 82AEEE   JSL PlaySFX ;$809A53
 82AEF2   RTS                      
 ----------------         
@@ -5152,7 +5160,7 @@ GrabFruit:
 82AF2A   LDA $0B                  
 82AF2C   CMP #$06                 
 82AF2E   BEQ $82AF70              
-82AF30   LDA #$1C
+82AF30   LDA #$1C ;Grabbing a collectable item
 82AF32   JSL PlaySFX ;$809A53
 82AF36   LDX $05                  
 82AF38   STZ $013F,X              
@@ -5175,7 +5183,7 @@ GrabFruit:
 82AF57   CMP #$0B                 
 82AF59   BCS $82AF65              
 82AF5B   STA $0157,X              
-82AF5E   LDA #$10                 
+82AF5E   LDA #$10 ;Winning like (red jewel)
 82AF60   JSL PlaySFX ;$809A53
 82AF64   RTS                      
 ----------------         
@@ -5455,7 +5463,7 @@ GrabFruit:
 82B18F   ORA $0048                
 82B192   BIT #$D0                 
 82B194   BEQ $82B1A9              
-82B196   LDA #$03                 
+82B196   LDA #$03 ;Menu sound validating option
 82B198   JSL PlaySFX ;$809A53
 82B19C   LDA #$04                 
 82B19E   STA $02                  
@@ -5482,7 +5490,7 @@ GrabFruit:
 82B1C5   BPL $82B1C9              
 82B1C7   LDA #$02                 
 82B1C9   STA $13                  
-82B1CB   LDA #$06                 
+82B1CB   LDA #$06 ;Sound when changing game main menu option
 82B1CD   JSL PlaySFX ;$809A53
 82B1D1   JSR $B206
 ;No Input pressed this frame
@@ -5631,7 +5639,7 @@ GrabFruit:
 82B2CD   LDA $3F                  
 82B2CF   ADC #$12                 
 82B2D1   JSL $808667              
-82B2D5   LDA #$03                 
+82B2D5   LDA #$03 ;Sound validating a menu option
 82B2D7   JSL PlaySFX ;$809A53
 82B2DB   LDA #$40                 
 82B2DD   STA $3D                  
@@ -5651,7 +5659,7 @@ GrabFruit:
 82B2F8   BEQ $82B304              
 82B2FA   DEC $3F                  
 82B2FC   DEC $3F                  
-82B2FE   LDA #$06                 
+82B2FE   LDA #$06 ;Sound Changing menu option
 82B300   JSL PlaySFX ;$809A53
 82B304   LDA $3F                  
 82B306   AND #$03                 
@@ -5960,7 +5968,7 @@ GrabFruit:
 82B81D   BNE $82B82D              
 82B81F   LDA #$02                 
 82B821   STA $03                  
-82B823   LDA #$03                 
+82B823   LDA #$03 ;Sound Validation Menu Option
 82B825   JSL PlaySFX ;$809A53
 82B829   LDA #$F0                 
 82B82B   STA $0F                  
@@ -6537,7 +6545,7 @@ GrabFruit:
 82BE98   CMP #$05                 
 82BE9A   BCC $82BE9E              
 82BE9C   STZ $35                  
-82BE9E   LDA #$06                 
+82BE9E   LDA #$06 ;Menu changing option sound
 82BEA0   JSL PlaySFX ;$809A53
 82BEA4   JMP $BF6A                
 82BEA7   LDX $35                  
@@ -6555,7 +6563,7 @@ GrabFruit:
 82BEBF   BPL $82BEC5              
 82BEC1   LDA #$03                 
 82BEC3   STA $30,X                
-82BEC5   LDA #$06                 
+82BEC5   LDA #$06 ;Menu changing option sound                
 82BEC7   JSL PlaySFX ;$809A53
 82BECB   RTS                      
 ----------------         
@@ -6598,7 +6606,7 @@ GrabFruit:
 82BF1C   INX                      
 82BF1D   CPX #$05                 
 82BF1F   BNE $82BF14              
-82BF21   LDA #$03                 
+82BF21   LDA #$03 ;Menu Validating Options
 82BF23   JSL PlaySFX ;$809A53
 82BF27   LDA #$02                 
 82BF29   STA $03                  
@@ -6617,7 +6625,7 @@ GrabFruit:
 82BF42   TAY                      
 82BF43   CMP #$19                 
 82BF45   BNE $82BF12              
-82BF47   LDA #$1A                 
+82BF47   LDA #$1A ;Error sound?
 82BF49   JSL PlaySFX ;$809A53
 --------unidentified--------
 82BF4D  .db $A9 $32 $22 $67 $86 $80 $A9 $04
@@ -6968,16 +6976,16 @@ GrabFruit:
 82C328   RTL                      
 ----------------         
 --------sub start--------
-82C329   PEA #$8382               
-82C32C   PLB                      
-82C32D   LDX $B6                  
-82C32F   LDA $C461,X              
-82C332   CLC                      
-82C333   ADC $B7                  
-82C335   TAX                      
-82C336   LDY $C461,X              
-82C339   BEQ $82C3B0              
-82C33B   LDA $C4D7,Y              
+82C329   PEA #$8382
+82C32C   PLB
+82C32D   LDX $B6
+82C32F   LDA $C461,X
+82C332   CLC
+82C333   ADC $B7
+82C335   TAX
+82C336   LDY $C461,X
+82C339   BEQ $82C3B0 ;Return
+82C33B   LDA $C4D7,Y
 82C33E   REP #$31                 
 82C340   AND #$00FF               
 82C343   ADC #$C4D8               
@@ -7136,37 +7144,10 @@ GrabFruit:
 82C45D  .db $21 $00 $20 $00      
 ----------------         
 --------data--------     
-82C461  .db $05 $15 $25 $3F $5D $00 $00 $00
-82C469  .db $00                  
-----------------         
---------unidentified--------
-82C46A  .db $00 $01              
-----------------         
---------data--------     
-82C46C  .db $00                  
-----------------         
---------unidentified--------
-82C46D  .db $00                  
-----------------         
---------data--------     
-82C46E  .db $02 $00              
-----------------         
---------unidentified--------
-82C470  .db $00 $00              
-----------------         
---------data--------     
-82C472  .db $03 $00 $00 $00 $00 $00 $00
-----------------         
---------unidentified--------
-82C479  .db $00 $00 $00 $00      
-----------------         
---------data--------     
-82C47D  .db $00                  
-----------------         
---------unidentified--------
-82C47E  .db $04 $00 $05 $00 $06 $00 $07 $00
-----------------         
---------data--------     
+82C461  .db $05 $15 $25 $3F $5D 
+82C466  .db $00 $00 $00 $00 $00 $01 $00 $00 $02 $00 $00 $00 $03 $00 $00 $00
+82C477  .db $00 $00 $00 $00 $00 $00 $00 $00 $04 $00 $05 $00 $06 $00 $07 $00 
+  
 82C486  .db $00 $00 $00          
 ----------------         
 --------unidentified--------
@@ -7206,10 +7187,11 @@ GrabFruit:
 --------unidentified--------
 82C4C1  .db $00 $00 $00 $00 $00 $00 $00 $00
 82C4C9  .db $00 $0F $00 $00 $00 $00 $00 $00
-82C4D1  .db $00 $10 $00 $00 $00 $00 $00 $10
-----------------         
---------data--------     
-82C4D9  .db $15 $1A              
+82C4D1  .db $00 $10 $00 $00 $00 $00 
+
+
+;Unknown Table Yet, loaded with level/map
+82C4D7  .db $00 $10 $15 $1A              
 ----------------         
 --------unidentified--------
 82C4DB  .db $1F $24 $29 $2E $33 $38 $3D $42
@@ -7232,7 +7214,7 @@ GrabFruit:
 82C537  .db $86                  
 ----------------         
    
-82C538 ;Block/Tiles Data   
+82C538 ;Block/Liftable Objects Data   
 db $05, $25, $45, $79, $B5
 
 82C53D ;Level 1 Pointers
@@ -7293,9 +7275,10 @@ db $02 $1A $98 $04 $1A $32 $02
 82C709 ;14
 db $06 $1A $90 $04 $1A $10 $05 $1A $98 $03 $1A $A0 $03 $1A $28 $04 $1A $2C $03
 
-82C71C ;14
+82C71C ;15
 db $04 $00 $04 $04 $00 $06 $06 $00 $38 $04 $00 $36 $06 
-82C729 
+
+82C729 ;16
 db $0B $00 $04 $02 $00 $04 $06 $00 $08 $06 $08 $0C $06 $08 $10 $06 $08 $14 $06 $1A $08 $02 $1A $10 $02 $1A $18 $02 $1A $A4 $05 $1A $30 $05
 
 
