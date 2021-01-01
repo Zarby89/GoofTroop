@@ -9520,6 +9520,7 @@ dw $C542
 80D4AF   RTS
 ----------------   
 --------unidentified-------- ;Contains code for kicked starry blocks (TODO:need to disassemble that)
+; Niamek : more specifically, being damaged by a kicked starred block.
 80D4B0  .db $68 $68 $E2 $20 $A9 $02 $85 $00
 80D4B8  .db $A9 $04 $85 $02 $64 $03 $64 $04
 80D4C0  .db $BD $00 $01 $3A $F0 $03 $64 $05
@@ -10557,8 +10558,8 @@ dw $C542
 80DD6D   STA $0000,Y  
 80DD70   LDA #$04 
 80DD72   STA $0002,Y  
-80DD75   LDA $1D ;Hit a fireball routine?
-80DD77   BEQ $80DD21  
+80DD75   LDA $1D ;Hit a fireball routine?  Niamek : Yes.
+80DD77   BEQ $80DD21  ; This is the jump that leads to the life loss. IIRC, my ohko mode change this branch to always branch (and do the hearts losses before the branch).
 80DD79   STZ $1D  
 80DD7B   STZ $3F  
 80DD7D   LDA #$02 
@@ -19183,7 +19184,7 @@ dw $BF87
 81D60F  .db $80 $20 $C5 $D7 $A5 $14 $C5 $3E
 81D617  .db $B0 $46 $A4 $11 $A5 $0D $10 $06
 81D61F  .db $88 $C4 $3D $90 $05 $60 $C4 $3D
-81D627  .db $90 $36 $20 $C6 $D5 $A6 $3C $BD;Code ? Hit by pete hookshot
+81D627  .db $90 $36 $20 $C6 $D5 $A6 $3C $BD;Code ? Hit by pete hookshot ; Niamek : Yeah, touching pete will trigger the enemy touch routines. But if you get damaged while being hooked by pete, it will trigger this code instead.
 81D62F  .db $2C $01 $F0 $2C $BD $00 $01 $3A
 81D637  .db $D0 $26 $BD $1D $01 $F0 $08 $9E
 81D63F  .db $1D $01 $9E $3F $01 $80 $08 $9E
