@@ -105,6 +105,7 @@ $59
 $A0 game mode?
 $A1 also used as index for jmp to routines
 $A2 = used for loading routines
+$A3 = used to tell if game is running or not (like message box/event) to preent sprites from moving
 $AB Pause
 
 $B3 sprite index ?

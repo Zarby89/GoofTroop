@@ -1,0 +1,7 @@
+number of tiles collision = 0x380 (896)
+numbers of tiles for 2 bgs = 0xE00 (3584)
+1 bank = 32k bytes
+4480
+7Maps per bank!
+
+i have at least 10 free banks 
