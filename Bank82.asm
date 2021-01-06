@@ -6739,12 +6739,13 @@ GrabFruit:
 82C117  .db $77 $C1              
 ----------------         
 --------unidentified--------
+; Credits related
 82C119  .db $AD $FC $00 $F0 $46 $A8 $C8 $D0
 82C121  .db $02 $A9 $00 $85 $13 $A9 $02 $85
 82C129  .db $03 $3A $85 $01 $64 $0E $A9 $5F
 82C131  .db $AC $C4 $00 $F0 $02 $A9 $6F $85
-82C139  .db $31 $A9 $F8 $85 $14 $A9 $01 $85
-82C141  .db $15 $A9 $80 $85 $11 $64 $12 $64
+82C139  .db $31 $A9 $F8 $85 $14 $A9 $01 $85 ; 37) Where the THE END should stop if password used",
+82C141  .db $15 $A9 $80 $85 $11 $64 $12 $64  ; 4F = "Credits : Speed of the THE END Credits",
 82C149  .db $28 $64 $29 $A9 $A0 $85 $2A $A9
 82C151  .db $FF $85 $2B $A9 $3D $85 $1B $A9
 82C159  .db $40 $85 $1A $A0 $93 $A9 $C6 $22
