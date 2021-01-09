@@ -1,0 +1,1175 @@
+
+===============================================================================
+  c1_list.txt 10/01/2021 00:51 by MarkZ87
+===============================================================================
+
+===============================================================================
+  PER SCREEN
+===============================================================================
+
+---------
+Level $00
+---------
+
+  Screen $00
+
+    type=$0E, data_0=$00, data_1=$00, x=$68, y=$24
+
+  Screen $01
+
+    type=$0E, data_0=$02, data_1=$01, x=$C8, y=$54
+
+  Screen $02
+
+    type=$0C, data_0=$00, data_1=$02, x=$60, y=$7C
+    type=$0C, data_0=$00, data_1=$02, x=$A0, y=$7C
+
+  Screen $03
+
+    type=$0C, data_0=$00, data_1=$02, x=$60, y=$58
+    type=$0C, data_0=$00, data_1=$02, x=$90, y=$58
+    type=$06, data_0=$00, data_1=$01, x=$50, y=$AA
+
+  Screen $04
+
+    type=$0C, data_0=$00, data_1=$82, x=$20, y=$48
+    type=$0C, data_0=$00, data_1=$82, x=$D4, y=$40
+    type=$0C, data_0=$00, data_1=$82, x=$E4, y=$68
+    type=$54, data_0=$00, data_1=$00, x=$5D, y=$20
+    type=$54, data_0=$00, data_1=$00, x=$A2, y=$20
+
+  Screen $05
+
+    type=$0C, data_0=$00, data_1=$01, x=$28, y=$98
+    type=$0C, data_0=$00, data_1=$01, x=$48, y=$B8
+    type=$00, data_0=$00, data_1=$03, x=$B8, y=$78
+    type=$00, data_0=$00, data_1=$03, x=$48, y=$68
+    type=$00, data_0=$00, data_1=$02, x=$74, y=$74
+    type=$00, data_0=$00, data_1=$03, x=$48, y=$48
+
+  Screen $06
+
+    type=$02, data_0=$00, data_1=$00, x=$D0, y=$40
+
+  Screen $07
+
+    type=$0E, data_0=$04, data_1=$00, x=$B8, y=$74
+    type=$1A, data_0=$04, data_1=$01, x=$40, y=$38
+
+  Screen $08
+
+    type=$0C, data_0=$00, data_1=$02, x=$80, y=$58
+    type=$0C, data_0=$00, data_1=$02, x=$18, y=$40
+    type=$0C, data_0=$00, data_1=$02, x=$28, y=$B0
+
+  Screen $09
+
+    type=$0C, data_0=$00, data_1=$02, x=$7C, y=$60
+    type=$0E, data_0=$06, data_1=$01, x=$A8, y=$84
+    type=$02, data_0=$00, data_1=$00, x=$38, y=$B0
+
+  Screen $0A
+
+    type=$0C, data_0=$08, data_1=$02, x=$18, y=$88
+    type=$0C, data_0=$08, data_1=$02, x=$58, y=$58
+    type=$0C, data_0=$08, data_1=$02, x=$D8, y=$38
+    type=$0C, data_0=$08, data_1=$02, x=$E8, y=$78
+
+  Screen $0B
+
+    [none]
+
+  Screen $0C
+
+    type=$0C, data_0=$08, data_1=$02, x=$22, y=$48
+    type=$0C, data_0=$08, data_1=$02, x=$40, y=$36
+    type=$0C, data_0=$08, data_1=$02, x=$78, y=$36
+    type=$54, data_0=$00, data_1=$00, x=$CF, y=$78
+
+  Screen $0D
+
+    [none]
+
+  Screen $0E
+
+    type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+    type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+    type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+    type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+
+  Screen $0F
+
+    type=$0C, data_0=$08, data_1=$02, x=$68, y=$68
+    type=$0C, data_0=$00, data_1=$02, x=$98, y=$48
+    type=$0C, data_0=$00, data_1=$02, x=$C0, y=$48
+
+---------
+Level $01
+---------
+
+  Screen $00
+
+    type=$0C, data_0=$08, data_1=$02, x=$BC, y=$78
+    type=$0C, data_0=$08, data_1=$02, x=$40, y=$78
+
+  Screen $01
+
+    type=$0E, data_0=$00, data_1=$01, x=$C0, y=$3C
+
+  Screen $02
+
+    [none]
+
+  Screen $03
+
+    type=$0C, data_0=$00, data_1=$02, x=$D8, y=$88
+    type=$0C, data_0=$08, data_1=$02, x=$48, y=$58
+    type=$00, data_0=$00, data_1=$02, x=$68, y=$98
+    type=$1A, data_0=$04, data_1=$01, x=$40, y=$34
+    type=$1A, data_0=$04, data_1=$03, x=$EC, y=$38
+
+  Screen $04
+
+    type=$0C, data_0=$0A, data_1=$01, x=$28, y=$A8
+    type=$0C, data_0=$0A, data_1=$01, x=$58, y=$88
+    type=$0C, data_0=$0A, data_1=$02, x=$E8, y=$38
+
+  Screen $05
+
+    type=$06, data_0=$00, data_1=$01, x=$38, y=$98
+    type=$06, data_0=$00, data_1=$01, x=$78, y=$44
+    type=$06, data_0=$00, data_1=$00, x=$B8, y=$98
+    type=$06, data_0=$00, data_1=$00, x=$18, y=$C8
+    type=$06, data_0=$00, data_1=$00, x=$E8, y=$C8
+
+  Screen $06
+
+    type=$0C, data_0=$0A, data_1=$02, x=$28, y=$58
+    type=$0C, data_0=$0A, data_1=$02, x=$88, y=$58
+    type=$0C, data_0=$0A, data_1=$02, x=$A8, y=$38
+    type=$0C, data_0=$0A, data_1=$02, x=$B8, y=$38
+
+  Screen $07
+
+    type=$0C, data_0=$02, data_1=$02, x=$98, y=$48
+
+  Screen $08
+
+    type=$0C, data_0=$02, data_1=$02, x=$80, y=$98
+    type=$0C, data_0=$02, data_1=$02, x=$C8, y=$B8
+
+  Screen $09
+
+    type=$0C, data_0=$0A, data_1=$02, x=$78, y=$38
+    type=$0C, data_0=$0A, data_1=$02, x=$88, y=$38
+
+  Screen $0A
+
+    type=$16, data_0=$04, data_1=$00, x=$B8, y=$A0
+    type=$16, data_0=$00, data_1=$00, x=$B8, y=$C0
+    type=$22, data_0=$8E, data_1=$02, x=$48, y=$30
+    type=$22, data_0=$10, data_1=$02, x=$B8, y=$30
+
+  Screen $0B
+
+    type=$0C, data_0=$02, data_1=$02, x=$38, y=$B8
+    type=$0C, data_0=$02, data_1=$02, x=$A8, y=$B8
+    type=$0C, data_0=$02, data_1=$02, x=$98, y=$58
+    type=$0C, data_0=$02, data_1=$02, x=$C8, y=$38
+
+  Screen $0C
+
+    type=$0C, data_0=$02, data_1=$02, x=$20, y=$98
+    type=$0C, data_0=$02, data_1=$02, x=$68, y=$98
+
+  Screen $0D
+
+    type=$34, data_0=$00, data_1=$00, x=$A8, y=$18
+
+  Screen $0E
+
+    type=$0C, data_0=$0C, data_1=$02, x=$28, y=$90
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$38
+
+  Screen $0F
+
+    type=$2E, data_0=$00, data_1=$00, x=$10, y=$54
+    type=$36, data_0=$00, data_1=$00, x=$D8, y=$80
+    type=$36, data_0=$00, data_1=$01, x=$28, y=$80
+
+---------
+Level $02
+---------
+
+  Screen $00
+
+    type=$2C, data_0=$06, data_1=$00, x=$80, y=$28
+    type=$32, data_0=$00, data_1=$00, x=$08, y=$CC
+
+  Screen $01
+
+    type=$2C, data_0=$08, data_1=$00, x=$00, y=$00
+
+  Screen $02
+
+    type=$10, data_0=$02, data_1=$00, x=$88, y=$90
+    type=$04, data_0=$00, data_1=$00, x=$38, y=$48
+    type=$04, data_0=$02, data_1=$00, x=$38, y=$A8
+    type=$2A, data_0=$00, data_1=$00, x=$18, y=$28
+    type=$2A, data_0=$00, data_1=$00, x=$18, y=$C8
+    type=$2A, data_0=$00, data_1=$00, x=$E8, y=$28
+    type=$2A, data_0=$00, data_1=$00, x=$E8, y=$C8
+
+  Screen $03
+
+    type=$0C, data_0=$08, data_1=$02, x=$78, y=$68
+    type=$0C, data_0=$0A, data_1=$02, x=$B8, y=$78
+
+  Screen $04
+
+    [none]
+
+  Screen $05
+
+    type=$08, data_0=$00, data_1=$01, x=$48, y=$40
+    type=$08, data_0=$02, data_1=$01, x=$50, y=$98
+    type=$08, data_0=$06, data_1=$01, x=$D0, y=$78
+    type=$2C, data_0=$02, data_1=$00, x=$80, y=$18
+
+  Screen $06
+
+    type=$0A, data_0=$00, data_1=$00, x=$28, y=$88
+    type=$0A, data_0=$00, data_1=$00, x=$D8, y=$88
+    type=$0A, data_0=$00, data_1=$00, x=$80, y=$50
+
+  Screen $07
+
+    [none]
+
+  Screen $08
+
+    type=$0C, data_0=$02, data_1=$02, x=$9C, y=$84
+    type=$0C, data_0=$02, data_1=$02, x=$74, y=$84
+
+  Screen $09
+
+    type=$18, data_0=$00, data_1=$02, x=$35, y=$78
+    type=$18, data_0=$00, data_1=$00, x=$60, y=$78
+    type=$18, data_0=$00, data_1=$02, x=$89, y=$75
+    type=$18, data_0=$00, data_1=$00, x=$9E, y=$78
+
+  Screen $0A
+
+    type=$0C, data_0=$00, data_1=$02, x=$38, y=$68
+    type=$0C, data_0=$02, data_1=$02, x=$58, y=$68
+    type=$0C, data_0=$00, data_1=$02, x=$78, y=$68
+    type=$0C, data_0=$02, data_1=$02, x=$D8, y=$58
+
+  Screen $0B
+
+    type=$22, data_0=$80, data_1=$00, x=$80, y=$C0
+
+  Screen $0C
+
+    type=$0C, data_0=$08, data_1=$82, x=$58, y=$48
+    type=$0C, data_0=$00, data_1=$82, x=$98, y=$48
+    type=$0C, data_0=$00, data_1=$82, x=$18, y=$88
+    type=$0C, data_0=$00, data_1=$82, x=$D8, y=$A8
+
+  Screen $0D
+
+    type=$2C, data_0=$04, data_1=$00, x=$08, y=$30
+
+  Screen $0E
+
+    type=$10, data_0=$08, data_1=$00, x=$38, y=$28
+    type=$10, data_0=$04, data_1=$00, x=$48, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$58, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$68, y=$28
+    type=$10, data_0=$02, data_1=$00, x=$78, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$88, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$98, y=$28
+    type=$2C, data_0=$00, data_1=$00, x=$08, y=$30
+
+  Screen $0F
+
+    type=$0E, data_0=$00, data_1=$00, x=$60, y=$1C
+
+  Screen $10
+
+    type=$10, data_0=$04, data_1=$00, x=$50, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$B0, y=$28
+    type=$10, data_0=$08, data_1=$00, x=$50, y=$38
+    type=$10, data_0=$08, data_1=$00, x=$50, y=$48
+    type=$10, data_0=$02, data_1=$00, x=$B0, y=$38
+    type=$10, data_0=$08, data_1=$00, x=$B0, y=$48
+    type=$42, data_0=$02, data_1=$04, x=$48, y=$68
+    type=$42, data_0=$02, data_1=$00, x=$48, y=$68
+    type=$42, data_0=$02, data_1=$01, x=$98, y=$88
+    type=$42, data_0=$02, data_1=$02, x=$68, y=$88
+    type=$42, data_0=$02, data_1=$03, x=$B8, y=$68
+
+  Screen $11
+
+    type=$0C, data_0=$00, data_1=$02, x=$18, y=$78
+    type=$0C, data_0=$00, data_1=$02, x=$48, y=$78
+    type=$0C, data_0=$02, data_1=$02, x=$58, y=$B8
+
+  Screen $12
+
+    type=$10, data_0=$02, data_1=$00, x=$48, y=$2C
+    type=$10, data_0=$04, data_1=$00, x=$B8, y=$2C
+    type=$42, data_0=$00, data_1=$04, x=$B0, y=$50
+    type=$42, data_0=$00, data_1=$00, x=$B0, y=$50
+    type=$42, data_0=$00, data_1=$01, x=$50, y=$A0
+    type=$42, data_0=$00, data_1=$02, x=$50, y=$50
+    type=$42, data_0=$00, data_1=$03, x=$B0, y=$A0
+
+  Screen $13
+
+    type=$0C, data_0=$04, data_1=$02, x=$28, y=$80
+    type=$0C, data_0=$00, data_1=$02, x=$68, y=$5C
+    type=$0C, data_0=$0C, data_1=$02, x=$A0, y=$5C
+
+  Screen $14
+
+    type=$0C, data_0=$08, data_1=$02, x=$28, y=$80
+    type=$0C, data_0=$08, data_1=$02, x=$88, y=$A0
+
+  Screen $15
+
+    type=$0C, data_0=$02, data_1=$02, x=$B8, y=$88
+    type=$0C, data_0=$08, data_1=$02, x=$48, y=$70
+    type=$38, data_0=$00, data_1=$00, x=$E0, y=$90
+
+  Screen $16
+
+    type=$22, data_0=$82, data_1=$02, x=$48, y=$30
+    type=$22, data_0=$04, data_1=$02, x=$B8, y=$30
+
+  Screen $17
+
+    type=$0C, data_0=$04, data_1=$02, x=$68, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$D8, y=$38
+    type=$0C, data_0=$0C, data_1=$02, x=$78, y=$B8
+
+  Screen $18
+
+    type=$0C, data_0=$02, data_1=$02, x=$E8, y=$28
+    type=$0C, data_0=$02, data_1=$02, x=$D0, y=$28
+
+  Screen $19
+
+    type=$26, data_0=$00, data_1=$01, x=$6B, y=$48
+    type=$26, data_0=$02, data_1=$00, x=$95, y=$48
+
+---------
+Level $03
+---------
+
+  Screen $00
+
+    type=$0C, data_0=$00, data_1=$02, x=$70, y=$68
+    type=$0C, data_0=$02, data_1=$02, x=$90, y=$68
+
+  Screen $01
+
+    [none]
+
+  Screen $02
+
+    type=$1A, data_0=$02, data_1=$01, x=$58, y=$68
+    type=$1A, data_0=$02, data_1=$03, x=$88, y=$68
+    type=$1A, data_0=$02, data_1=$01, x=$48, y=$90
+    type=$1A, data_0=$02, data_1=$03, x=$78, y=$90
+    type=$0C, data_0=$04, data_1=$02, x=$D8, y=$28
+    type=$0C, data_0=$04, data_1=$02, x=$E8, y=$78
+    type=$0C, data_0=$04, data_1=$02, x=$D8, y=$C8
+
+  Screen $03
+
+    type=$0C, data_0=$04, data_1=$02, x=$28, y=$58
+    type=$0C, data_0=$04, data_1=$02, x=$58, y=$58
+    type=$0C, data_0=$04, data_1=$02, x=$A0, y=$48
+
+  Screen $04
+
+    type=$4A, data_0=$00, data_1=$00, x=$80, y=$48
+
+  Screen $05
+
+    type=$44, data_0=$00, data_1=$01, x=$FF, y=$FF
+    type=$44, data_0=$00, data_1=$00, x=$38, y=$38
+    type=$44, data_0=$02, data_1=$00, x=$38, y=$A8
+    type=$44, data_0=$04, data_1=$00, x=$68, y=$68
+    type=$44, data_0=$06, data_1=$00, x=$98, y=$38
+    type=$44, data_0=$08, data_1=$00, x=$A8, y=$98
+    type=$44, data_0=$0A, data_1=$00, x=$C8, y=$68
+
+  Screen $06
+
+    type=$0C, data_0=$04, data_1=$02, x=$80, y=$6C
+
+  Screen $07
+
+    type=$0C, data_0=$0A, data_1=$02, x=$68, y=$68
+
+  Screen $08
+
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+    type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+
+  Screen $09
+
+    type=$0C, data_0=$00, data_1=$02, x=$C8, y=$98
+
+  Screen $0A
+
+    [none]
+
+  Screen $0B
+
+    type=$0C, data_0=$00, data_1=$02, x=$98, y=$58
+    type=$0C, data_0=$00, data_1=$02, x=$98, y=$78
+    type=$0C, data_0=$02, data_1=$02, x=$D8, y=$58
+    type=$0C, data_0=$00, data_1=$02, x=$D8, y=$78
+
+  Screen $0C
+
+    type=$0C, data_0=$02, data_1=$02, x=$80, y=$30
+    type=$0C, data_0=$02, data_1=$02, x=$90, y=$80
+    type=$0C, data_0=$02, data_1=$02, x=$50, y=$50
+    type=$0C, data_0=$02, data_1=$02, x=$B8, y=$B0
+    type=$4C, data_0=$00, data_1=$01, x=$2C, y=$38
+    type=$4C, data_0=$00, data_1=$03, x=$D4, y=$B8
+
+  Screen $0D
+
+    type=$0C, data_0=$04, data_1=$02, x=$28, y=$28
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$98
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$C0
+    type=$06, data_0=$00, data_1=$01, x=$48, y=$68
+    type=$06, data_0=$00, data_1=$01, x=$B8, y=$68
+
+  Screen $0E
+
+    [none]
+
+  Screen $0F
+
+    [none]
+
+  Screen $10
+
+    type=$0C, data_0=$0A, data_1=$02, x=$80, y=$58
+
+  Screen $11
+
+    type=$0C, data_0=$02, data_1=$02, x=$58, y=$98
+    type=$0C, data_0=$0C, data_1=$02, x=$70, y=$A8
+
+  Screen $12
+
+    type=$0C, data_0=$02, data_1=$02, x=$80, y=$28
+    type=$0C, data_0=$02, data_1=$02, x=$90, y=$68
+    type=$0C, data_0=$02, data_1=$02, x=$80, y=$C8
+    type=$0C, data_0=$02, data_1=$02, x=$80, y=$A8
+    type=$4C, data_0=$00, data_1=$01, x=$2C, y=$48
+    type=$4C, data_0=$00, data_1=$01, x=$2C, y=$88
+
+  Screen $13
+
+    type=$0C, data_0=$0C, data_1=$02, x=$68, y=$60
+    type=$0C, data_0=$0E, data_1=$02, x=$A8, y=$48
+    type=$2A, data_0=$02, data_1=$00, x=$18, y=$28
+    type=$2A, data_0=$02, data_1=$00, x=$E8, y=$28
+    type=$2A, data_0=$02, data_1=$00, x=$18, y=$B8
+    type=$2A, data_0=$02, data_1=$00, x=$E8, y=$C8
+
+  Screen $14
+
+    [none]
+
+  Screen $15
+
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$48, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$B8, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+
+  Screen $16
+
+    [none]
+
+  Screen $17
+
+    type=$4A, data_0=$02, data_1=$00, x=$C8, y=$98
+
+  Screen $18
+
+    type=$0C, data_0=$04, data_1=$02, x=$48, y=$38
+    type=$0C, data_0=$02, data_1=$02, x=$B8, y=$38
+    type=$0C, data_0=$02, data_1=$02, x=$68, y=$48
+    type=$0C, data_0=$04, data_1=$02, x=$98, y=$48
+
+  Screen $19
+
+    type=$24, data_0=$00, data_1=$00, x=$00, y=$00
+
+  Screen $1A
+
+    type=$1A, data_0=$02, data_1=$01, x=$58, y=$68
+    type=$1A, data_0=$02, data_1=$03, x=$88, y=$68
+    type=$1A, data_0=$02, data_1=$01, x=$48, y=$90
+    type=$1A, data_0=$02, data_1=$03, x=$78, y=$90
+    type=$0C, data_0=$04, data_1=$02, x=$D8, y=$28
+    type=$0C, data_0=$04, data_1=$02, x=$E8, y=$78
+    type=$0C, data_0=$04, data_1=$02, x=$D8, y=$C8
+
+  Screen $1B
+
+    type=$0C, data_0=$04, data_1=$02, x=$28, y=$58
+    type=$0C, data_0=$04, data_1=$02, x=$58, y=$58
+    type=$0C, data_0=$04, data_1=$02, x=$A0, y=$48
+
+  Screen $1C
+
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+    type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+
+  Screen $1D
+
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+    type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+
+---------
+Level $04
+---------
+
+  Screen $00
+
+    [none]
+
+  Screen $01
+
+    type=$0C, data_0=$08, data_1=$02, x=$78, y=$98
+    type=$0C, data_0=$08, data_1=$02, x=$C8, y=$B8
+    type=$0C, data_0=$00, data_1=$02, x=$28, y=$28
+    type=$0C, data_0=$00, data_1=$02, x=$98, y=$28
+
+  Screen $02
+
+    type=$0C, data_0=$0C, data_1=$02, x=$D8, y=$28
+    type=$0C, data_0=$04, data_1=$02, x=$68, y=$B8
+    type=$22, data_0=$06, data_1=$03, x=$90, y=$80
+
+  Screen $03
+
+    type=$0E, data_0=$00, data_1=$00, x=$B8, y=$2C
+
+  Screen $04
+
+    type=$2A, data_0=$04, data_1=$00, x=$18, y=$28
+    type=$0C, data_0=$08, data_1=$02, x=$18, y=$38
+    type=$0C, data_0=$0C, data_1=$02, x=$38, y=$38
+    type=$0C, data_0=$02, data_1=$02, x=$28, y=$28
+    type=$0C, data_0=$04, data_1=$02, x=$48, y=$28
+    type=$32, data_0=$04, data_1=$00, x=$18, y=$88
+
+  Screen $05
+
+    [none]
+
+  Screen $06
+
+    type=$0C, data_0=$08, data_1=$02, x=$18, y=$C8
+    type=$0C, data_0=$0C, data_1=$02, x=$68, y=$B8
+    type=$0C, data_0=$08, data_1=$02, x=$78, y=$78
+    type=$20, data_0=$00, data_1=$01, x=$30, y=$58
+    type=$20, data_0=$00, data_1=$03, x=$60, y=$98
+    type=$20, data_0=$00, data_1=$02, x=$A8, y=$70
+
+  Screen $07
+
+    type=$0C, data_0=$08, data_1=$02, x=$48, y=$78
+    type=$0C, data_0=$0A, data_1=$02, x=$C8, y=$78
+    type=$0C, data_0=$00, data_1=$02, x=$98, y=$68
+    type=$0C, data_0=$02, data_1=$02, x=$68, y=$88
+
+  Screen $08
+
+    type=$0C, data_0=$0E, data_1=$02, x=$B8, y=$58
+    type=$0C, data_0=$02, data_1=$02, x=$A8, y=$88
+    type=$0C, data_0=$02, data_1=$02, x=$C8, y=$88
+    type=$46, data_0=$00, data_1=$00, x=$40, y=$2A
+
+  Screen $09
+
+    [none]
+
+  Screen $0A
+
+    [none]
+
+  Screen $0B
+
+    type=$2A, data_0=$06, data_1=$00, x=$68, y=$28
+    type=$2A, data_0=$06, data_1=$00, x=$98, y=$28
+    type=$0E, data_0=$02, data_1=$01, x=$A8, y=$6C
+
+  Screen $0C
+
+    type=$0C, data_0=$0E, data_1=$02, x=$D8, y=$B8
+    type=$0C, data_0=$02, data_1=$02, x=$18, y=$C8
+
+  Screen $0D
+
+    type=$0C, data_0=$08, data_1=$02, x=$88, y=$78
+    type=$0C, data_0=$08, data_1=$02, x=$A8, y=$78
+    type=$0C, data_0=$00, data_1=$02, x=$78, y=$88
+    type=$0C, data_0=$00, data_1=$02, x=$B8, y=$88
+
+  Screen $0E
+
+    type=$0E, data_0=$04, data_1=$00, x=$50, y=$2C
+    type=$0E, data_0=$06, data_1=$01, x=$B0, y=$2C
+
+  Screen $0F
+
+    type=$0C, data_0=$08, data_1=$02, x=$38, y=$98
+    type=$0C, data_0=$00, data_1=$02, x=$E8, y=$C8
+
+  Screen $10
+
+    type=$0C, data_0=$08, data_1=$02, x=$C8, y=$58
+
+  Screen $11
+
+    [none]
+
+  Screen $12
+
+    type=$0E, data_0=$08, data_1=$00, x=$E8, y=$2C
+    type=$48, data_0=$00, data_1=$00, x=$58, y=$B8
+
+  Screen $13
+
+    [none]
+
+  Screen $14
+
+    type=$0E, data_0=$0A, data_1=$01, x=$E8, y=$2C
+    type=$46, data_0=$02, data_1=$01, x=$40, y=$BE
+    type=$32, data_0=$02, data_1=$00, x=$88, y=$C6
+
+  Screen $15
+
+    type=$22, data_0=$08, data_1=$03, x=$30, y=$C0
+    type=$22, data_0=$8A, data_1=$03, x=$E0, y=$C0
+    type=$22, data_0=$0C, data_1=$00, x=$E0, y=$30
+
+  Screen $16
+
+    [none]
+
+  Screen $17
+
+    type=$0C, data_0=$0C, data_1=$02, x=$18, y=$C8
+    type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$C8
+    type=$0C, data_0=$04, data_1=$00, x=$68, y=$78
+
+  Screen $18
+
+    type=$0C, data_0=$02, data_1=$02, x=$28, y=$B0
+    type=$0C, data_0=$02, data_1=$02, x=$58, y=$30
+    type=$0C, data_0=$02, data_1=$02, x=$A8, y=$30
+    type=$0C, data_0=$02, data_1=$02, x=$D8, y=$70
+    type=$52, data_0=$00, data_1=$00, x=$80, y=$8A
+
+  Screen $19
+
+    type=$3A, data_0=$00, data_1=$00, x=$98, y=$28
+
+===============================================================================
+  PER TYPE
+===============================================================================
+
+--------
+Type $00
+--------
+
+  lvl_index=$00, scr_index=$05, type=$00, data_0=$00, data_1=$03, x=$48, y=$48
+  lvl_index=$00, scr_index=$05, type=$00, data_0=$00, data_1=$03, x=$48, y=$68
+  lvl_index=$00, scr_index=$05, type=$00, data_0=$00, data_1=$02, x=$74, y=$74
+  lvl_index=$00, scr_index=$05, type=$00, data_0=$00, data_1=$03, x=$B8, y=$78
+  lvl_index=$01, scr_index=$03, type=$00, data_0=$00, data_1=$02, x=$68, y=$98
+
+--------
+Type $02
+--------
+
+  lvl_index=$00, scr_index=$06, type=$02, data_0=$00, data_1=$00, x=$D0, y=$40
+  lvl_index=$00, scr_index=$09, type=$02, data_0=$00, data_1=$00, x=$38, y=$B0
+
+--------
+Type $04
+--------
+
+  lvl_index=$02, scr_index=$02, type=$04, data_0=$00, data_1=$00, x=$38, y=$48
+  lvl_index=$02, scr_index=$02, type=$04, data_0=$02, data_1=$00, x=$38, y=$A8
+
+--------
+Type $06
+--------
+
+  lvl_index=$00, scr_index=$03, type=$06, data_0=$00, data_1=$01, x=$50, y=$AA
+  lvl_index=$01, scr_index=$05, type=$06, data_0=$00, data_1=$00, x=$B8, y=$98
+  lvl_index=$01, scr_index=$05, type=$06, data_0=$00, data_1=$01, x=$78, y=$44
+  lvl_index=$01, scr_index=$05, type=$06, data_0=$00, data_1=$01, x=$38, y=$98
+  lvl_index=$01, scr_index=$05, type=$06, data_0=$00, data_1=$00, x=$18, y=$C8
+  lvl_index=$01, scr_index=$05, type=$06, data_0=$00, data_1=$00, x=$E8, y=$C8
+  lvl_index=$03, scr_index=$0D, type=$06, data_0=$00, data_1=$01, x=$B8, y=$68
+  lvl_index=$03, scr_index=$0D, type=$06, data_0=$00, data_1=$01, x=$48, y=$68
+
+--------
+Type $08
+--------
+
+  lvl_index=$02, scr_index=$05, type=$08, data_0=$06, data_1=$01, x=$D0, y=$78
+  lvl_index=$02, scr_index=$05, type=$08, data_0=$02, data_1=$01, x=$50, y=$98
+  lvl_index=$02, scr_index=$05, type=$08, data_0=$00, data_1=$01, x=$48, y=$40
+
+--------
+Type $0A
+--------
+
+  lvl_index=$02, scr_index=$06, type=$0A, data_0=$00, data_1=$00, x=$80, y=$50
+  lvl_index=$02, scr_index=$06, type=$0A, data_0=$00, data_1=$00, x=$D8, y=$88
+  lvl_index=$02, scr_index=$06, type=$0A, data_0=$00, data_1=$00, x=$28, y=$88
+
+--------
+Type $0C
+--------
+
+  lvl_index=$00, scr_index=$02, type=$0C, data_0=$00, data_1=$02, x=$60, y=$7C
+  lvl_index=$00, scr_index=$02, type=$0C, data_0=$00, data_1=$02, x=$A0, y=$7C
+  lvl_index=$00, scr_index=$03, type=$0C, data_0=$00, data_1=$02, x=$60, y=$58
+  lvl_index=$00, scr_index=$03, type=$0C, data_0=$00, data_1=$02, x=$90, y=$58
+  lvl_index=$00, scr_index=$04, type=$0C, data_0=$00, data_1=$82, x=$D4, y=$40
+  lvl_index=$00, scr_index=$04, type=$0C, data_0=$00, data_1=$82, x=$E4, y=$68
+  lvl_index=$00, scr_index=$04, type=$0C, data_0=$00, data_1=$82, x=$20, y=$48
+  lvl_index=$00, scr_index=$05, type=$0C, data_0=$00, data_1=$01, x=$28, y=$98
+  lvl_index=$00, scr_index=$05, type=$0C, data_0=$00, data_1=$01, x=$48, y=$B8
+  lvl_index=$00, scr_index=$08, type=$0C, data_0=$00, data_1=$02, x=$80, y=$58
+  lvl_index=$00, scr_index=$08, type=$0C, data_0=$00, data_1=$02, x=$18, y=$40
+  lvl_index=$00, scr_index=$08, type=$0C, data_0=$00, data_1=$02, x=$28, y=$B0
+  lvl_index=$00, scr_index=$09, type=$0C, data_0=$00, data_1=$02, x=$7C, y=$60
+  lvl_index=$00, scr_index=$0A, type=$0C, data_0=$08, data_1=$02, x=$18, y=$88
+  lvl_index=$00, scr_index=$0A, type=$0C, data_0=$08, data_1=$02, x=$E8, y=$78
+  lvl_index=$00, scr_index=$0A, type=$0C, data_0=$08, data_1=$02, x=$D8, y=$38
+  lvl_index=$00, scr_index=$0A, type=$0C, data_0=$08, data_1=$02, x=$58, y=$58
+  lvl_index=$00, scr_index=$0C, type=$0C, data_0=$08, data_1=$02, x=$40, y=$36
+  lvl_index=$00, scr_index=$0C, type=$0C, data_0=$08, data_1=$02, x=$78, y=$36
+  lvl_index=$00, scr_index=$0C, type=$0C, data_0=$08, data_1=$02, x=$22, y=$48
+  lvl_index=$00, scr_index=$0F, type=$0C, data_0=$08, data_1=$02, x=$68, y=$68
+  lvl_index=$00, scr_index=$0F, type=$0C, data_0=$00, data_1=$02, x=$C0, y=$48
+  lvl_index=$00, scr_index=$0F, type=$0C, data_0=$00, data_1=$02, x=$98, y=$48
+  lvl_index=$01, scr_index=$00, type=$0C, data_0=$08, data_1=$02, x=$BC, y=$78
+  lvl_index=$01, scr_index=$00, type=$0C, data_0=$08, data_1=$02, x=$40, y=$78
+  lvl_index=$01, scr_index=$03, type=$0C, data_0=$08, data_1=$02, x=$48, y=$58
+  lvl_index=$01, scr_index=$03, type=$0C, data_0=$00, data_1=$02, x=$D8, y=$88
+  lvl_index=$01, scr_index=$04, type=$0C, data_0=$0A, data_1=$01, x=$58, y=$88
+  lvl_index=$01, scr_index=$04, type=$0C, data_0=$0A, data_1=$02, x=$E8, y=$38
+  lvl_index=$01, scr_index=$04, type=$0C, data_0=$0A, data_1=$01, x=$28, y=$A8
+  lvl_index=$01, scr_index=$06, type=$0C, data_0=$0A, data_1=$02, x=$B8, y=$38
+  lvl_index=$01, scr_index=$06, type=$0C, data_0=$0A, data_1=$02, x=$A8, y=$38
+  lvl_index=$01, scr_index=$06, type=$0C, data_0=$0A, data_1=$02, x=$88, y=$58
+  lvl_index=$01, scr_index=$06, type=$0C, data_0=$0A, data_1=$02, x=$28, y=$58
+  lvl_index=$01, scr_index=$07, type=$0C, data_0=$02, data_1=$02, x=$98, y=$48
+  lvl_index=$01, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$80, y=$98
+  lvl_index=$01, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$C8, y=$B8
+  lvl_index=$01, scr_index=$09, type=$0C, data_0=$0A, data_1=$02, x=$88, y=$38
+  lvl_index=$01, scr_index=$09, type=$0C, data_0=$0A, data_1=$02, x=$78, y=$38
+  lvl_index=$01, scr_index=$0B, type=$0C, data_0=$02, data_1=$02, x=$A8, y=$B8
+  lvl_index=$01, scr_index=$0B, type=$0C, data_0=$02, data_1=$02, x=$38, y=$B8
+  lvl_index=$01, scr_index=$0B, type=$0C, data_0=$02, data_1=$02, x=$C8, y=$38
+  lvl_index=$01, scr_index=$0B, type=$0C, data_0=$02, data_1=$02, x=$98, y=$58
+  lvl_index=$01, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$20, y=$98
+  lvl_index=$01, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$68, y=$98
+  lvl_index=$01, scr_index=$0E, type=$0C, data_0=$0C, data_1=$02, x=$28, y=$90
+  lvl_index=$01, scr_index=$0E, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$38
+  lvl_index=$02, scr_index=$03, type=$0C, data_0=$08, data_1=$02, x=$78, y=$68
+  lvl_index=$02, scr_index=$03, type=$0C, data_0=$0A, data_1=$02, x=$B8, y=$78
+  lvl_index=$02, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$9C, y=$84
+  lvl_index=$02, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$74, y=$84
+  lvl_index=$02, scr_index=$0A, type=$0C, data_0=$00, data_1=$02, x=$38, y=$68
+  lvl_index=$02, scr_index=$0A, type=$0C, data_0=$02, data_1=$02, x=$D8, y=$58
+  lvl_index=$02, scr_index=$0A, type=$0C, data_0=$02, data_1=$02, x=$58, y=$68
+  lvl_index=$02, scr_index=$0A, type=$0C, data_0=$00, data_1=$02, x=$78, y=$68
+  lvl_index=$02, scr_index=$0C, type=$0C, data_0=$00, data_1=$82, x=$18, y=$88
+  lvl_index=$02, scr_index=$0C, type=$0C, data_0=$00, data_1=$82, x=$D8, y=$A8
+  lvl_index=$02, scr_index=$0C, type=$0C, data_0=$00, data_1=$82, x=$98, y=$48
+  lvl_index=$02, scr_index=$0C, type=$0C, data_0=$08, data_1=$82, x=$58, y=$48
+  lvl_index=$02, scr_index=$11, type=$0C, data_0=$02, data_1=$02, x=$58, y=$B8
+  lvl_index=$02, scr_index=$11, type=$0C, data_0=$00, data_1=$02, x=$18, y=$78
+  lvl_index=$02, scr_index=$11, type=$0C, data_0=$00, data_1=$02, x=$48, y=$78
+  lvl_index=$02, scr_index=$13, type=$0C, data_0=$04, data_1=$02, x=$28, y=$80
+  lvl_index=$02, scr_index=$13, type=$0C, data_0=$0C, data_1=$02, x=$A0, y=$5C
+  lvl_index=$02, scr_index=$13, type=$0C, data_0=$00, data_1=$02, x=$68, y=$5C
+  lvl_index=$02, scr_index=$14, type=$0C, data_0=$08, data_1=$02, x=$88, y=$A0
+  lvl_index=$02, scr_index=$14, type=$0C, data_0=$08, data_1=$02, x=$28, y=$80
+  lvl_index=$02, scr_index=$15, type=$0C, data_0=$08, data_1=$02, x=$48, y=$70
+  lvl_index=$02, scr_index=$15, type=$0C, data_0=$02, data_1=$02, x=$B8, y=$88
+  lvl_index=$02, scr_index=$17, type=$0C, data_0=$0C, data_1=$02, x=$78, y=$B8
+  lvl_index=$02, scr_index=$17, type=$0C, data_0=$04, data_1=$02, x=$68, y=$78
+  lvl_index=$02, scr_index=$17, type=$0C, data_0=$0C, data_1=$02, x=$D8, y=$38
+  lvl_index=$02, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$E8, y=$28
+  lvl_index=$02, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$D0, y=$28
+  lvl_index=$03, scr_index=$00, type=$0C, data_0=$00, data_1=$02, x=$70, y=$68
+  lvl_index=$03, scr_index=$00, type=$0C, data_0=$02, data_1=$02, x=$90, y=$68
+  lvl_index=$03, scr_index=$02, type=$0C, data_0=$04, data_1=$02, x=$E8, y=$78
+  lvl_index=$03, scr_index=$02, type=$0C, data_0=$04, data_1=$02, x=$D8, y=$C8
+  lvl_index=$03, scr_index=$02, type=$0C, data_0=$04, data_1=$02, x=$D8, y=$28
+  lvl_index=$03, scr_index=$03, type=$0C, data_0=$04, data_1=$02, x=$28, y=$58
+  lvl_index=$03, scr_index=$03, type=$0C, data_0=$04, data_1=$02, x=$58, y=$58
+  lvl_index=$03, scr_index=$03, type=$0C, data_0=$04, data_1=$02, x=$A0, y=$48
+  lvl_index=$03, scr_index=$06, type=$0C, data_0=$04, data_1=$02, x=$80, y=$6C
+  lvl_index=$03, scr_index=$07, type=$0C, data_0=$0A, data_1=$02, x=$68, y=$68
+  lvl_index=$03, scr_index=$08, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+  lvl_index=$03, scr_index=$08, type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+  lvl_index=$03, scr_index=$08, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+  lvl_index=$03, scr_index=$08, type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+  lvl_index=$03, scr_index=$09, type=$0C, data_0=$00, data_1=$02, x=$C8, y=$98
+  lvl_index=$03, scr_index=$0B, type=$0C, data_0=$00, data_1=$02, x=$98, y=$78
+  lvl_index=$03, scr_index=$0B, type=$0C, data_0=$02, data_1=$02, x=$D8, y=$58
+  lvl_index=$03, scr_index=$0B, type=$0C, data_0=$00, data_1=$02, x=$D8, y=$78
+  lvl_index=$03, scr_index=$0B, type=$0C, data_0=$00, data_1=$02, x=$98, y=$58
+  lvl_index=$03, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$90, y=$80
+  lvl_index=$03, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$B8, y=$B0
+  lvl_index=$03, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$80, y=$30
+  lvl_index=$03, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$50, y=$50
+  lvl_index=$03, scr_index=$0D, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$98
+  lvl_index=$03, scr_index=$0D, type=$0C, data_0=$04, data_1=$02, x=$28, y=$28
+  lvl_index=$03, scr_index=$0D, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$C0
+  lvl_index=$03, scr_index=$10, type=$0C, data_0=$0A, data_1=$02, x=$80, y=$58
+  lvl_index=$03, scr_index=$11, type=$0C, data_0=$0C, data_1=$02, x=$70, y=$A8
+  lvl_index=$03, scr_index=$11, type=$0C, data_0=$02, data_1=$02, x=$58, y=$98
+  lvl_index=$03, scr_index=$12, type=$0C, data_0=$02, data_1=$02, x=$80, y=$28
+  lvl_index=$03, scr_index=$12, type=$0C, data_0=$02, data_1=$02, x=$90, y=$68
+  lvl_index=$03, scr_index=$12, type=$0C, data_0=$02, data_1=$02, x=$80, y=$C8
+  lvl_index=$03, scr_index=$12, type=$0C, data_0=$02, data_1=$02, x=$80, y=$A8
+  lvl_index=$03, scr_index=$13, type=$0C, data_0=$0E, data_1=$02, x=$A8, y=$48
+  lvl_index=$03, scr_index=$13, type=$0C, data_0=$0C, data_1=$02, x=$68, y=$60
+  lvl_index=$03, scr_index=$15, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+  lvl_index=$03, scr_index=$15, type=$0C, data_0=$0C, data_1=$02, x=$48, y=$78
+  lvl_index=$03, scr_index=$15, type=$0C, data_0=$0C, data_1=$02, x=$B8, y=$78
+  lvl_index=$03, scr_index=$15, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+  lvl_index=$03, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$B8, y=$38
+  lvl_index=$03, scr_index=$18, type=$0C, data_0=$04, data_1=$02, x=$98, y=$48
+  lvl_index=$03, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$68, y=$48
+  lvl_index=$03, scr_index=$18, type=$0C, data_0=$04, data_1=$02, x=$48, y=$38
+  lvl_index=$03, scr_index=$1A, type=$0C, data_0=$04, data_1=$02, x=$D8, y=$28
+  lvl_index=$03, scr_index=$1A, type=$0C, data_0=$04, data_1=$02, x=$E8, y=$78
+  lvl_index=$03, scr_index=$1A, type=$0C, data_0=$04, data_1=$02, x=$D8, y=$C8
+  lvl_index=$03, scr_index=$1B, type=$0C, data_0=$04, data_1=$02, x=$58, y=$58
+  lvl_index=$03, scr_index=$1B, type=$0C, data_0=$04, data_1=$02, x=$28, y=$58
+  lvl_index=$03, scr_index=$1B, type=$0C, data_0=$04, data_1=$02, x=$A0, y=$48
+  lvl_index=$03, scr_index=$1C, type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+  lvl_index=$03, scr_index=$1C, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+  lvl_index=$03, scr_index=$1C, type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+  lvl_index=$03, scr_index=$1C, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+  lvl_index=$03, scr_index=$1D, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$78
+  lvl_index=$03, scr_index=$1D, type=$0C, data_0=$0E, data_1=$02, x=$58, y=$78
+  lvl_index=$03, scr_index=$1D, type=$0C, data_0=$0C, data_1=$02, x=$A8, y=$78
+  lvl_index=$03, scr_index=$1D, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$78
+  lvl_index=$04, scr_index=$01, type=$0C, data_0=$08, data_1=$02, x=$C8, y=$B8
+  lvl_index=$04, scr_index=$01, type=$0C, data_0=$00, data_1=$02, x=$28, y=$28
+  lvl_index=$04, scr_index=$01, type=$0C, data_0=$00, data_1=$02, x=$98, y=$28
+  lvl_index=$04, scr_index=$01, type=$0C, data_0=$08, data_1=$02, x=$78, y=$98
+  lvl_index=$04, scr_index=$02, type=$0C, data_0=$04, data_1=$02, x=$68, y=$B8
+  lvl_index=$04, scr_index=$02, type=$0C, data_0=$0C, data_1=$02, x=$D8, y=$28
+  lvl_index=$04, scr_index=$04, type=$0C, data_0=$0C, data_1=$02, x=$38, y=$38
+  lvl_index=$04, scr_index=$04, type=$0C, data_0=$02, data_1=$02, x=$28, y=$28
+  lvl_index=$04, scr_index=$04, type=$0C, data_0=$04, data_1=$02, x=$48, y=$28
+  lvl_index=$04, scr_index=$04, type=$0C, data_0=$08, data_1=$02, x=$18, y=$38
+  lvl_index=$04, scr_index=$06, type=$0C, data_0=$08, data_1=$02, x=$78, y=$78
+  lvl_index=$04, scr_index=$06, type=$0C, data_0=$0C, data_1=$02, x=$68, y=$B8
+  lvl_index=$04, scr_index=$06, type=$0C, data_0=$08, data_1=$02, x=$18, y=$C8
+  lvl_index=$04, scr_index=$07, type=$0C, data_0=$08, data_1=$02, x=$48, y=$78
+  lvl_index=$04, scr_index=$07, type=$0C, data_0=$02, data_1=$02, x=$68, y=$88
+  lvl_index=$04, scr_index=$07, type=$0C, data_0=$00, data_1=$02, x=$98, y=$68
+  lvl_index=$04, scr_index=$07, type=$0C, data_0=$0A, data_1=$02, x=$C8, y=$78
+  lvl_index=$04, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$A8, y=$88
+  lvl_index=$04, scr_index=$08, type=$0C, data_0=$02, data_1=$02, x=$C8, y=$88
+  lvl_index=$04, scr_index=$08, type=$0C, data_0=$0E, data_1=$02, x=$B8, y=$58
+  lvl_index=$04, scr_index=$0C, type=$0C, data_0=$0E, data_1=$02, x=$D8, y=$B8
+  lvl_index=$04, scr_index=$0C, type=$0C, data_0=$02, data_1=$02, x=$18, y=$C8
+  lvl_index=$04, scr_index=$0D, type=$0C, data_0=$00, data_1=$02, x=$B8, y=$88
+  lvl_index=$04, scr_index=$0D, type=$0C, data_0=$08, data_1=$02, x=$A8, y=$78
+  lvl_index=$04, scr_index=$0D, type=$0C, data_0=$00, data_1=$02, x=$78, y=$88
+  lvl_index=$04, scr_index=$0D, type=$0C, data_0=$08, data_1=$02, x=$88, y=$78
+  lvl_index=$04, scr_index=$0F, type=$0C, data_0=$08, data_1=$02, x=$38, y=$98
+  lvl_index=$04, scr_index=$0F, type=$0C, data_0=$00, data_1=$02, x=$E8, y=$C8
+  lvl_index=$04, scr_index=$10, type=$0C, data_0=$08, data_1=$02, x=$C8, y=$58
+  lvl_index=$04, scr_index=$17, type=$0C, data_0=$04, data_1=$00, x=$68, y=$78
+  lvl_index=$04, scr_index=$17, type=$0C, data_0=$0C, data_1=$02, x=$18, y=$C8
+  lvl_index=$04, scr_index=$17, type=$0C, data_0=$0C, data_1=$02, x=$E8, y=$C8
+  lvl_index=$04, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$58, y=$30
+  lvl_index=$04, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$28, y=$B0
+  lvl_index=$04, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$D8, y=$70
+  lvl_index=$04, scr_index=$18, type=$0C, data_0=$02, data_1=$02, x=$A8, y=$30
+
+--------
+Type $0E
+--------
+
+  lvl_index=$00, scr_index=$00, type=$0E, data_0=$00, data_1=$00, x=$68, y=$24
+  lvl_index=$00, scr_index=$01, type=$0E, data_0=$02, data_1=$01, x=$C8, y=$54
+  lvl_index=$00, scr_index=$07, type=$0E, data_0=$04, data_1=$00, x=$B8, y=$74
+  lvl_index=$00, scr_index=$09, type=$0E, data_0=$06, data_1=$01, x=$A8, y=$84
+  lvl_index=$01, scr_index=$01, type=$0E, data_0=$00, data_1=$01, x=$C0, y=$3C
+  lvl_index=$02, scr_index=$0F, type=$0E, data_0=$00, data_1=$00, x=$60, y=$1C
+  lvl_index=$04, scr_index=$03, type=$0E, data_0=$00, data_1=$00, x=$B8, y=$2C
+  lvl_index=$04, scr_index=$0B, type=$0E, data_0=$02, data_1=$01, x=$A8, y=$6C
+  lvl_index=$04, scr_index=$0E, type=$0E, data_0=$04, data_1=$00, x=$50, y=$2C
+  lvl_index=$04, scr_index=$0E, type=$0E, data_0=$06, data_1=$01, x=$B0, y=$2C
+  lvl_index=$04, scr_index=$12, type=$0E, data_0=$08, data_1=$00, x=$E8, y=$2C
+  lvl_index=$04, scr_index=$14, type=$0E, data_0=$0A, data_1=$01, x=$E8, y=$2C
+
+--------
+Type $10
+--------
+
+  lvl_index=$02, scr_index=$02, type=$10, data_0=$02, data_1=$00, x=$88, y=$90
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$02, data_1=$00, x=$78, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$08, data_1=$00, x=$88, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$04, data_1=$00, x=$48, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$08, data_1=$00, x=$58, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$08, data_1=$00, x=$98, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$08, data_1=$00, x=$38, y=$28
+  lvl_index=$02, scr_index=$0E, type=$10, data_0=$08, data_1=$00, x=$68, y=$28
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$08, data_1=$00, x=$50, y=$48
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$08, data_1=$00, x=$50, y=$38
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$08, data_1=$00, x=$B0, y=$28
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$08, data_1=$00, x=$B0, y=$48
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$04, data_1=$00, x=$50, y=$28
+  lvl_index=$02, scr_index=$10, type=$10, data_0=$02, data_1=$00, x=$B0, y=$38
+  lvl_index=$02, scr_index=$12, type=$10, data_0=$04, data_1=$00, x=$B8, y=$2C
+  lvl_index=$02, scr_index=$12, type=$10, data_0=$02, data_1=$00, x=$48, y=$2C
+
+--------
+Type $16
+--------
+
+  lvl_index=$01, scr_index=$0A, type=$16, data_0=$04, data_1=$00, x=$B8, y=$A0
+  lvl_index=$01, scr_index=$0A, type=$16, data_0=$00, data_1=$00, x=$B8, y=$C0
+
+--------
+Type $18
+--------
+
+  lvl_index=$02, scr_index=$09, type=$18, data_0=$00, data_1=$02, x=$35, y=$78
+  lvl_index=$02, scr_index=$09, type=$18, data_0=$00, data_1=$00, x=$9E, y=$78
+  lvl_index=$02, scr_index=$09, type=$18, data_0=$00, data_1=$02, x=$89, y=$75
+  lvl_index=$02, scr_index=$09, type=$18, data_0=$00, data_1=$00, x=$60, y=$78
+
+--------
+Type $1A
+--------
+
+  lvl_index=$00, scr_index=$07, type=$1A, data_0=$04, data_1=$01, x=$40, y=$38
+  lvl_index=$01, scr_index=$03, type=$1A, data_0=$04, data_1=$03, x=$EC, y=$38
+  lvl_index=$01, scr_index=$03, type=$1A, data_0=$04, data_1=$01, x=$40, y=$34
+  lvl_index=$03, scr_index=$02, type=$1A, data_0=$02, data_1=$01, x=$58, y=$68
+  lvl_index=$03, scr_index=$02, type=$1A, data_0=$02, data_1=$03, x=$88, y=$68
+  lvl_index=$03, scr_index=$02, type=$1A, data_0=$02, data_1=$03, x=$78, y=$90
+  lvl_index=$03, scr_index=$02, type=$1A, data_0=$02, data_1=$01, x=$48, y=$90
+  lvl_index=$03, scr_index=$1A, type=$1A, data_0=$02, data_1=$01, x=$48, y=$90
+  lvl_index=$03, scr_index=$1A, type=$1A, data_0=$02, data_1=$01, x=$58, y=$68
+  lvl_index=$03, scr_index=$1A, type=$1A, data_0=$02, data_1=$03, x=$88, y=$68
+  lvl_index=$03, scr_index=$1A, type=$1A, data_0=$02, data_1=$03, x=$78, y=$90
+
+--------
+Type $20
+--------
+
+  lvl_index=$04, scr_index=$06, type=$20, data_0=$00, data_1=$03, x=$60, y=$98
+  lvl_index=$04, scr_index=$06, type=$20, data_0=$00, data_1=$02, x=$A8, y=$70
+  lvl_index=$04, scr_index=$06, type=$20, data_0=$00, data_1=$01, x=$30, y=$58
+
+--------
+Type $22
+--------
+
+  lvl_index=$01, scr_index=$0A, type=$22, data_0=$8E, data_1=$02, x=$48, y=$30
+  lvl_index=$01, scr_index=$0A, type=$22, data_0=$10, data_1=$02, x=$B8, y=$30
+  lvl_index=$02, scr_index=$0B, type=$22, data_0=$80, data_1=$00, x=$80, y=$C0
+  lvl_index=$02, scr_index=$16, type=$22, data_0=$82, data_1=$02, x=$48, y=$30
+  lvl_index=$02, scr_index=$16, type=$22, data_0=$04, data_1=$02, x=$B8, y=$30
+  lvl_index=$04, scr_index=$02, type=$22, data_0=$06, data_1=$03, x=$90, y=$80
+  lvl_index=$04, scr_index=$15, type=$22, data_0=$08, data_1=$03, x=$30, y=$C0
+  lvl_index=$04, scr_index=$15, type=$22, data_0=$8A, data_1=$03, x=$E0, y=$C0
+  lvl_index=$04, scr_index=$15, type=$22, data_0=$0C, data_1=$00, x=$E0, y=$30
+
+--------
+Type $24
+--------
+
+  lvl_index=$03, scr_index=$19, type=$24, data_0=$00, data_1=$00, x=$00, y=$00
+
+--------
+Type $26
+--------
+
+  lvl_index=$02, scr_index=$19, type=$26, data_0=$00, data_1=$01, x=$6B, y=$48
+  lvl_index=$02, scr_index=$19, type=$26, data_0=$02, data_1=$00, x=$95, y=$48
+
+--------
+Type $28
+--------
+
+  lvl_index=$00, scr_index=$0E, type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+  lvl_index=$00, scr_index=$0E, type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+  lvl_index=$00, scr_index=$0E, type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+  lvl_index=$00, scr_index=$0E, type=$28, data_0=$00, data_1=$00, x=$80, y=$80
+
+--------
+Type $2A
+--------
+
+  lvl_index=$02, scr_index=$02, type=$2A, data_0=$00, data_1=$00, x=$E8, y=$28
+  lvl_index=$02, scr_index=$02, type=$2A, data_0=$00, data_1=$00, x=$18, y=$28
+  lvl_index=$02, scr_index=$02, type=$2A, data_0=$00, data_1=$00, x=$18, y=$C8
+  lvl_index=$02, scr_index=$02, type=$2A, data_0=$00, data_1=$00, x=$E8, y=$C8
+  lvl_index=$03, scr_index=$13, type=$2A, data_0=$02, data_1=$00, x=$18, y=$B8
+  lvl_index=$03, scr_index=$13, type=$2A, data_0=$02, data_1=$00, x=$18, y=$28
+  lvl_index=$03, scr_index=$13, type=$2A, data_0=$02, data_1=$00, x=$E8, y=$28
+  lvl_index=$03, scr_index=$13, type=$2A, data_0=$02, data_1=$00, x=$E8, y=$C8
+  lvl_index=$04, scr_index=$04, type=$2A, data_0=$04, data_1=$00, x=$18, y=$28
+  lvl_index=$04, scr_index=$0B, type=$2A, data_0=$06, data_1=$00, x=$98, y=$28
+  lvl_index=$04, scr_index=$0B, type=$2A, data_0=$06, data_1=$00, x=$68, y=$28
+
+--------
+Type $2C
+--------
+
+  lvl_index=$02, scr_index=$00, type=$2C, data_0=$06, data_1=$00, x=$80, y=$28
+  lvl_index=$02, scr_index=$01, type=$2C, data_0=$08, data_1=$00, x=$00, y=$00
+  lvl_index=$02, scr_index=$05, type=$2C, data_0=$02, data_1=$00, x=$80, y=$18
+  lvl_index=$02, scr_index=$0D, type=$2C, data_0=$04, data_1=$00, x=$08, y=$30
+  lvl_index=$02, scr_index=$0E, type=$2C, data_0=$00, data_1=$00, x=$08, y=$30
+
+--------
+Type $2E
+--------
+
+  lvl_index=$01, scr_index=$0F, type=$2E, data_0=$00, data_1=$00, x=$10, y=$54
+
+--------
+Type $32
+--------
+
+  lvl_index=$02, scr_index=$00, type=$32, data_0=$00, data_1=$00, x=$08, y=$CC
+  lvl_index=$04, scr_index=$04, type=$32, data_0=$04, data_1=$00, x=$18, y=$88
+  lvl_index=$04, scr_index=$14, type=$32, data_0=$02, data_1=$00, x=$88, y=$C6
+
+--------
+Type $34
+--------
+
+  lvl_index=$01, scr_index=$0D, type=$34, data_0=$00, data_1=$00, x=$A8, y=$18
+
+--------
+Type $36
+--------
+
+  lvl_index=$01, scr_index=$0F, type=$36, data_0=$00, data_1=$00, x=$D8, y=$80
+  lvl_index=$01, scr_index=$0F, type=$36, data_0=$00, data_1=$01, x=$28, y=$80
+
+--------
+Type $38
+--------
+
+  lvl_index=$02, scr_index=$15, type=$38, data_0=$00, data_1=$00, x=$E0, y=$90
+
+--------
+Type $3A
+--------
+
+  lvl_index=$04, scr_index=$19, type=$3A, data_0=$00, data_1=$00, x=$98, y=$28
+
+--------
+Type $42
+--------
+
+  lvl_index=$02, scr_index=$10, type=$42, data_0=$02, data_1=$04, x=$48, y=$68
+  lvl_index=$02, scr_index=$10, type=$42, data_0=$02, data_1=$00, x=$48, y=$68
+  lvl_index=$02, scr_index=$10, type=$42, data_0=$02, data_1=$02, x=$68, y=$88
+  lvl_index=$02, scr_index=$10, type=$42, data_0=$02, data_1=$01, x=$98, y=$88
+  lvl_index=$02, scr_index=$10, type=$42, data_0=$02, data_1=$03, x=$B8, y=$68
+  lvl_index=$02, scr_index=$12, type=$42, data_0=$00, data_1=$02, x=$50, y=$50
+  lvl_index=$02, scr_index=$12, type=$42, data_0=$00, data_1=$04, x=$B0, y=$50
+  lvl_index=$02, scr_index=$12, type=$42, data_0=$00, data_1=$03, x=$B0, y=$A0
+  lvl_index=$02, scr_index=$12, type=$42, data_0=$00, data_1=$01, x=$50, y=$A0
+  lvl_index=$02, scr_index=$12, type=$42, data_0=$00, data_1=$00, x=$B0, y=$50
+
+--------
+Type $44
+--------
+
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$06, data_1=$00, x=$98, y=$38
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$08, data_1=$00, x=$A8, y=$98
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$0A, data_1=$00, x=$C8, y=$68
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$04, data_1=$00, x=$68, y=$68
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$02, data_1=$00, x=$38, y=$A8
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$00, data_1=$00, x=$38, y=$38
+  lvl_index=$03, scr_index=$05, type=$44, data_0=$00, data_1=$01, x=$FF, y=$FF
+
+--------
+Type $46
+--------
+
+  lvl_index=$04, scr_index=$08, type=$46, data_0=$00, data_1=$00, x=$40, y=$2A
+  lvl_index=$04, scr_index=$14, type=$46, data_0=$02, data_1=$01, x=$40, y=$BE
+
+--------
+Type $48
+--------
+
+  lvl_index=$04, scr_index=$12, type=$48, data_0=$00, data_1=$00, x=$58, y=$B8
+
+--------
+Type $4A
+--------
+
+  lvl_index=$03, scr_index=$04, type=$4A, data_0=$00, data_1=$00, x=$80, y=$48
+  lvl_index=$03, scr_index=$17, type=$4A, data_0=$02, data_1=$00, x=$C8, y=$98
+
+--------
+Type $4C
+--------
+
+  lvl_index=$03, scr_index=$0C, type=$4C, data_0=$00, data_1=$01, x=$2C, y=$38
+  lvl_index=$03, scr_index=$0C, type=$4C, data_0=$00, data_1=$03, x=$D4, y=$B8
+  lvl_index=$03, scr_index=$12, type=$4C, data_0=$00, data_1=$01, x=$2C, y=$88
+  lvl_index=$03, scr_index=$12, type=$4C, data_0=$00, data_1=$01, x=$2C, y=$48
+
+--------
+Type $52
+--------
+
+  lvl_index=$04, scr_index=$18, type=$52, data_0=$00, data_1=$00, x=$80, y=$8A
+
+--------
+Type $54
+--------
+
+  lvl_index=$00, scr_index=$04, type=$54, data_0=$00, data_1=$00, x=$5D, y=$20
+  lvl_index=$00, scr_index=$04, type=$54, data_0=$00, data_1=$00, x=$A2, y=$20
+  lvl_index=$00, scr_index=$0C, type=$54, data_0=$00, data_1=$00, x=$CF, y=$78
