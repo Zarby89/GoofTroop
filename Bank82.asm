@@ -6928,8 +6928,8 @@ GrabFruit:
 82C2C9   BNE $82C251              
 82C2CB   SEP #$10                 
 82C2CD   RTL                      
-----------------         
---------sub start--------
+
+;Sprite Read routine
 82C2CE   PEA #$8380               
 82C2D1   PLB                      
 82C2D2   LDA $B7                  
@@ -6945,23 +6945,23 @@ GrabFruit:
 82C2E6   STA $00                  
 82C2E8   LDX #$0200               
 82C2EB   LDA #$03                 
-82C2ED   STA $00,X                
-82C2EF   LDA $0000,Y              
-82C2F2   STA $0A,X                
-82C2F4   LDA $0001,Y              
-82C2F7   STA $0B,X                
-82C2F9   LDA $0002,Y              
-82C2FC   AND #$7F                 
-82C2FE   STA $0D,X                
-82C300   LDA $0002,Y              
-82C303   AND #$80                 
+82C2ED   STA $00,X
+82C2EF   LDA $0000,Y
+82C2F2   STA $0A,X
+82C2F4   LDA $0001,Y
+82C2F7   STA $0B,X
+82C2F9   LDA $0002,Y
+82C2FC   AND #$7F
+82C2FE   STA $0D,X
+82C300   LDA $0002,Y
+82C303   AND #$80
 82C305   ASL                      
 82C306   ROL                      
 82C307   STA $0C,X                
 82C309   LDA $0003,Y              
-82C30C   STA $11,X                
+82C30C   STA $11,X ;Store X Position in $11
 82C30E   LDA $0004,Y              
-82C311   STA $14,X                
+82C311   STA $14,X ;Store Y position in $14
 82C313   REP #$21                 
 82C315   TXA                      
 82C316   ADC #$0050               

@@ -58,6 +58,16 @@ $4E[0x02] = Controller2 Pressed Filtered Input [axlr0000 byetUDLR]
 
 
 
+$50[0x20] (array) - Used in (STA) 808362,8080CC,808156  /  (LDA) 8080AE, 808356
+;Group of 8 values for each (4 total)
+;IF $50[00] != 0 then decrease $50[01] 
+;IF $50[01] != 0 then set $50[00] to 04?
+;Basically wait 4 frame to reduce $50[01] by 1 until it reach 0 a sort of timer?
+;Sometime setter on 01 or 02 too
+;Related to stack somehow - contains stack pointers... 
+
+
+
 $70 = mirror of $2100 (INIDISP - Screen Display)
 $74 = mirror of $210D BG Scroll Registers (BG1) Horizontal
 $75 = mirror of $210D BG Scroll Registers (BG1) Horizontal
@@ -170,8 +180,8 @@ $01E0[0x02] = Controller1 Current Input [byetaxlr 0000UDLR]
 $01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
 
-$0200 to $0980 = sprites ram
-
+$0200 to $0980 = sprites ram - 0x50 bytes per sprite
+$0A00 to $0AC0 = Doors Ram - 0x20 bytes per door
 
 $0A00 - Door/Event Related?
 $0A0A = ID?
@@ -180,10 +190,11 @@ $0A0D = LowerByte2
 $0A11 = Byte3
 $0A14 = Byte4
 
-$0A00 Doors infos
-$0A20 Doors infos
-$0A40 Doors infos
-$0A60 Doors infos
+$0B00 to $0D80 = liftable sprites ram - 0x40 byte per object
+
+
+
+
 
 
 
@@ -220,11 +231,13 @@ $1A5E - Next Sound Effect Position in RAM
 
 $1AA0 = sprites OAM data mirror
 
+$???? - $1DFF = Stack
+
 $1E00 - 1FFF Palettes Buffer
 
 $1F10 flashing timer for PRESS START 2nd player
 
-$???? - $1DFF = Stack
+
 
 $2000 - $757F GFX Max GFX
 $7580 - $F1FF GFX Goofy GFX
@@ -234,9 +247,13 @@ $F200 - $FFFF GFX Objects GFX, barels, bombs, blocks, etc...
 
 BANK 7F ->
 
-$0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded twice no clue why...)
-$0E00 - $141F GFX Effects ?
-$1420 - $B000 GFX all loader gfx
+$7F0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded twice no clue why...)
+$7F0E00 - $141F GFX Effects ?
+$7F1420 - $B000 GFX all loader gfx
 
-$E000 - $E7FF BG2 tiles8 data
-$E800 - $EFFF BG1 tiles8 data
+$7FE000 - $E7FF BG2 tiles8 data
+$7FE800 - $EFFF BG1 tiles8 data
+
+7FFF11 - Music Id
+
+7E023D = Cursor

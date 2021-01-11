@@ -369,47 +369,12 @@
 838612  .db $20 $53 $68 $69 $6E $6F $68 $61
 83861A  .db $72 $61 $20 $20 $20 $20 $20 $20
 838622  .db $20 $20 $20 $55 $2E $53 $2E $41
-83862A  .db $20 $20 $20 $20 $20 $20 $10
-----------------         
---------unidentified--------
-838631  .db $11                  
-----------------         
---------data--------     
-838632  .db $12 $13 $14 $15      
-----------------         
---------unidentified--------
-838636  .db $16                  
-----------------         
---------data--------     
-838637  .db $17                  
-----------------         
---------unidentified--------
-838638  .db $18 $19              
-----------------         
---------data--------     
-83863A  .db $1A                  
-----------------         
---------unidentified--------
-83863B  .db $1B                  
-----------------         
---------data--------     
-83863C  .db $1C                  
-----------------         
---------unidentified--------
-83863D  .db $1D                  
-----------------         
---------data--------     
-83863E  .db $1E $1F              
-----------------         
---------unidentified--------
-838640  .db $20                  
-----------------         
---------data--------     
-838641  .db $21 $22              
-----------------         
---------unidentified--------
-838643  .db $23 $24              
-----------------         
+83862A  .db $20 $20 $20 $20 $20 $20
+
+
+;List of sounds IDs (23 and 24 ??) also not really sure what's the point of this table only to compare maybe?
+838630 db $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24
+    
 ;Intro Level Data
 838645    
 db $02, $07, $0A 
@@ -937,12 +902,12 @@ db $00, $00, $09, $00, $09, $00, $09, $09, $2D, $09, $00, $00, $2D, $09, $00, $0
 ----------------         
 --------unidentified--------
 838C76  .db $3C $36 $3C $3F      
-----------------         
---------data--------     
+   
+
 838C7A  .db $06 $02 $0A $00 $20 $0A $12 $00
 838C82  .db $34 $1E $18 $1A      
-----------------         
---------unidentified--------
+
+
 838C86  .db $30 $32 $34          
 ----------------         
 --------data--------     
@@ -1094,69 +1059,66 @@ db $00, $00, $09, $00, $09, $00, $09, $09, $2D, $09, $00, $00, $2D, $09, $00, $0
 --------data--------     
 838E54  .db $00 $00 $80 $FC $80 $03 $00 $00
 838E5C  .db $00 $00 $80 $03 $80 $FC $00 $00
-838E64  .db $A0 $8E $A5 $8E      
-----------------         
---------unidentified--------
-838E68  .db $AA $8E $AF $8E      
-----------------         
---------data--------     
-838E6C  .db $B4 $8E $B9 $8E      
-----------------         
---------unidentified--------
-838E70  .db $BE $8E $C3 $8E $C8 $8E $CD $8E
-838E78  .db $D2 $8E $D7 $8E      
-----------------         
---------data--------     
-838E7C  .db $DC $8E $E1 $8E $E6 $8E $E6 $8E
-----------------         
---------unidentified--------
-838E84  .db $E6 $8E $E6 $8E      
-----------------         
---------data--------     
-838E88  .db $E6 $8E              
-----------------         
---------unidentified--------
-838E8A  .db $2C $8F $E6 $8E $E6 $8E $09 $8F
-838E92  .db $E6 $8E $09 $8F $09 $8F
-----------------         
---------data--------     
-838E98  .db $E6 $8E $09 $8F      
-----------------         
---------unidentified--------
-838E9C  .db $54 $8F              
-----------------         
---------data--------     
-838E9E  .db $63 $8F $01 $FF $29 $00 $00 $01
-838EA6  .db $FF $29 $00 $02      
-----------------         
---------unidentified--------
-838EAA  .db $01 $FF $29 $00 $04 $01 $FF $29
-838EB2  .db $00 $06              
-----------------         
---------data--------     
-838EB4  .db $01 $FF $29 $00 $08 $01 $FF $29
-838EBC  .db $00 $0A              
-----------------         
---------unidentified--------
-838EBE  .db $01 $FF $29 $00 $0C $01 $FF $29
-838EC6  .db $00 $0E $01 $FF $29 $00 $10 $01
-838ECE  .db $FF $29 $00 $12 $01 $FF $29 $00
-838ED6  .db $14 $01 $FF $29 $00 $16
-----------------         
---------data--------     
-838EDC  .db $01 $FF $29 $00 $18 $01 $FF $29
-838EE4  .db $00                  
-----------------         
---------unidentified--------
-838EE5  .db $1A                  
-----------------         
---------data--------     
-838EE6  .db $01 $03 $29 $00 $26 $03 $03 $2A
-838EEE  .db $00 $01 $10 $28 $04 $03 $2B $00
-838EF6  .db $01 $10 $11 $2A $03 $03 $2A $00
-838EFE  .db $01 $10 $2C $04 $73 $2C $00 $01
-838F06  .db $10 $11 $2E $01 $03 $29 $00 $30
-838F0E  .db $03 $03 $2A $00 $01 $10 $32 $04
+
+;Tile Animation Address Table for liftable objects (used with $06 in animation routine)
+838E64  
+db $A0, $8E ;$838EA0
+db $A5, $8E      
+db $AA, $8E 
+db $AF, $8E         
+db $B4, $8E
+db $B9, $8E      
+db $BE, $8E
+db $C3, $8E
+db $C8, $8E
+db $CD, $8E
+db $D2, $8E
+db $D7, $8E          
+db $DC, $8E 
+db $E1, $8E
+db $E6, $8E
+db $E6, $8E
+db $E6, $8E
+db $E6, $8E      
+db $E6, $8E   
+db $2C, $8F           
+db $E6, $8E
+db $E6, $8E
+db $09, $8F
+db $E6, $8E
+db $09, $8F
+db $09, $8F 
+db $E6, $8E
+db $09, $8F      
+db $54, $8F 
+db $63, $8F
+
+
+;Animation Tiles data for the liftable objects
+;1C = green bomb block
+;24 <- bird
+;26 <- pot particles when exploding
+
+838EA0 db $01, $FF, $29, $00, $00
+838EA5 db $01, $FF, $29, $00, $02 
+838EAA db $01, $FF, $29, $00, $04
+838EAF db $01, $FF, $29, $00, $06   
+838EB4 db $01, $FF, $29, $00, $08 
+838EB9 db $01, $FF, $29, $00, $0A
+838EBE db $01, $FF, $29, $00, $0C
+838EC3 db $01, $FF, $29, $00, $0E 
+838EC8 db $01, $FF, $29, $00, $10 
+838ECD db $01, $FF, $29, $00, $12
+838ED2 db $01, $FF, $29, $00, $14
+838ED7 db $01, $FF, $29, $00, $16   
+838EDC db $01, $FF, $29, $00, $18
+838EE1 db $01, $FF, $29, $00, $1A
+;Paricles when exploding but not sure how they work yet looks weird
+838EE6 db $01, $03, $29, $00, $26, $03, $03, $2A, $00, $01, $10, $28
+838EF2 db $04, $03, $2B, $00, $01, $10, $11, $2A, $03, $03, $2A, $00, $01, $10, $2C
+838F01 db $04, $73, $2C, $00, $01, $10, $11, $2E, $01, $03, $29, $00, $30
+
+838F0D  .db $03 $03 $2A $00 $01 $10 $32 $04
 838F16  .db $03 $2B $00 $01 $10 $11 $34 $03
 838F1E  .db $03 $2A $00 $01 $10 $36 $04 $73
 838F26  .db $2C $00 $01 $10 $11 $38 $04 $06
@@ -1177,13 +1139,11 @@ db $00, $00, $09, $00, $09, $00, $09, $09, $2D, $09, $00, $00, $2D, $09, $00, $0
     ; for example, I know that 838F9F is one of the X velocities values for the thrown items.
     ; Currently, I can say that there are 3 X velocities in this area.
     ; Formula : 838F9B + 4x where x is 0,1 or 2
-    ; The Y counterparts are the next two offsets
 838F9E  .db $02 $00 $00 $40 $02 $90 $FF $34
 838FA6  .db $02 $4A $00 $78 $01 $00 $00 $80; Somewhere around here, there is a table for the Boss 0 Thrown items.
     ; for example, I know that 838F9F is one of the X velocities values for the thrown items.
     ; Currently, I can say that there are 3 X velocities in this area.
     ; Formula : 838FA7 + 4x where x is 0,1 or 2
-    ; The Y counterpart are the next two offsets.
 
 838FAE  .db $01 $B6 $FF $78 $01 $00 $00 $00
 838FB6  .db $FE $6A $01 $96 $FE  
