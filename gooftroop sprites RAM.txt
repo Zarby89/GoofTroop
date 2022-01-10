@@ -1,0 +1,92 @@
+203 ; might be related (02 seems to be running animation)
+20e ;??
+22a ;direction i think
+233 ; ??
+23e ; ??
+
+0200 to 980 = sprites data
+
+
+02 01 04 04 02 00 5f b3 7f 04 <- when stunned
+
+Pirate RAM : 
+$00 ? is active or something like that?
+$01 : Sprite State
+$02 : Sprite State, 00 = wait for transition, 02 = normal state, 04 recover from taking damage, 06 = dead
+$03 : Pirate State, 00 = walking around, 02 = chasing player
+$04 : Another State?, 08 = set taking damage, 04 = changing direction
+
+$05 : Sprite SLOT Index
+$06 = Address for animation
+$07 = Address for animation
+$08 = Animation Timer? for something?
+$0A = Sprite ID?
+$0D = Direction
+
+
+$10 X?subpixel?
+$11 X?
+$12 X Highbyte
+
+$13 Y?subpixel?
+$14 Y Lowbyte
+$15 Y Highbyte
+
+$16 ?
+$17 Height from shadow
+
+$18 ?
+$19 ?
+$1A OAM Address?
+$1B OAM Related? VHOOPPPT
+$1C Number of HP? (if 0 sprite is getting knocked out of screen and die)
+$1D Last HP to compare with $1C
+$1E ?
+$1F ?
+$20[0x03] Address where to blit gfx to
+$24 ? OAM Related
+$25 ? OAM Related
+$26 ?
+$27 ?
+$28[0x02] HSpeed 16 bit
+$2A[0x02] VSpeed 16 bit
+
+$2C ?
+$2D ?
+$2E ?
+
+$2F ? ;Setted to 1 when stunned
+$30 ? ;Setted to 1 when stunned
+
+$31 ?
+$32 ?
+$33 ?
+$34 ?
+$35 ?
+
+$36 ?;Setted
+$37 ?;Setted
+
+$38 ?
+$39 ?
+
+$3A ?;Setted
+$3B ?;Setted
+
+$3C Timer?, also Stun Timer
+$3D Timer Related
+$3E ZSpeed ;Lifting Item?
+$3F ;Lifting Item?
+
+$40 to 4F unused? <- pretty sure that's work ram different for every sprites
+
+
+7000
+7280
+
+C0F1
+C0F5
+C0F9
+C0FD
+
+00E8 tile 320

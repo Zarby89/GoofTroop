@@ -39,9 +39,11 @@ $2E[0x02] = ?? used for indexed read local (end up being used for DMA size) and 
 
 $30[0x03] = indirect long read, used to set $3C, $38 and 7F6800+ (getting set from a table at $8FFEA0)
 
-$34[0x02] = ?? used to set $7F0014+
+$32[0x03]
 
-$3C[0x02] ; used in loading sprite routine?? *5
+$34[0x02] = ?? used to set $7F0014+ GFX related?
+
+$3C[0x02] ; used in loading gfx routine?? *5
 
 $40 = Number of DMAs to Do ;See $1800
 $41 = number of thing to do (DMA Related) ;See $1900
@@ -55,6 +57,16 @@ $48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
 $4A[0x02] = Controller2 Current Input [axlr0000 byetUDLR] 
 $4C[0x02] = Controller2 Last Input [axlr0000 byetUDLR]
 $4E[0x02] = Controller2 Pressed Filtered Input [axlr0000 byetUDLR]
+
+
+
+$50[0x20] (array) - Used in (STA) 808362,8080CC,808156  /  (LDA) 8080AE, 808356
+;Group of 8 values for each (4 total)
+;IF $50[00] != 0 then decrease $50[01] 
+;IF $50[01] != 0 then set $50[00] to 04?
+;Basically wait 4 frame to reduce $50[01] by 1 until it reach 0 a sort of timer?
+;Sometime setter on 01 or 02 too
+;Related to stack somehow - contains stack pointers... 
 
 
 
@@ -96,7 +108,7 @@ $8C[0x02] = mirror of $421A (Controller2 [byetUDLR axlr0000])
 $9A = tell if nmi need to be executed this frame
 $9B
 $9C = frame counter?
-
+$9F = Frame Counter?
 
 $27
 $51
@@ -106,15 +118,21 @@ $A0 game mode?
 $A1 also used as index for jmp to routines
 $A2 = used for loading routines
 $A3 = used to tell if game is running or not (like message box/event) to preent sprites from moving
+$A8 = 00 during gameplay, !=0 in menus
 $AB Pause
+$AC = 01 during transition, 00 normal gameplay
 
+
+$B1 Gamestate?
 $B3 sprite index ?
 $B4[0x02] = sprite index/address to read/write into buffer ($1AA0)
 $B6 = level id in
 $B7 = map id in
+
 $BD = player count - 1 = 1Player, 3 = 2Player
 
 $C8?
+$CC = Continues
 
 $F0 = frame counting down from 60 to 0
 $F1 = seconds
@@ -133,27 +151,40 @@ $0100[0x02] = pointer for something?
 $0102[0x02] = pointer for jumptable in main routine
 $0103 used as pointer for jumptable as well / item being used + 08?? action the P1 is doing
 
+
+$0102 p1 when getting hit?
 $0103 = 0x02 = lifting, 0x04 = holding up, 0x06 = throwing, 0x08 = kicking, 0x0A = crounching/hookshot, 0x0C=?, 0x0E=?,0x10=?,0x12 = digging, 0x14 bell
 $0104 = item used subtype?
 
-$0110[0x02] = Xpos P1 (2b)
-$0113[0x02] = Ypos P1 (2b)
+$010D ; P1 Direction
+$010E ; P1 X Mirroring
 
+$0110 = Xpos subpixel? P1 (2b)
+
+$0111[0x02] = Xpos P1 (2b)
+
+$0113 = Ypos subpixel? P1 (2b)
+$0114[0x02] = Ypos P1 (2b)
+
+$0123 = P1 animation frame
 
 $011D = P1 Hearts
-$0157 = P1 Lives
 $0140 = P1 ItemsCount, 00 or 02
 $0141 = P1 Item Slot Used, 00 or 02
 $0142 = P1 Item1 - 0x02 = Hookshot, 0x04 = Candle, 0x06 = Small Key, 0x08 = Boss Key, 0x0A = Shovel, 0x0C = Bell, 0x0E = Plank ;higher are invalid
 $0143 = P1 Item2 - same as above
 $013C = P1 Item PositionX?
 $013E = P1 Item PositionY?
+$013F = P1 Item Something
 $014E = P1 Item related
+$0157 = P1 Lives
 
 
 $0146 = p1 direction? 02 up, 04 right, 06 down, 08 left
 $0147 = p1 direction facing without moving same as above -2
 
+$0153 = p1 carrying something?
+$0156 = p1?? always 02
 
 $0160 used as pointer for jumptable
 $016C = offseted XLowPos
@@ -163,6 +194,7 @@ $016E = offseted YLowpos
 $0160[0x02] = Controller1 Current Input [byetaxlr 0000UDLR] 
 $0162[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $0164[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
+						   $49	   $48				
 $48[0x02] = Controller1 Pressed Filtered Input [axlr0000 byetUDLR]
 
 
@@ -170,7 +202,15 @@ $01E0[0x02] = Controller1 Current Input [byetaxlr 0000UDLR]
 $01E2[0x02] = Controller1 Last Input [byetaxlr 0000UDLR] 
 $01E4[0x02] = Controller1 Filtered Input [byetaxlr 0000UDLR] 
 
-$0200 to $0980 = sprites ram
+$0200 to $0980 = sprites ram 0x50 per sprite
+  ID SUB DIR* DIR X   Y
+  B3  B4  B5* B6  B1  B2
+;[0A][0B][0C][0D][11][14]
+
+
+$0A00 to $0AC0 = ?? Objects RAM
+
+
 
 
 $0A00 - Door/Event Related?
@@ -185,11 +225,12 @@ $0A20 Doors infos
 $0A40 Doors infos
 $0A60 Doors infos
 
+$0B00 to $0D80 = liftable sprites ram
 
 
 $0D8A = PlayerOffsetter
 $0D80 = OffsettedPlayerRAM ?
-
+$0DC0 = hookshot related?
 
 $0E00 ??
 $0E20 ??
@@ -220,11 +261,13 @@ $1A5E - Next Sound Effect Position in RAM
 
 $1AA0 = sprites OAM data mirror
 
+$???? - $1DFF = Stack
+
 $1E00 - 1FFF Palettes Buffer
 
 $1F10 flashing timer for PRESS START 2nd player
 
-$???? - $1DFF = Stack
+
 
 $2000 - $757F GFX Max GFX
 $7580 - $F1FF GFX Goofy GFX
@@ -234,9 +277,13 @@ $F200 - $FFFF GFX Objects GFX, barels, bombs, blocks, etc...
 
 BANK 7F ->
 
-$0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded twice no clue why...)
-$0E00 - $141F GFX Effects ?
-$1420 - $B000 GFX all loader gfx
+$7F0000 - $0DFF GFX Objects GFX, barels, bombs, blocks, etc... (they are loaded twice no clue why...)
+$7F0E00 - $141F GFX Effects ?
+$7F1420 - $B000 GFX all loader gfx
 
-$E000 - $E7FF BG2 tiles8 data
-$E800 - $EFFF BG1 tiles8 data
+$7FE000 - $E7FF BG2 tiles8 data
+$7FE800 - $EFFF BG1 tiles8 data
+
+7FFF11 - Music Id
+
+7E023D = Cursor

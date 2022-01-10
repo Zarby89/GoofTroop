@@ -1,0 +1,13306 @@
+;BANK80    
+
+
+org $808000
+VectorReset:
+STZ $4200     ;808000
+STZ $420B     ;808003
+STZ $420C     ;808006
+SEI ;808009
+CLC ;80800A
+XCE ;80800B
+LDA #$8F;80800C
+STA $2100     ;80800E set Force Blank
+LDA #$00;808011
+STA $7FFF08   ;808013 ?
+LDA #$01;808017  
+STA $420D     ;808019 Set FastROM
+REP #$10;80801C
+LDX #$1DFF    ;80801E Set Stack pointer address to 1DFF
+TXS ;808021
+SEP #$10;808022 A to 8bit
+JSR AntiPiracy;808024 Prevent SRAM to be used, if SRAM size != 0 loop forever
+
+LDA #$83;808027     
+PHA ;808029 
+PLB ;80802A  
+REP #$10;80802B  
+LDX #$8000    ;80802D  
+LDA $0000,X   ;808030
+.BranchDelta
+BEQ .BranchAlpha    ;808033 Goto $80805E  
+LSR ;808035  
+STA $00 ;808036  
+INX ;808038 
+LDA $0000,X   ;808039  
+STA $10 ;80803C  
+INX ;80803E  
+LDA $0000,X   ;80803F  
+STA $11 ;808042  
+INX ;808044
+.BranchCharlie  
+LDA $0000,X   ;808045  
+STA ($10)     ;808048  
+INX ;80804A  
+BCC .BranchBeta     ;80804B Goto $808053
+LDA $0000,X   ;80804D  
+STA ($10)     ;808050  
+INX ;808052 
+.BranchBeta 
+LDY $10 ;808053  
+INY ;808055  
+STY $10 ;808056  
+DEC $00 ;808058  
+BNE .BranchCharlie  ;80805A Goto $808045
+BRA .BranchDelta    ;80805C Goto $808030
+.BranchAlpha
+
+
+REP #$20;80805E A 16-bit mode
+LDX #$1FFE    ;808060
+.LoopAlpha
+STZ $00,X     ;808063
+DEX ;808065
+DEX ;808066
+BPL .LoopAlpha;808067 Goto $808063
+LDX #$1DBF    ;808069 
+LDY #$0018    ;80806C
+.BranchEcho 
+STX $54,Y     ;80806F 
+TXA ;808071 
+SEC ;808072 
+SBC #$0040    ;808073 
+TAX ;808076 
+TYA ;808077 
+SEC ;808078 
+SBC #$0008    ;808079 
+TAY ;80807C 
+BPL .BranchEcho     ;80807D Goto $80806F   
+
+SEP #$30;80807F ; A and XY = 8-bit mode
+LDA #$80;808081
+STA $70 ;808083 
+LDX #$00;808085 
+LDA #$00;808087 
+JSL $808104   ;808089 ;Unknown long routine 
+LDA #$B1;80808D 
+STA $4200     ;80808F ;Set Controller?
+LDA #$A0;808092 
+STA $4207     ;808094 ;H-Count timer
+LDA #$BF;808097 
+STA $4209     ;808099 ;V-Count timer
+CLI ;80809C 
+SEP #$30;80809D  
+.BranchFoxtrot   
+STZ $009B     ;80809F
+LDA #$FF;8080A2 
+STA $009A     ;8080A4
+LDY #$00;8080A7 
+LDA $009B     ;8080A9
+BNE .BranchFoxtrot  ;8080AC Goto $80809F
+LDA $0050,Y   ;8080AE
+BMI .BranchGamma    ;8080B1 Goto $8080B9
+CMP #$04;8080B3 
+BEQ $8080C7   ;8080B5 
+BCS $8080E4   ;8080B7 
+.BranchGamma
+
+STZ $009A     ;8080B9 
+TYA ;8080BC
+CLC ;8080BD 
+ADC #$08;8080BE 
+TAY ;8080C0 
+CPY #$20;8080C1 
+BNE $8080A9   ;8080C3 
+BRA $8080A7   ;8080C5 
+STY $0027     ;8080C7 
+LDA #$02;8080CA 
+STA $0050,Y   ;8080CC
+PHP ;8080CF 
+PHB ;8080D0
+REP #$20;8080D1 
+TSC ;8080D3 
+STA $0025     ;8080D4 
+LDA $0052,Y   ;8080D7 
+TCS ;8080DA 
+REP #$10;8080DB 
+PLY ;8080DD 
+PLX ;8080DE 
+PLA ;8080DF 
+PLP ;8080E0 
+PLD ;8080E1 
+PLB ;8080E2 
+RTL ;8080E3 
+
+MainRoutine?:
+{
+8080E4   STY $0027 ;??
+8080E7   LDA #$02 
+8080E9   STA $0050,Y ;StackRelated
+8080EC   PHP
+8080ED   PHB
+8080EE   REP #$20 
+8080F0   TSC
+8080F1   STA $0025 ;Stack Pointer Current
+8080F4   LDA $0052,Y;StackRelated 
+8080F7   TCS
+8080F8   LDA #$0000   
+8080FB   TCD 
+8080FC   SEP #$20 
+8080FE   LDX $0056,Y ;StackRelated
+808101   JMP ($81E3,X) 
+
+}
+
+UnknownLongRoutine1_TODO:
+{
+PHP ;808104
+SEP #$30;808105 all 8-bit
+STA $000056, X;808107
+LDA #$08;80810B
+STA $000050, X;80810D
+XBA ;808111
+STA $000057, X;808112
+REP #$20;808116
+LDA $000054, X;808118
+STA $000052, X;80811C
+PLP ;808120
+RTL ;808121
+} 
+----------------   
+808122   REP #$30 
+808124   LDA $000025  
+808128   TCS
+808129   PLB
+80812A   PLP
+80812B   LDY $0027
+80812E   LDA #$00 
+808130   STA $0050,Y  
+808133   JMP $80B9
+--------sub start--------
+808136   PHP
+808137   REP #$20 
+808139   LDA #$0000   
+80813C   STA $000050,X
+808140   PLP
+808141   RTL
+----------------   
+;Related To the Stack?
+808142   PHB : PHD : PHP 
+808145   REP #$30 
+808147   PHA : PHX : PHY ;Store A,X,Y in 16bits
+80814A   SEP #$30 
+80814C   XBA
+80814D   LDA #$83
+80814F   PHA
+808150   PLB ; Set DataBank to #$83
+808151   LDY $0027 ;????
+808154   LDA #$01 
+808156   STA $0050,Y ;???
+808159   XBA
+80815A   STA $0051,Y ;???   
+80815D   BNE $808164  
+80815F   LDA #$84  
+808161   STA $0050,Y ;???  
+808164   TSC ;Get Stack Pointer
+808165   REP #$20 
+808167   STA $0052,Y ;Store Stack Pointer there??
+80816A   LDA $0025 ;Stack Current Location
+80816D   TCS ;Restore Stack Pointer
+80816E   PLB 
+80816F   PLP
+808170   STZ $009A ;NMI Related
+808173   JMP $80B9 
+--------unidentified--------
+808176  .db $08 $E2 $20 $BF $50 $00 $00 $09
+80817E  .db $80 $9F $50 $00 $00 $28 $6B $08
+808186  .db $E2 $20 $BF $50 $00 $00 $C9 $80
+80818E  .db $29 $7F $9F $50 $00 $00 $28 $6B
+----------------   
+--------sub start--------
+808196   PHB
+808197   PHD
+808198   PHP
+808199   REP #$30 
+80819B   PHA
+80819C   PHX
+80819D   PHY
+80819E   SEP #$30 
+8081A0   LDA #$83 
+8081A2   PHA
+8081A3   PLB
+8081A4   LDY $0027
+8081A7   LDA #$04 
+8081A9   STA $0050,Y  
+8081AC   TSC
+8081AD   REP #$20 
+8081AF   STA $0052,Y  
+8081B2   LDA $0025
+8081B5   TCS
+8081B6   PLB
+8081B7   PLP
+8081B8   JMP $80B9
+8081BB   SEP #$30 
+8081BD   PHA
+8081BE   LDA #$83 
+8081C0   PHA
+8081C1   PLB
+8081C2   PLA
+8081C3   LDY $0027
+8081C6   STA $0056,Y  
+8081C9   XBA
+8081CA   STA $0057,Y  
+8081CD   LDA #$08 
+8081CF   STA $0050,Y  
+8081D2   REP #$30 
+8081D4   LDA $0054,Y  
+8081D7   STA $0052,Y  
+8081DA   LDA $0025
+8081DD   TCS
+8081DE   PLB
+8081DF   PLP
+8081E0   JMP $80B9
+;JumpTable   
+8081E3 
+dw $81FB ; intro + capcom logo
+dw $81FF ; title screen
+dw $8203
+dw $8207
+dw $820B
+dw $820F
+dw $8213
+dw $8217
+dw $821B
+dw $821F
+dw $8223
+dw $8227
+
+
+8081FB   JMP $80968E  
+8081FF   JMP $809A6A  
+808203   JMP $809D56  
+808207   JMP $80B0B0  
+80820B   JMP $809597  
+80820F   JMP $8095A9  
+808213   JMP $8095B5  
+808217   JMP $8095C7  
+80821B   JMP $809000
+ 
+80821F   JMP $80A962  
+808223   JMP $80B0DD  
+808227   JMP $80B12E
+
+SkipExpandedJump:
+JMP SkipEverything  ;$80822B Goto $836E
+
+VectorNMI:
+{
+;$80822E 
+REP #$38  
+;$808230
+PHA : PHX : PHY : PHD : PHB  
+;$808235   
+LDA #$0000 : TCD ;Set Direct Page to 0000   
+;$808239
+SEP #$30 
+;$80823B 
+LDA #$83 : PHA : PLB ;Set Databank to 83
+;$80823F
+LDA $4210 ;Interrupt Flag Registers
+;$808242
+LDA $9A : BNE SkipExpandedJump ; $9A ?
+;$808246
+LDA $70 : STA $2100
+;$80824B 
+LDA $84 : STA $2130
+;$808250 
+LDA $85 : STA $2131
+;$808255     
+LDA $86 : ORA #$20 : STA $2132    
+;$80825C
+LDA $87 : ORA #$40 : STA $2132   
+;$808263   
+LDA $88 : ORA #$80 : STA $2132 
+;$80826A     
+LDA $74 : STA $210D     
+;$80826F
+LDA $75 : STA $210D
+;$808274  
+LDA $76 : STA $210E     
+;$808279  
+LDA $77 : STA $210E
+;$80827E   
+LDA $78 : STA $210F
+;$808283  
+LDA $79 : STA $210F
+;$808288   
+LDA $7A : STA $2110     
+;$80828D  
+LDA $7B : STA $2110    
+;$808292
+LDA $7C : STA $2111     
+;$808297 
+LDA $7D : STA $2111     
+;$80829C    
+LDA $7E : STA $2112     
+;$8082A1
+LDA $7F : STA $2112
+;$8082A6
+LDA $80 : STA $212C
+;$8082AB
+LDA $81 : STA $212D
+;$8082B0
+LDA $82 : STA $212E
+;$8082B5   
+LDA $83 : STA $212F
+
+
+;$8082BA    
+STZ $4300 ; Set DMA0 to mode 0
+;$8082BD
+LDA #$04 : STA $4301 ;Set DMA0 to 2104 OAM (Sprites)  
+;$8082C2    
+STZ $4304 ;Set DMA0 source address to 00
+;$8082C5
+REP #$20
+;$8082C7    
+STZ $2102
+;$8082CA 
+LDA #$1AA0 : STA $4302 ;Set DMA0 source address to $1AA0     
+;$8082D0
+LDA #$0220 : STA $4305 ;Set DMA0 length (0x220) all the sprites data 
+;$8082D6  
+SEP #$20
+;$8082D8
+LDA #$01 : STA $420B ;Do the DMA0 !
+
+
+;$8082DD
+LDA #$00 : STA $2121 ;Set CGRAM Address to 0 (Palettes)
+;$8082E2     
+STZ $4300 ;Set DMA0 to mode 0
+;$8082E5
+LDA #$22 : STA $4301 ;Set DMA0 to 2122 CGRAM (Palettes)
+;$8082EA
+STZ $4304 ;Set DMA0 source address to 00
+;$8082ED
+REP #$20
+;$8082EF
+LDA #$1E00 : STA $4302 ;Set DMA0 source address to $1E00
+;$8082F5    
+LDA #$0200 : STA $4305 ;Set DMA0 length (0x200) all palettes   
+;$8082FB
+SEP #$20    
+;$8082FD  
+LDA #$01 : STA $420B ; Do the DMA0 ! 
+
+;$808302
+JSR $838D ;DMA Loop1 ($40)
+;$808305
+JSR $83DB ;DMA Loop2 ($41)
+;$808308
+JSR $8427 ;DMA Loop3 ($42-$43)
+
+.loopPPU ;$80830B
+LDA $4212 : AND #$01 : BNE .loopPPU ;check if auto-joypad is being read
+;$808312
+REP #$30
+;$808314
+LDA $4218 : TAX : AND #$000F : BEQ .IsGamepad1 ;Read Controller 1 Data [byetUDLR axlr0000] Check if controller 1 is a gamepad
+;$80831D
+LDX #$0000 ;Otherwise kill all input from it
+.IsGamepad1 ;$808320 
+STX $8A
+
+;$808322
+LDA $421A : TAX : AND #$000F : BEQ .IsGamepad2;Read Controller 2 Data [byetUDLR axlr0000] Check if controller 2 is a gamepad
+;$80832B
+LDX #$0000 ;Otherwise kill all input from it   
+.IsGamepad2 ;80832E
+STX $8C 
+
+;808330
+SEP #$30
+;808332
+REP #$20
+;808334
+LDA $44 : STA $46 ;Load Gamepad1 data ($44) [axlr0000 byetUDLR] store it in Last Input ($46)
+;808338
+LDA $8A : XBA : STA $44 ;RAW Gamepad Data1 reversed to [axlr0000 byetUDLR] 
+;80833D
+EOR $46 : AND $44 : STA $48 ;Last input pressed / What has been pressed on this frame 
+
+;808343 -same as above for controller 2
+LDA $4A : STA $4C 
+;808345  
+LDA $8C : XBA : STA $4A    
+;80834C    
+EOR $4C : AND $4A : STA $4E
+
+SEP #$20;808352 A = 16-bit
+
+LDX #$18;808354 
+
+.BranchPlus
+LDA $50,X     ;808356 $68? sort of timer?
+CMP #$01;808358
+BNE .NoChange50     ;80835A Goto $808364
+DEC $51,X     ;80835C
+BNE .NoChange50     ;80835E Goto $808364
+LDA #$04;808360
+STA $50,X     ;808362
+.NoChange50
+
+TXA ;808364
+SEC ;808365
+SBC #$08;808366
+TAX ;808368
+BPL .BranchPlus     ;808369 Goto $808356
+JSR NMISubRoutine1  ;80836B Goto $8099EE ;APU Related
+SkipEverything:
+LDA #$93;80836E
+STA $9B ;808370 
+INC $9C ;808372
+LDA $89 ;808374 ;frame counter?
+STA $420C     ;808376 Do HDMA from $89
+REP #$30;808379
+
+PLB ;80837B  
+PLD ;80837C  
+PLY ;80837D  
+PLX ;80837E  
+PLA ;80837F  
+RTI ;808380   
+}
+
+808381   STZ $4200 ;Turn off NMI
+808384   JSR $838D
+808387   LDA #$B1 
+808389   STA $4200 ;Restore NMI
+80838C   RTS
+
+;Loop DMAs when $40 is not != 0 $40 = number of DMA to do i think
+;(8bytes) [$4300, $2116(02), $4305(02), $4302(02), $4304]
+80838D   LDA $40 ; ?
+80838F   BEQ $8083CE ;Return if $40 == 0
+808391   LDA #$80 
+808393   STA $2115 ;Set VRAM Increment mode to incrementing
+808396   LDA #$18 
+808398   STA $4301 ;Set DMA0 Destination to  VRAM Data
+80839B   LDX #$00 
+80839D   LDA $1800,X 
+8083A0   STA $4300 ;Set Control DMA0
+8083A3   REP #$20 
+8083A5   LDA $1801,X 
+8083A8   STA $2116 ;Set VRAM Destination Start Address
+8083AB   LDA $1803,X  
+8083AE   STA $4305 ;Set Length of the DMA0
+8083B1   LDA $1805,X  
+8083B4   STA $4302 ;Set DMA Source Address
+8083B7   SEP #$21 
+8083B9   LDA $1807,X 
+8083BC   STA $4304 ;Set DMA Source Bank
+8083BF   LDA #$01 
+8083C1   STA $420B ;FIRE THE DMA0 !
+8083C4   TXA
+8083C5   ADC #$07 
+8083C7   TAX
+8083C8   CPX $40  
+8083CA   BNE $80839D ;IF X != 40 then continue to do DMAs!
+8083CC   STZ $40  
+8083CE   RTS
+
+
+--------unidentified-------- ;Most likely Code !!
+8083CF  .db $9C $00 $42 $20 $DB $83 $A9 $B1
+8083D7  .db $8D $00 $42 $60
+
+;Loop DMAs when $41 is not != 0 $41 = number of DMA to do
+;(4bytes) + data [$2115, $2116, $2117, $4305(length)] + DATA(length)
+8083DB   LDA $41 
+8083DD   BEQ $808426 ;Rerturn if $41 == 0 
+8083DF   LDA #$01 
+8083E1   STA $4300 ;Set DMA Control to 2 Register write once
+8083E4   LDA #$18 
+8083E6   STA $4301 ;Set DMA Destination to VRAM
+8083E9   LDX #$00 
+8083EB   LDA $1900,X  
+8083EE   STA $2115 ;Video Control Mode
+8083F1   LDA $1901,X  
+8083F4   STA $2116 ;Set Address Destination for VRAM Write
+8083F7   LDA $1902,X  
+8083FA   STA $2117 ;Set Address Destination for VRAM Write
+8083FD   LDA $1903,X  
+808400   STA $4305 ;Size to byte 4 ?
+808403   STZ $4306 ;Size to 00 ?
+808406   INX
+808407   INX
+808408   INX
+808409   INX
+80840A   STX $4302 ;Set Source Address
+80840D   LDA #$19
+80840F   STA $4303 ;Set Source Address ;$19XX
+808412   STZ $4304 ;Set Bank to 00
+808415   LDA #$01 
+808417   STA $420B ;Fire DMA00
+80841A   TXA 
+80841B   CLC 
+80841C   ADC $18FF,X ;Because X have been increase by 4, add the length to A
+80841F   TAX
+808420   CPX $41 ;Check if we reached length
+808422   BNE $8083EB ;If we didn't there's another DMA waiting to be transfered so loopback
+808424   STZ $41  
+808426   RTS
+
+;Loop DMAs when $42 is not equal to $43 = number of DMA to do
+808427   LDX $42  
+808429   CPX $43  
+80842B   BEQ $808483 ;IF $42 == $43 then Return
+80842D   TXA
+80842E   CLC
+80842F   ADC #$04
+808431   AND #$7F
+808433   STA $42 ;Add #$04 to $42
+808435   LDA #$80 
+808437   STA $2115 ;Set incrementing mode after writing to $2119/$213A
+80843A   LDA #$18
+80843C   STA $4301 ;Destination register ($2118)
+80843F   LDA #$01 
+808441   STA $4300 ;Set writing mode to 2 register write once
+808444   REP #$21 
+808446   LDA $1380,X 
+808449   STA $28 ;Store Indirect Address
+80844B   LDA $1382,X  
+80844E   STA $2B ;Store Value for later
+808450   LDA ($28)
+808452   STA $4302 ;Load Indirect Address from first bytes into Source Address DMA
+808455   LDY #$02 
+808457   LDA ($28),Y ;Load Bank at +2
+808459   INY
+80845A   TAX
+80845B   STX $4304 ;Set Bank DMA
+
+80845E   REP #$21 
+808460   LDA $2B  
+808462   STA $2116 ;VRAM Address
+808465   ADC #$0100 ;Add 0x100 for next iteration?
+808468   STA $2B  
+80846A   LDA ($28),Y  ;Load Indirect Address 3rd byte
+80846C   STA $2E 
+80846E   AND #$7FFF 
+808471   INY
+808472   INY ;INY for the next iteration
+808473   STA $4305 ;Length of the transfer
+808476   SEP #$20 
+808478   LDA #$01 
+80847A   STA $420B ;FIRE THE DMA0
+80847D   LDA $2F
+80847F   BMI $80845E  ;if bit 7 is setted on the 3rd byte of the indirect array redo a bytes transfer without setting anything
+808481   BRA $808427  ;return to start of the code that is comparing $42 with $43
+808483   RTS
+
+;--------------------
+VectorIRQ:
+808484   REP #$38 
+808486   PHA : PHX : PHY
+808489   PHD : PHB
+80848B   LDA #$0000 : TCD ;Set Direct Page to 0000  
+80848F   SEP #$30 
+808491   LDA #$83 ;Set DataBank to #$83
+808493   PHA
+808494   PLB
+808495   LDA $4211
+808498   LDA $9D ;?
+80849A   BEQ $8084A1 ;IF $9D == 0 then skip that jumptable thing
+80849C   LDX $9E  
+80849E   JSR ($84A9,X)
+8084A1   REP #$38 
+8084A3   PLB : PLD
+8084A5   PLY : PLX : PLA 
+8084A8   RTI
+----------------   
+IRQJumpTable:
+{
+dw SetSubscreen;$84B3
+dw $84B9 
+dw $84CB 
+dw $84DF 
+dw $84F5 
+}    
+
+SetSubscreen:
+8084B3   LDA #$16 
+8084B5   STA $212C
+8084B8   RTS
+
+;Not Ran during Full Run - Zarby
+;8084B9  .db $A9 $A0 $8D $07 $42 $A9 $17 $8D
+;8084C1  .db $09 $42 $9C $25 $21 $A9 $04 $85
+;8084C9  .db $9E $60 
+8084B9   LDA #$A0
+8084BB   STA $4207
+8084BE   LDA #$17
+8084C0   STA $4209
+8084C3   STZ $2125
+8084C6   LDA #$04
+8084C8   STA $9E
+8084CA   RTS
+
+;Not Ran during Full Run - Zarby
+;8084CB  .db $A9 $A0 
+;$8D $07 $42
+;$A9
+;8084D1  .db $07 
+;$8D $09 $42 
+;$A9 $0F $8D $25
+;8084D9  .db $21 $A9 $02 $85 $9E $60
+
+8084CB   LDA #$A0
+8084CD   STA $4207
+8084D0   LDA #$07
+8084D2   STA $4209
+8084D5   LDA #$0F
+8084D7   STA $2125
+8084DA   LDA $8502
+8084DD   STA $9E
+8084DF   RTS
+
+
+;Not Ran during Full Run - Zarby
+;8084DF  .db $A9 $A0
+;8084E1  .db $8D $07 $42 $A9 $2F $8D $09 $42
+;8084E9  .db $A5 $80 $29 $0F $8D $2C $21 $A9
+;8084F1  .db $08 $85 $9E $60
+
+
+;Not Ran during Full Run - Zarby
+;8084F5  .db $A9 $A0 $8D $07
+;8084F9  .db $42 $A9 $07 $8D $09 $42 $A5 $80
+;808501  .db $8D $2C $21 $A9 $06 $85 $9E $60
+;808509  .db $EA $EA $80 $FE
+
+SetFBlank:
+{
+80850D   LDA #$80
+80850F   STA $70  ; $70 = mirror of $2100
+808511   RTS
+}
+
+ResetFBlank:
+{
+808512   LDA #$0F
+808514   STA $70
+808516   RTS
+}
+
+SetBGScroll:
+{
+808517   REP #$20 
+808519   LDA #$03FF   
+80851C   STZ $74 ;BG1 HSCroll
+80851E   STA $76 ;BG1 VScroll
+808520   STZ $78 ;BG2 HScroll
+808522   STA $7A ;BG2 VScroll 
+808524   SEP #$20 
+808526   RTS
+}
+
+808527   JSR SetFBlank ;$850D
+80852A   JSR $853A
+80852D   JSR $853E
+808530   JSR $8542
+808533   LDA #$01 
+808535   JSL $808142
+808539   RTS
+
+SetDMABuffer:
+.Zero
+80853A   LDY #$00 
+80853C   BRA .PredefinedValue;$808544  
+.Four
+80853E   LDY #$04 
+808540   BRA .PredefinedValue;$808544
+.Eight
+808542   LDY #$08 
+.PredefinedValue
+808544   LDX $0040
+808547   LDA #$09 
+808549   STA $1800,X ;$4300
+80854C   REP #$21 
+80854E   LDA $8067,Y  
+808551   STA $1801,X ;$2116(02)  
+808554   LDA $8069,Y  
+808557   STA $1803,X ;$4305(02) 
+80855A   LDA #$80A7   
+80855D   STA $1805,X ;$4302(02) 
+808560   SEP #$20 
+808562   LDA #$83 
+808564   STA $1807,X ;$4304  
+808567   TXA
+808568   ADC #$08 
+80856A   STA $0040
+80856D   RTS
+
+80856E   LDY #$0C 
+808570   JSR $8544
+808573   RTL
+
+
+;Load 4 groups of something into $1800,X?
+SetGroupOfDmas:
+808574   LDY #$10 
+808576   JSR SetDMABuffer_PredefinedValue ;$8544 ;[44 4E 30 00]
+808579   LDY #$14 
+80857B   JSR SetDMABuffer_PredefinedValue ;$8544 ;[84 4E 30 00]
+80857E   LDY #$18 
+808580   JSR SetDMABuffer_PredefinedValue ;$8544 ;[C4 4E 30 00]   
+808583   LDY #$1C 
+808585   JSR SetDMABuffer_PredefinedValue ;$8544 ;[EF 4E 04 00]   
+808588   RTL
+
+SetGroupOfDmas:
+808589   LDA $0A  
+80858B   BNE JSR SetDMABuffer_PredefinedValue ;$8085A2  
+80858D   LDY #$20 
+80858F   JSR SetDMABuffer_PredefinedValue ;$8544
+808592   LDY #$24 
+808594   JSR SetDMABuffer_PredefinedValue ;$8544
+808597   LDY #$28 
+808599   JSR SetDMABuffer_PredefinedValue ;$8544
+80859C   LDY #$2C 
+80859E   JSR SetDMABuffer_PredefinedValue ;$8544
+8085A1   RTL
+
+SetGroupOfDmas:  
+8085A2   LDY #$30 
+8085A4   JSR SetDMABuffer_PredefinedValue ;$8544
+8085A7   LDY #$34 
+8085A9   JSR SetDMABuffer_PredefinedValue ;$8544
+8085AC   LDY #$38 
+8085AE   JSR SetDMABuffer_PredefinedValue ;$8544
+8085B1   LDY #$3C 
+8085B3   JSR SetDMABuffer_PredefinedValue ;$8544
+8085B6   RTL
+
+;No clue what that is ? can't find any reference to it for the moment looks like code:
+8085B7  .db $0B $0A $AA $A9 $81 $80 $13
+;PHD : ASL : TAX : LDA #$81 : BRA $8085CA
+
+;
+
+SetDMABuffer2:
+{
+
+8085BE   PHD
+8085BF   LDA #$80 
+8085C1   STA $0004
+8085C4   REP #$20 
+8085C6   LDA #$0000   
+8085C9   TCD
+8085CA   BRA $8085DF  
+--------sub start--------
+8085CC   PHD
+8085CD   ASL
+8085CE   TAX
+8085CF   LDA #$80 
+8085D1   STA $0004
+8085D4   REP #$20 
+8085D6   LDA #$0000   
+8085D9   TCD
+8085DA   LDA $D379,X  
+8085DD   STA $10
+
+8085DF   SEP #$20 
+8085E1   LDY #$00 
+8085E3   LDX $41  
+8085E5   LDA $04  
+8085E7   STA $1900,X  ;$2115
+8085EA   INX
+8085EB   LDA ($10),Y  
+8085ED   INY
+8085EE   STA $1900,X  ;$2116 
+8085F1   INX
+8085F2   LDA ($10),Y  
+8085F4   INY
+8085F5   STA $1900,X ;$2117  
+8085F8   INX
+8085F9   LDA ($10),Y  
+8085FB   INY
+8085FC   STA $00  
+8085FE   LDA ($10),Y  
+808600   INY
+808601   STA $02  
+808603   ASL
+808604   STA $1900,X  ;$4305 
+808607   INX
+808608   LDA ($10),Y
+80860A   INY
+80860B   STA $1900,X  ;DMA Data 
+80860E   INX
+80860F   LDA $00  
+808611   STA $1900,X  ;DMA Data 
+808614   INX
+808615   DEC $02  
+808617   BNE $808608  
+808619   STX $41  
+80861B   PLD
+80861C   RTL
+}
+
+----------------   
+--------unidentified--------
+80861D  .db $0B $0A $AA $C2 $20 $A9 $00 $00
+808625  .db $5B $BD $79 $D3 $85 $10 $E2 $20
+80862D  .db $A0 $00 $A6 $41 $A9 $80 $9D $00
+808635  .db $19 $E8 $B1 $10 $C8 $9D $00 $19
+80863D  .db $E8 $B1 $10 $C8 $9D $00 $19 $E8
+808645  .db $C8 $B1 $10 $C8 $85 $02 $0A $9D
+80864D  .db $00 $19 $E8 $9E $00 $19 $E8 $9E
+808655  .db $00 $19 $E8 $C6 $02 $D0 $F4 $86
+80865D  .db $41 $2B $6B $0B $0A $AA $A9 $81
+808665  .db $80 $05  
+----------------   
+;?? take A as argument create pointers for something in $1900?
+SetDMABuffer3:
+{
+808667   PHD
+808668   ASL
+808669   TAX
+80866A   LDA #$80
+80866C   STA $0004 ;??
+80866F   REP #$20 
+808671   LDA #$0000   
+808674   TCD
+808675   LDA $D379,X ;?bunch of pointers
+808678   STA $10 
+80867A   SEP #$30 
+80867C   LDY #$00 
+80867E   LDX $41 
+808680   LDA $04 
+808682   STA $1900,X ;1900? $2115
+808685   INX 
+808686   LDA ($10),Y ;Y:00 = AA  ;[08 51 28 03 24 4A]
+808688   INY ;+1
+808689   STA $1900,X ;$2116
+80868C   INX
+80868D   LDA ($10),Y ;Y:00 = 51
+80868F   INY ;+1
+808690   STA $1900,X  ;$2117
+808693   INX
+808694   LDA ($10),Y ;Y:00 = 27 
+808696   INY ;+1
+808697   STA $00  
+808699   LDA ($10),Y ;Y:00 = 0C
+80869B   INY ;+1     
+80869C   STA $02  
+80869E   ASL
+80869F   STA $1900,X ;$4305 
+8086A2   INX 
+8086A3   LDA ($10),Y ;Y:00 = D0
+8086A5   INY ;+1     
+8086A6   STA $1900,X 
+8086A9   INX
+8086AA   LDA $00  
+8086AC   STA $1900,X  
+8086AF   INX
+8086B0   DEC $02  
+8086B2   BNE $8086A3  
+8086B4   STX $41  
+8086B6   LDA ($10),Y ;Y:00 = D1
+8086B8   BNE $8086BC  
+8086BA   PLD
+8086BB   RTL
+----------------   
+8086BC   INY
+8086BD   REP #$31 
+8086BF   TYA
+8086C0   ADC $10  
+8086C2   BRA $808678  
+--------sub start--------
+8086C4   PHD
+8086C5   ASL
+8086C6   TAX
+8086C7   REP #$20 
+8086C9   LDA #$0000   
+8086CC   TCD
+8086CD   LDA $D379,X  
+8086D0   STA $10  
+8086D2   SEP #$20 
+8086D4   LDY #$00 
+8086D6   LDX $41  
+8086D8   LDA #$80 
+8086DA   STA $1900,X  
+8086DD   INX
+8086DE   REP #$21 
+8086E0   LDA ($10),Y  
+8086E2   STA $1900,X  
+8086E5   ADC #$0020   
+8086E8   STA $13  
+8086EA   SEP #$20 
+8086EC   INY
+8086ED   INY
+8086EE   INX
+8086EF   INX
+8086F0   LDA ($10),Y  
+8086F2   INY
+8086F3   STA $00  
+8086F5   LDA ($10),Y  
+8086F7   INY
+8086F8   STA $02  
+8086FA   STA $04  
+8086FC   ASL
+8086FD   STA $1900,X  
+808700   INX
+808701   LDA ($10),Y  
+808703   INY
+808704   STA $1900,X  
+808707   INX
+808708   LDA $00  
+80870A   STA $1900,X  
+80870D   INX
+80870E   DEC $02  
+808710   BNE $808701  
+808712   STX $41  
+808714   LDA #$80 
+808716   STA $1900,X  
+808719   INX
+80871A   REP #$21 
+80871C   LDA $13  
+80871E   STA $1900,X  
+808721   SEP #$20 
+808723   INX
+808724   INX
+808725   LDA $04  
+808727   ASL
+808728   STA $1900,X  
+80872B   INX
+80872C   LDY #$04 
+80872E   LDA ($10),Y  
+808730   INY
+808731   CLC
+808732   ADC #$10 
+808734   STA $1900,X  
+808737   INX
+808738   LDA $00  
+80873A   STA $1900,X  
+80873D   INX
+80873E   DEC $04  
+808740   BNE $80872E  
+808742   STX $41  
+808744   PLD
+808745   RTL
+----------------   
+--------sub start--------
+808746   PHD
+808747   ASL
+808748   TAX
+808749   REP #$20 
+80874B   LDA #$0000   
+80874E   TCD
+80874F   LDA $D379,X  
+808752   STA $10  
+808754   SEP #$20 
+808756   LDY #$00 
+808758   LDX $41  
+80875A   LDA #$80 
+80875C   STA $1900,X  
+80875F   INX
+808760   REP #$21 
+808762   LDA ($10),Y  
+808764   STA $1900,X  
+808767   ADC #$0020   
+80876A   STA $13  
+80876C   SEP #$20 
+80876E   INY
+80876F   INY
+808770   INX
+808771   INX
+808772   LDA ($10),Y  
+808774   INY
+808775   STA $00  
+808777   LDA ($10),Y  
+808779   INY
+80877A   STA $02  
+80877C   STA $04  
+80877E   ASL
+80877F   ASL
+808780   STA $06  
+808782   STA $1900,X  
+808785   INX
+808786   LDA ($10),Y  
+808788   INY
+808789   STA $1900,X  
+80878C   INC
+80878D   STA $1902,X  
+808790   LDA $00  
+808792   STA $1901,X  
+808795   STA $1903,X  
+808798   INX
+808799   INX
+80879A   INX
+80879B   INX
+80879C   DEC $02  
+80879E   BNE $808786  
+8087A0   STX $41  
+8087A2   LDA #$80 
+8087A4   STA $1900,X  
+8087A7   INX
+8087A8   REP #$21 
+8087AA   LDA $13  
+8087AC   STA $1900,X  
+8087AF   SEP #$20 
+8087B1   INX
+8087B2   INX
+8087B3   LDA $06  
+8087B5   STA $1900,X  
+8087B8   INX
+8087B9   LDY #$04 
+8087BB   LDA ($10),Y  
+8087BD   INY
+8087BE   CLC
+8087BF   ADC #$10 
+8087C1   STA $1900,X  
+8087C4   INC
+8087C5   STA $1902,X  
+8087C8   LDA $00  
+8087CA   STA $1901,X  
+8087CD   STA $1903,X  
+8087D0   INX
+8087D1   INX
+8087D2   INX
+8087D3   INX
+8087D4   DEC $04  
+8087D6   BNE $8087BB  
+8087D8   STX $41  
+8087DA   PLD
+8087DB   RTL
+----------------   
+--------sub start--------
+8087DC   PHP
+8087DD   SEP #$30 
+8087DF   LDX $0041
+8087E2   LDA #$80 
+8087E4   STA $1900,X  
+8087E7   LDA $0010
+8087EA   STA $1901,X  
+8087ED   LDA $0011
+8087F0   STA $1902,X  
+8087F3   LDA #$02 
+8087F5   STA $1903,X  
+8087F8   LDA $0000
+8087FB   AND #$0F 
+8087FD   TAY
+8087FE   LDA $80A8,Y  
+808801   STA $1904,X  
+808804   LDA #$20 
+808806   STA $1905,X  
+808809   TXA
+80880A   CLC
+80880B   ADC #$06 
+80880D   STA $0041
+808810   PLP
+808811   RTL
+----------------   
+--------sub start--------
+808812   PHP
+808813   SEP #$30 
+808815   LDX $0041
+808818   LDA #$80 
+80881A   STA $1900,X  
+80881D   LDA $0010
+808820   STA $1901,X  
+808823   LDA $0011
+808826   STA $1902,X  
+808829   LDA #$04 
+80882B   STA $1903,X  
+80882E   LDA $0000
+808831   LSR
+808832   LSR
+808833   LSR
+808834   LSR
+808835   TAY
+808836   LDA $80A8,Y  
+808839   STA $1904,X  
+80883C   LDA $0000
+80883F   AND #$0F 
+808841   TAY
+808842   LDA $80A8,Y  
+808845   STA $1906,X  
+808848   LDA #$20 
+80884A   STA $1905,X  
+80884D   STA $1907,X  
+808850   TXA
+808851   CLC
+808852   ADC #$08 
+808854   STA $0041
+808857   PLP
+808858   RTL
+----------------   
+GetRandomInt:
+808859   REP #$20 
+80885B   LDA $1A58
+80885E   ASL
+80885F   CLC
+808860   ADC $1A58
+808863   STA $0000
+808866   SEP #$20 
+808868   XBA
+808869   CLC
+80886A   ADC $1A58
+80886D   STA $1A58
+808870   STA $0000
+808873   LDA $0001
+808876   STA $1A59
+808879   RTL
+----------------   
+--------unidentified--------
+80887A  .db $AE $41 $00 $A9 $80 $9D $00 $19
+808882  .db $AD $10 $00 $9D $01 $19 $AD $11
+80888A  .db $00 $9D $02 $19 $A9 $02 $9D $03
+808892  .db $19 $A9 $6D $9D $04 $19 $A9 $20
+80889A  .db $9D $05 $19 $8A $18 $69 $06 $8D
+8088A2  .db $41 $00 $6B $AE $41 $00 $A9 $80
+8088AA  .db $9D $00 $19 $AD $10 $00 $9D $01
+8088B2  .db $19 $AD $11 $00 $9D $02 $19 $A9
+8088BA  .db $02 $9D $03 $19 $A9 $20 $9D $04
+8088C2  .db $19 $9E $05 $19 $8A $18 $69 $06
+8088CA  .db $8D $41 $00 $6B
+----------------   
+
+;????
+;B9 is sprite ID being ran? i think?
+
+SpriteSaveDirectPage:
+{
+8088CE   LDA $00B9
+8088D1   ASL
+8088D2   TAX
+8088D3   TDC
+8088D4   STA $1240,X  
+8088D7   XBA
+8088D8   STA $1241,X  
+8088DB   INC $00B9
+8088DE   RTL
+}
+;
+
+
+8088DF   LDA $00BC
+8088E2   ASL
+8088E3   TAX
+8088E4   TDC
+8088E5   STA $1360,X  
+8088E8   XBA
+8088E9   STA $1361,X  
+8088EC   INC $00BC
+8088EF   RTL
+
+
+8088F0   LDA $7FF800,X
+8088F4   STA $1400,X  
+8088F7   LDA $7FF820,X
+8088FB   STA $1420,X  
+8088FE   TXY
+8088FF   LDA $0040
+808902   AND #$00FF   
+808905   TAX
+808906   REP #$21 
+808908   TYA
+808909   ADC #$5000   
+80890C   STA $1801,X  
+80890F   ADC #$0020   
+808912   STA $1809,X  
+808915   LDA #$0004   
+808918   STA $1803,X  
+80891B   STA $180B,X  
+80891E   LDA #$80A7   
+808921   STA $1805,X  
+808924   STA $180D,X  
+808927   SEP #$21 
+808929   LDA #$09 
+80892B   STA $1800,X  
+80892E   STA $1808,X  
+808931   LDA #$83 
+808933   STA $1807,X  
+808936   STA $180F,X  
+808939   TXA
+80893A   ADC #$0F 
+80893C   STA $0040
+80893F   REP #$20 
+808941   RTL
+----------------   
+--------sub start--------
+808942   STY $0000
+808945   STA $0001
+808948   LDA $00B7
+80894B   LSR
+80894C   REP #$31 
+80894E   AND #$00FF   
+808951   ADC $0000
+808954   TAY
+808955   SEP #$20 
+808957   LDA $00B7
+80895A   LSR
+80895B   LDA $0000,Y  
+80895E   BCC $808964  
+808960   LSR
+808961   LSR
+808962   LSR
+808963   LSR
+808964   AND #$0F 
+808966   ORA #$31 
+808968   STA $1B  
+80896A   SEP #$10 
+80896C   RTL
+----------------   
+--------sub start--------
+80896D   STY $0010
+808970   STA $0011
+808973   LDA $00B7
+808976   TAY
+808977   AND #$07 
+808979   TAX
+80897A   TYA
+80897B   LSR
+80897C   LSR
+80897D   LSR
+80897E   REP #$31 
+808980   AND #$00FF   
+808983   ADC $0010
+808986   TAY
+808987   SEP #$20 
+808989   LDA $0002,Y  
+80898C   BIT $8286,X  
+80898F   BEQ $808998  
+808991   REP #$20 
+808993   INC $0010
+808996   SEP #$20 
+808998   LDX $0010
+80899B   LDA $0000,X  
+80899E   STA $1B  
+8089A0   SEP #$10 
+8089A2   RTL
+
+
+;Animation Timer Alternative
+FrameAnimationNoTimer:
+8089A3   XBA
+8089A4   TYA
+8089A5   REP #$30 
+8089A7   BRA $8089C8  
+
+
+;Animation Timer (After investigation seems to contains only TILE data for OAM)
+;How it works
+;Read a word address from $06-$07
+;First Byte is indicating the number of bytes to skip+3
+;2nd Byte is indicating Timer, if bit 7 is setted will
+;read 2 next bytes as an address to put in $06-$07
+;I am guessing the bytes skipped are data read by the sprite somewhere else
+
+;Snake Animation (839831) : 
+;(00)  03 0A 4F   00 0C 1C
+;(01)  04 0A 4F   02 1D 20 0D
+;(02)  03 8A 4F   04 30 21 [31 98]<- return to (00)
+
+;Edgehog Animation (839637) :
+;(00)  05 04 2E   20 22 23 24 1D
+;(01)  05 04 2D   20 32 33 34 1D
+;(02)  05 04 2E   20 25 26 35 1D
+;(03)  05 84 2D   20 32 33 34 1D [37 96]<- return to (00)
+
+;Fish animation (83ACBD)
+;(00)  01 05 55   06
+;(01)  01 05 9A   06
+;(02)  01 05 55   06
+;(03)  01 05 55   0A
+;(04)  01 05 55   08
+;(05)  01 05 9A   0C
+;(06)  01 85 55   0C [D5 AC]<- goto (07)
+;83ACD5
+;(07)  01 85 55 0C [D5 AC]<- goto (07)
+
+;Pirate Flag Animation (83ACE3)
+;(00)  05 0A CC   06 08 24 34 25 
+;(01)  05 0A CC   0A 0C 24 34 25 
+;(02)  05 0A CC   20 22 24 34 25 
+;(03)  05 8A CC   0A 0C 24 34 25 [EF AC]<- return to (00)
+
+
+;this is a generic code used by alots of sprites
+
+FrameAnimationAlt:
+8089A9   DEC $08 ;Timer?
+8089AB   BNE $8089D6 
+8089AD   REP #$31 
+8089AF   LDY $06 ;Load Position in Frame Array?
+8089B1   LDA $0000,Y ;Load Byte1 of Frame Array
+8089B4   AND #$00FF ;And FF (03)
+8089B7   ADC #$0003 ;ADC #$0003 (06)
+8089BA   ADC $06 ;ADC Position so Position+06
+8089BC   TAX ;Put it in X
+8089BD   LDA $0001,Y ;Load Byte2 of Frame Array
+8089C0   BIT #$0080 ;if bit 7 is unsetted skip loading byte1 (+6 position)
+8089C3   BEQ $8089C9
+8089C5   LDA $0000,X ;otherwise load byte1 and 2 (0A04)
+8089C8   TAX ;put that in X
+
+8089C9   STX $06 ;store new position in $06
+
+8089CB   SEP #$20 
+8089CD   LDA $0001,X 
+8089D0   AND #$7F 
+8089D2   STA $08 ;store byte2 in $08 (0A) ;Timer
+8089D4   SEP #$10 
+8089D6   RTL
+
+
+;Routine that is used alots in the game TODO *MIGHT BE SPAWN ITEM/SPRITE ROUTINE*
+8089D7   XBA
+8089D8   TYA
+8089D9   REP #$30
+8089DB   JMP $89FD
+--------sub start--------
+8089DE   DEC $08  
+8089E0   BNE $808A52  
+8089E2   REP #$31 
+8089E4   LDY $06  
+8089E6   LDA $0000,Y  
+8089E9   AND #$00FF   
+8089EC   ADC #$0004   
+8089EF   ADC $06  
+8089F1   TAX
+8089F2   LDA $0001,Y  
+8089F5   BIT #$0080   
+8089F8   BEQ $8089FE  
+8089FA   LDA $0000,X
+
+8089FD   TAX
+8089FE   STX $06 ;$0106   
+808A00   SEP #$20 
+808A02   LDA $0001,X  
+808A05   AND #$7F 
+808A07   STA $08 ;$0108
+808A09   REP #$21 
+808A0B   LDA $0000,X  
+808A0E   AND #$00FF   
+808A11   ADC #$0003   
+808A14   ADC $06 
+808A16   TAX
+808A17   SEP #$20 
+808A19   LDA $0000,X  
+808A1C   STA $23 ;Setting the address $0123 ?
+808A1E   SEP #$10 
+808A20   RTL
+----------------   
+--------sub start--------
+808A21   LDA $23  
+808A23   BRA $808A2B  
+--------sub start--------
+808A25   LDA $23  
+808A27   CMP $24  
+808A29   BEQ $808A52  
+808A2B   STA $24  
+808A2D   LDX $22  
+808A2F   LDY $0043
+808A32   REP #$31 
+808A34   LDA $23  
+808A36   AND #$00FF   
+808A39   ADC $C6A9,X  
+808A3C   TAX
+808A3D   LDA $C6A9,X  
+808A40   STA $1380,Y  
+808A43   LDA $20  
+808A45   STA $1382,Y  
+808A48   SEP #$31 
+808A4A   TYA
+808A4B   ADC #$03 
+808A4D   AND #$7F 
+808A4F   STA $0043
+808A52   RTL
+----------------   
+--------sub start--------
+808A53   REP #$21 
+808A55   LDA $1A  
+808A57   AND #$01FF   
+808A5A   ASL
+808A5B   ASL
+808A5C   ASL
+808A5D   ASL
+808A5E   ORA #$6000   
+808A61   STA $20  
+808A63   SEP #$20 
+808A65   RTL
+----------------   
+--------sub start--------
+808A66   LDA $11  
+808A68   LSR
+808A69   LSR
+808A6A   LSR
+808A6B   STA $0002
+808A6E   STZ $0003
+808A71   REP #$30 
+808A73   LDA $14  
+808A75   AND #$00F8   
+808A78   ASL
+808A79   ASL
+808A7A   ADC $0002
+808A7D   TAX
+808A7E   SEP #$20 
+808A80   LDA $1400,X  
+808A83   SEP #$10 
+808A85   RTL
+----------------   
+--------sub start--------
+808A86   LDA $000A
+808A89   LSR
+808A8A   LSR
+808A8B   LSR
+808A8C   STA $0002
+808A8F   STZ $0003
+808A92   REP #$30 
+808A94   LDA $000C
+808A97   AND #$00F8   
+808A9A   ASL
+808A9B   ASL
+808A9C   ADC $0002
+808A9F   TAX
+808AA0   SEP #$20 
+808AA2   LDA $1400,X  
+808AA5   SEP #$10 
+808AA7   RTL
+----------------   
+--------sub start--------
+808AA8   LDA $11  
+808AAA   LSR
+808AAB   LSR
+808AAC   LSR
+808AAD   STA $0002
+808AB0   STZ $0003
+808AB3   REP #$30 
+808AB5   LDA $14  
+808AB7   AND #$00F8   
+808ABA   ASL
+808ABB   ASL
+808ABC   ADC $0002
+808ABF   TAX
+808AC0   SEP #$20 
+808AC2   LDA $1400,X  
+808AC5   SEP #$10 
+808AC7   TAY
+808AC8   AND #$F0 
+808ACA   CMP #$70 
+808ACC   BNE $808AD5  
+808ACE   TYA
+808ACF   AND #$01 
+808AD1   BEQ $808AD6  
+808AD3   STA $0C  
+808AD5   RTL
+----------------   
+--------unidentified--------
+808AD6  .db $64 $0C $6B $AD $00 $01 $3A $D0
+808ADE  .db $09 $AD $80 $01 $3A $F0 $08 $64
+808AE6  .db $26 $6B $A9 $80 $85 $26 $6B $AD
+808AEE  .db $57 $1A $85 $26 $49 $80 $8D $57
+808AF6  .db $1A $6B $A5 $26 $D0 $0A $AD $00
+808AFE  .db $01 $D0 $04 $A9 $80 $85 $26 $6B
+808B06  .db $AD $80 $01 $D0 $02 $64 $26 $6B
+----------------   
+--------sub start--------
+;D = 0B00 / X = 0100 (probably player id)
+808B0E   REP #$20 
+808B10   LDA $0011,X  ; $0111 X Low Position
+808B13   SEC
+808B14   SBC $11  
+808B16   STA $0006
+808B19   LDA $0014,X  ; $0114 Y Low Position
+808B1C   SEC
+808B1D   SBC $14
+808B1F   STA $0008
+808B22   SEP #$20 
+808B24   STZ $0004
+808B27   LDX #$0000   
+808B2A   LDY $0006 ; WRam?
+808B2D   BNE $808B34  
+808B2F   LDX #$0004   
+808B32   BRA $808B4B  
+808B34   LDY $0008 ; WRam?
+808B37   BNE $808B3E  
+808B39   LDX #$0006   
+808B3C   BRA $808B4B  
+808B3E   LDY $0006 ; WRam?
+808B41   BPL $808B4B  
+808B43   LDX #$0002   
+808B46   LDA #$10 
+808B48   STA $0004 ; WRam?
+808B4B   JSR ($8BD6,X)
+808B4E   REP #$20 
+808B50   LDA $0008
+808B53   BPL $808B5C  
+808B55   EOR #$FFFF   
+808B58   INC
+808B59   STA $0008
+808B5C   LDA $0006
+808B5F   BPL $808B68  
+808B61   EOR #$FFFF   
+808B64   INC
+808B65   STA $0006
+808B68   CMP $0008
+808B6B   BCS $808B80  
+808B6D   LDA $0006
+808B70   STA $000A
+808B73   LDA $0008
+808B76   STA $0006
+808B79   LDA $000A
+808B7C   STA $0008
+808B7F   SEC
+808B80   STZ $0000
+808B83   LDA $0006
+808B86   SBC $0008
+808B89   STA $0006
+808B8C   LDA $0006
+808B8F   BMI $808BBB  
+808B91   SBC $0008
+808B94   STA $0006
+808B97   LDA $0006
+808B9A   BMI $808BBB  
+808B9C   INC $0000
+808B9F   SBC $0008
+808BA2   STA $0006
+808BA5   LDA $0006
+808BA8   BMI $808BBB  
+808BAA   INC $0000
+808BAD   SBC $0008
+808BB0   STA $0006
+808BB3   LDA $0006
+808BB6   BMI $808BBB  
+808BB8   INC $0000
+808BBB   SEP #$31 
+808BBD   LDA $0004
+808BC0   AND #$04 
+808BC2   BNE $808BCC  
+808BC4   LDA #$03 
+808BC6   SBC $0000
+808BC9   STA $0000
+808BCC   LDA $0000
+808BCF   CLC
+808BD0   ADC $0004
+808BD3   AND #$1F 
+808BD5   RTL
+
+
+808BD6
+dw $8BDE 
+dw $8C36
+dw $8C87
+dw $8C96
+
+808BDE   LDY $0008
+808BE1   BMI $808BEE  
+808BE3   LDA $0004
+808BE6   ORA #$08 
+808BE8   STA $0004
+808BEB   LDX #$0002   
+808BEE   JMP ($8BF1,X)
+   
+808BF1 
+dw $8BF5 
+dw $8C17
+
+808BF5   REP #$20 
+808BF7   LDA $0008
+808BFA   EOR #$FFFF   
+808BFD   INC
+808BFE   STA $0008
+808C01   TAY
+808C02   SEP #$20 
+808C04   CPY $0006
+808C07   BEQ $808C0E  
+808C09   CPY $0006
+808C0C   BCS $808C16  
+808C0E   LDA $0004
+808C11   ORA #$04 
+808C13   STA $0004
+808C16   RTS
+----------------   
+808C17   LDY $0006
+808C1A   CPY $0008
+808C1D   BEQ $808C2D  
+808C1F   CPY $0008
+808C22   BCC $808C2D  
+808C24   LDA $0004
+808C27   ORA #$08 
+808C29   STA $0004
+808C2C   RTS
+----------------   
+808C2D   LDA $0004
+808C30   ORA #$0C 
+808C32   STA $0004
+808C35   RTS
+----------------   
+--------sub start--------
+808C36   LDX #$0000   
+808C39   LDY $0008
+808C3C   BPL $808C49  
+808C3E   LDA $0004
+808C41   ORA #$08 
+808C43   STA $0004
+808C46   LDX #$0002   
+808C49   JMP ($8C4C,X)
+--------data--------     
+808C4C  .db $50 $8C $6D $8C
+----------------   
+808C50   REP #$20 
+808C52   LDA $0006
+808C55   EOR #$FFFF   
+808C58   INC
+808C59   STA $0006
+808C5C   TAY
+808C5D   SEP #$20 
+808C5F   CPY $0008
+808C62   BCC $808C6C  
+808C64   LDA $0004
+808C67   ORA #$04 
+808C69   STA $0004
+808C6C   RTS
+----------------   
+808C6D   LDY $0006
+808C70   CPY $0008
+808C73   BCS $808C7E  
+808C75   LDA $0004
+808C78   ORA #$08 
+808C7A   STA $0004
+808C7D   RTS
+----------------   
+808C7E   LDA $0004
+808C81   ORA #$0C 
+808C83   STA $0004
+808C86   RTS
+----------------   
+--------sub start--------
+808C87   LDY $0008
+808C8A   BPL $808C90  
+808C8C   STZ $0004
+808C8F   RTS
+----------------   
+808C90   LDA #$10 
+808C92   STA $0004
+808C95   RTS
+----------------   
+--------sub start--------
+808C96   LDY $0006
+808C99   BPL $808CA1  
+808C9B   LDA #$18 
+808C9D   STA $0004
+808CA0   RTS
+----------------   
+808CA1   LDA #$08 
+808CA3   STA $0004
+808CA6   RTS
+----------------   
+--------sub start--------
+808CA7   PEA #$837F   
+808CAA   PLB
+808CAB   REP #$31 
+808CAD   LDX #$E000   
+808CB0   STZ $0000,X  
+808CB3   STZ $0002,X  
+808CB6   STZ $0004,X  
+808CB9   STZ $0006,X  
+808CBC   STZ $0008,X  
+808CBF   STZ $000A,X  
+808CC2   STZ $000C,X  
+808CC5   STZ $000E,X  
+808CC8   TXA
+808CC9   ADC #$0010   
+808CCC   TAX
+808CCD   CMP #$E700   
+808CD0   BCC $808CB0  
+808CD2   SEP #$30 
+808CD4   PLB
+808CD5   RTS
+----------------   
+--------sub start--------
+808CD6   PEA #$837F   
+808CD9   PLB
+808CDA   REP #$31 
+808CDC   LDX #$E800   
+808CDF   STZ $0000,X  
+808CE2   STZ $0002,X  
+808CE5   STZ $0004,X  
+808CE8   STZ $0006,X  
+808CEB   STZ $0008,X  
+808CEE   STZ $000A,X  
+808CF1   STZ $000C,X  
+808CF4   STZ $000E,X  
+808CF7   TXA
+808CF8   ADC #$0010   
+808CFB   TAX
+808CFC   CMP #$F000   
+808CFF   BCC $808CDF  
+808D01   SEP #$30 
+808D03   PLB
+808D04   RTS
+----------------   
+--------sub start--------
+808D05   ASL
+808D06   TAY
+808D07   REP #$30 
+808D09   LDA #$0009   
+808D0C   STA $0000
+808D0F   LDX $827A,Y  
+808D12   LDY $0010
+808D15   PEA #$837F   
+808D18   PLB
+808D19   CLC
+808D1A   LDA $0000,X  
+808D1D   STA $0000,Y  
+808D20   LDA $0002,X  
+808D23   STA $0002,Y  
+808D26   LDA $0004,X  
+808D29   STA $0004,Y  
+808D2C   LDA $0006,X  
+808D2F   STA $0006,Y  
+808D32   LDA $0008,X  
+808D35   STA $0008,Y  
+808D38   LDA $000A,X  
+808D3B   STA $000A,Y  
+808D3E   LDA $000C,X  
+808D41   STA $000C,Y  
+808D44   LDA $000E,X  
+808D47   STA $000E,Y  
+808D4A   LDA $0010,X  
+808D4D   STA $0010,Y  
+808D50   LDA $0012,X  
+808D53   STA $0012,Y  
+808D56   LDA $0014,X  
+808D59   STA $0014,Y  
+808D5C   LDA $0016,X  
+808D5F   STA $0016,Y  
+808D62   TXA
+808D63   ADC #$0040   
+808D66   TAX
+808D67   TYA
+808D68   ADC #$0040   
+808D6B   TAY
+808D6C   LDA $000000  
+808D70   DEC
+808D71   STA $000000  
+808D75   BNE $808D1A  
+808D77   PLB
+808D78   SEP #$30 
+808D7A   RTL
+
+;Set A DMA ? for a 16x16 tile object it seems ?
+808D7B   REP #$20 
+808D7D   AND #$00FF   
+808D80   ASL
+808D81   ASL
+808D82   ASL
+808D83   LDY $0040 ;Get DMA Count
+808D86   REP #$11 
+808D88   TAX
+808D89   LDA #$0004 ; 4 size (2 tiles)
+808D8C   STA $1803,Y ; $4305
+808D8F   STA $180B,Y ; $4305
+808D92   LDA $0010   ; Address Location of the star tile
+808D95   STA $1801,Y ; $2116
+808D98   ADC #$0020   
+808D9B   STA $1809,Y ; $2116 
+808D9E   TXA
+808D9F   CLC
+808DA0   ADC #$80E0  ; Source Address
+808DA3   STA $1805,Y ; $4302
+808DA6   ADC #$0004   
+808DA9   STA $180D,Y ; $4302  
+808DAC   SEP #$20 
+808DAE   LDA #$83    ; Source Bank
+808DB0   STA $1807,Y ; $4304  
+808DB3   STA $180F,Y ; $4304    
+808DB6   SEP #$11 
+808DB8   LDA #$01    ; DMA Mode
+808DBA   STA $1800,Y ; $4300
+808DBD   STA $1808,Y ; $4300   
+808DC0   TYA
+808DC1   ADC #$0F 
+808DC3   STA $0040 ; reincrease the position of the DMA buffer
+808DC6   RTL
+
+
+;Set A DMA ? for Something tile object it seems ?
+808DC7   LDY $0040
+808DCA   REP #$31 
+808DCC   LDA #$0008   
+808DCF   STA $1803,Y  
+808DD2   STA $180B,Y  
+808DD5   STA $1813,Y  
+808DD8   LDA $0010
+808DDB   STA $1801,Y  
+808DDE   ADC #$0020   
+808DE1   STA $1809,Y  
+808DE4   ADC #$0020   
+808DE7   STA $1811,Y  
+808DEA   TXA
+808DEB   CLC
+808DEC   ADC #$824A   
+808DEF   STA $1805,Y  
+808DF2   ADC #$0008   
+808DF5   STA $180D,Y  
+808DF8   ADC #$0008   
+808DFB   STA $1815,Y  
+808DFE   SEP #$20 
+808E00   LDA #$83 
+808E02   STA $1807,Y  
+808E05   STA $180F,Y  
+808E08   STA $1817,Y  
+808E0B   SEP #$11 
+808E0D   LDA #$01 
+808E0F   STA $1800,Y  
+808E12   STA $1808,Y  
+808E15   STA $1810,Y  
+808E18   TYA
+808E19   ADC #$17 
+808E1B   STA $0040
+808E1E   RTL
+----------------   
+--------unidentified--------
+808E1F  .db $0A $AA $AC $40 $00 $C2 $31 $A9
+808E27  .db $02 $00 $99 $03 $18 $AD $10 $00
+808E2F  .db $99 $01 $18 $8A $69 $F8 $81 $99
+808E37  .db $05 $18 $E2 $20 $A9 $83 $99 $07
+808E3F  .db $18 $E2 $11 $A9 $01 $99 $00 $18
+808E47  .db $98 $69 $07 $8D $40 $00 $6B $0A
+808E4F  .db $0A $AA $AC $40 $00 $C2 $31 $A9
+808E57  .db $04 $00 $99 $03 $18 $AD $10 $00
+808E5F  .db $99 $01 $18 $8A $69 $FE $81 $99
+808E67  .db $05 $18 $E2 $20 $A9 $83 $99 $07
+808E6F  .db $18 $E2 $11 $A9 $01 $99 $00 $18
+808E77  .db $98 $69 $07 $8D $40 $00 $6B
+----------------   
+--------sub start--------
+808E7E   LDY $0040
+808E81   REP #$31 
+808E83   LDA #$0008   
+808E86   STA $1803,Y  
+808E89   STA $180B,Y  
+808E8C   STA $1813,Y  
+808E8F   STA $181B,Y  
+808E92   LDA $0010
+808E95   STA $1801,Y  
+808E98   ADC #$0020   
+808E9B   STA $1809,Y  
+808E9E   ADC #$0020   
+808EA1   STA $1811,Y  
+808EA4   ADC #$0020   
+808EA7   STA $1819,Y  
+808EAA   TXA
+808EAB   CLC
+808EAC   ADC #$820A   
+808EAF   STA $1805,Y  
+808EB2   ADC #$0008   
+808EB5   STA $180D,Y  
+808EB8   ADC #$0008   
+808EBB   STA $1815,Y  
+808EBE   ADC #$0008   
+808EC1   STA $181D,Y  
+808EC4   SEP #$31 
+808EC6   LDA #$83 
+808EC8   STA $1807,Y  
+808ECB   STA $180F,Y  
+808ECE   STA $1817,Y  
+808ED1   STA $181F,Y  
+808ED4   LDA #$01 
+808ED6   STA $1800,Y  
+808ED9   STA $1808,Y  
+808EDC   STA $1810,Y  
+808EDF   STA $1818,Y  
+808EE2   TYA
+808EE3   ADC #$1F 
+808EE5   STA $0040
+808EE8   RTL
+----------------   
+--------sub start--------
+808EE9   LDA $119B
+808EEC   BEQ $808EFA  
+808EEE   DEC
+808EEF   STA $119B
+808EF2   TAY
+808EF3   LDA $119C,Y  
+808EF6   STA $1A  
+808EF8   CLC
+808EF9   RTL
+----------------   
+--------unidentified--------
+808EFA  .db $38 $6B  
+----------------   
+--------sub start--------
+808EFC   LDA $1190
+808EFF   BEQ $808F0D  
+808F01   DEC
+808F02   STA $1190
+808F05   TAY
+808F06   LDA $1191,Y  
+808F09   STA $1A  
+808F0B   CLC
+808F0C   RTL
+----------------   
+--------unidentified--------
+808F0D  .db $38 $6B  
+
+
+
+808F0F   LDY $119B
+808F12   LDA $1A    ;OAM Address 
+808F14   STA $119C,Y
+808F17   INY
+808F18   STY $119B ;i think this is related to the VRAM slot used by the pirate
+808F1B   INC $00FB ;Increment pirate kill count
+
+;Kill the Current sprite?
+KillSprite:
+808F1E   STZ $00  
+808F20   STZ $01  
+808F22   STZ $02  
+808F24   STZ $03  
+808F26   STZ $04  
+808F28   STZ $05  
+808F2A   STZ $16  
+808F2C   STZ $17  
+808F2E   RTL
+
+;????
+808F2F  LDY $119B
+808F32  LDA $1A
+808F34  STA $119C,Y
+808F37  INY 
+808F38  STY $119B
+
+;Kill Item routine?
+KillItem:
+808F3B   STZ $00  
+808F3D   STZ $01  
+808F3F   STZ $02  
+808F41   STZ $03  
+808F43   STZ $04  
+808F45   STZ $05  
+808F47   STZ $16  
+808F49   STZ $17  
+808F4B   RTL
+----------------   
+--------sub start--------
+808F4C   LDY $1190
+808F4F   LDA $1A  
+808F51   STA $1191,Y  
+808F54   INY
+808F55   STY $1190
+808F58   REP #$20 
+808F5A   STZ $00  
+808F5C   STZ $02  
+808F5E   STZ $04  
+808F60   STZ $10  
+808F62   STZ $12  
+808F64   STZ $14  
+808F66   STZ $16  
+808F68   STZ $2E  
+808F6A   STZ $30  
+808F6C   SEP #$20 
+808F6E   STZ $2D  
+808F70   STZ $0C  
+808F72   RTL
+
+GetNextEmptySprite:
+{
+808F73   REP #$10 
+808F75   LDX #$0200   
+808F78   LDA $0000,X  
+808F7B   BEQ $808F8C ;If sprite0 byte1 == 0 return
+808F7D   REP #$21 
+808F7F   TXA
+808F80   ADC #$0050   
+808F83   TAX
+808F84   CMP #$0980   
+808F87   SEP #$20 
+808F89   BCC $808F78  
+808F8B   RTL
+
+808F8C   CLC
+808F8D   RTL
+}
+
+GetNextEmptyLiftableSprite:
+{
+808F8E   REP #$10 
+808F90   LDX #$0B00   
+808F93   LDA $0000,X  
+808F96   BEQ $808FA7  
+808F98   REP #$21 
+808F9A   TXA
+808F9B   ADC #$0040   
+808F9E   TAX
+808F9F   CMP #$0D80   
+808FA2   SEP #$20 
+808FA4   BCC $808F93  
+808FA6   RTL
+
+808FA7   CLC
+808FA8   RTL
+}
+
+GetNextEmptySomething: ;TODO
+{
+808FA9   REP #$10 
+808FAB   LDX #$0A00   
+808FAE   LDA $0000,X  
+808FB1   BEQ $808FC2  
+808FB3   REP #$21 
+808FB5   TXA
+808FB6   ADC #$0020   
+808FB9   TAX
+808FBA   CMP #$0AC0   
+808FBD   SEP #$20 
+808FBF   BCC $808FAE  
+808FC1   RTL
+
+808FC2   CLC
+808FC3   RTL
+}
+
+808FC4   JSR $9000
+808FC7   JSR $905F
+808FCA   JSR $9085
+808FCD   JSR $90D2
+808FD0   JSR $90AB
+808FD3   JSR $9119
+808FD6   JSR $9141
+808FD9   JSR $915D
+808FDC   LDA #$01 
+808FDE   STA $1100
+808FE1   STA $1101
+808FE4   STZ $1110
+808FE7   STA $1111
+808FEA   REP #$20 
+808FEC   LDA #$AAEA   
+808FEF   STA $1102
+808FF2   STZ $F8  
+808FF4   STZ $FA  
+808FF6   STZ $FC  
+808FF8   STZ $FE  
+808FFA   SEP #$20 
+808FFC   STZ $1A4F
+808FFF   RTS
+----------------   
+--------sub start--------
+809000   REP #$10 
+809002   STZ $00  
+809004   LDX #$0200   
+809007   LDA #$04 
+809009   STA $09,X
+80900B   LDA $00  
+80900D   STA $25,X
+80900F   INC $00  
+809011   REP #$21 
+809013   STZ $00,X
+809015   STZ $02,X
+809017   STZ $04,X
+809019   STZ $10,X
+80901B   STZ $12,X
+80901D   STZ $14,X
+80901F   STZ $16,X
+809021   TXA
+809022   ADC #$0050   
+809025   TAX
+809026   CMP #$0980   
+809029   SEP #$20 
+80902B   BCC $809007  
+80902D   SEP #$10 
+80902F   LDA #$04 
+809031   STA $119B
+809034   LDA #$00 
+809036   STA $119F
+809039   LDA #$06 
+80903B   STA $119E
+80903E   LDA #$20 
+809040   STA $119D
+809043   LDA #$26 
+809045   STA $119C
+809048   REP #$20 
+80904A   STZ $1200
+80904D   STZ $1202
+809050   STZ $1204
+809053   STZ $1220
+809056   STZ $1222
+809059   STZ $1224
+80905C   SEP #$20 
+80905E   RTS
+----------------   
+--------sub start--------
+80905F   REP #$10 
+809061   LDX #$0A00   
+809064   LDA #$06 
+809066   STA $09,X
+809068   REP #$21 
+80906A   STZ $00,X
+80906C   STZ $02,X
+80906E   STZ $04,X
+809070   STZ $10,X
+809072   STZ $12,X
+809074   STZ $14,X
+809076   TXA
+809077   ADC #$0020   
+80907A   TAX
+80907B   CMP #$0AC0   
+80907E   SEP #$20 
+809080   BCC $809064  
+809082   SEP #$10 
+809084   RTS
+----------------   
+--------sub start--------
+809085   REP #$10 
+809087   LDX #$1040   
+80908A   LDA #$08 
+80908C   STA $09,X
+80908E   REP #$21 
+809090   STZ $00,X
+809092   STZ $02,X
+809094   STZ $04,X
+809096   STZ $10,X
+809098   STZ $12,X
+80909A   STZ $14,X
+80909C   TXA
+80909D   ADC #$0020   
+8090A0   TAX
+8090A1   CMP #$1100   
+8090A4   SEP #$20 
+8090A6   BCC $80908A  
+8090A8   SEP #$10 
+8090AA   RTS
+----------------   
+--------sub start--------
+8090AB   REP #$30 
+8090AD   STZ $0D80
+8090B0   STZ $0D82
+8090B3   STZ $0D84
+8090B6   STZ $0DC0
+8090B9   STZ $0DC2
+8090BC   STZ $0DC4
+8090BF   SEP #$30 
+8090C1   LDA #$02 
+8090C3   STA $0D89
+8090C6   STA $0DC9
+8090C9   LDA #$80 
+8090CB   STZ $0D8A
+8090CE   STA $0DCA
+8090D1   RTS
+----------------   
+--------sub start--------
+8090D2   REP #$10 
+8090D4   STZ $00  
+8090D6   LDX #$0B00   
+8090D9   LDA $00  
+8090DB   STA $0025,X  
+8090DE   INC $00  
+8090E0   LDA #$0A 
+8090E2   STA $09,X
+8090E4   REP #$21 
+8090E6   STZ $00,X
+8090E8   STZ $02,X
+8090EA   STZ $04,X
+8090EC   STZ $10,X
+8090EE   STZ $12,X
+8090F0   STZ $14,X
+8090F2   STZ $16,X
+8090F4   STZ $0C,X
+8090F6   STZ $2D,X
+8090F8   STZ $30,X
+8090FA   TXA
+8090FB   ADC #$0040   
+8090FE   TAX
+8090FF   CMP #$0D80   
+809102   SEP #$20 
+809104   BCC $8090D9  
+809106   SEP #$10 
+809108   LDA #$0A 
+80910A   STA $1190
+80910D   DEC
+80910E   TAX
+80910F   LDA $828E,X  
+809112   STA $1191,X  
+809115   DEX
+809116   BPL $80910F  
+809118   RTS
+
+;Kill Item?
+809119   REP #$10 
+80911B   LDX #$0E00   
+80911E   LDA #$10 
+809120   STA $09,X
+809122   REP #$21 
+809124   STZ $00,X
+809126   STZ $02,X
+809128   STZ $04,X
+80912A   STZ $0A,X
+80912C   STZ $10,X
+80912E   STZ $12,X
+809130   STZ $14,X
+809132   TXA
+809133   ADC #$0020   
+809136   TAX
+809137   CMP #$1000   
+80913A   SEP #$20 
+80913C   BCC $80911E  
+80913E   SEP #$10 
+809140   RTS
+----------------   
+--------sub start--------
+809141   STZ $1000
+809144   REP #$30 
+809146   LDX #$1000   
+809149   LDY #$1001   
+80914C   LDA #$003E   
+80914F   MVN $83,$83  
+809152   SEP #$30 
+809154   LDA #$0C 
+809156   STA $1009
+809159   STA $1029
+80915C   RTS
+----------------   
+--------sub start--------
+80915D   STZ $0AC0
+809160   REP #$30 
+809162   LDX #$0AC0   
+809165   LDY #$0AC1   
+809168   LDA #$003E   
+80916B   MVN $83,$83  
+80916E   SEP #$30 
+809170   STZ $0AC0
+809173   STZ $0AE0
+809176   LDA #$0E 
+809178   STA $0AC9
+80917B   STA $0AE9
+80917E   RTS
+----------------   
+--------sub start--------
+80917F   LDX #$00 
+809181   STZ $1170,X  
+809184   INX
+809185   CPX #$20 
+809187   BCC $809181  
+809189   JSL $80E50B  
+80918D   REP #$20 
+80918F   STZ $1144 ;Clear Locked Doors Data
+809192   STZ $1146 ;Clear Locked Doors Data?
+809195   SEP #$20 
+809197   STZ $CE  
+809199   RTS
+----------------   
+--------sub start--------
+80919A   REP #$20 
+80919C   LDX #$00 
+80919E   STX $0000
+8091A1   LDY #$00 
+8091A3   JSR $91BF
+8091A6   PHA
+8091A7   LDY #$80 
+8091A9   JSR $91BF
+8091AC   STA $000A
+8091AF   PLA
+8091B0   CMP $000A
+8091B3   PHP
+8091B4   BCC $8091BB  
+8091B6   LDX #$80 
+8091B8   STX $0000
+8091BB   PLP
+8091BC   SEP #$20 
+8091BE   RTL
+----------------   
+--------sub start--------
+8091BF   LDA $0111,Y  
+8091C2   SEC
+8091C3   SBC $11  
+8091C5   BPL $8091CB  
+8091C7   EOR #$FFFF   
+8091CA   INC
+8091CB   JSR $91E4
+8091CE   STA $000A
+8091D1   LDA $0114,Y  
+8091D4   SEC
+8091D5   SBC $14  
+8091D7   BPL $8091DD  
+8091D9   EOR #$FFFF   
+8091DC   INC
+8091DD   JSR $91E4
+8091E0   ADC $000A
+8091E3   RTS
+----------------   
+--------sub start--------
+8091E4   SEP #$20 
+8091E6   STA $4202
+8091E9   STA $4203
+8091EC   NOP
+8091ED   NOP
+8091EE   NOP
+8091EF   NOP
+8091F0   REP #$21 
+8091F2   LDA $4216
+8091F5   RTS
+----------------   
+--------sub start--------
+8091F6   LDA #$FF 
+8091F8   STA $0004
+8091FB   LDY #$00 
+8091FD   LDA #$00 
+8091FF   XBA
+809200   LDA $8298,X  
+809203   REP #$20 
+809205   STA $0000
+809208   ASL
+809209   STA $0002
+80920C   SEP #$20 
+80920E   LDA $0100,Y  
+809211   BEQ $809242  
+809213   REP #$21 
+809215   LDA $11  
+809217   ADC $0000
+80921A   SEC
+80921B   SBC $0111,Y  
+80921E   CMP $0002
+809221   BCS $80922F  
+809223   LDA $14  
+809225   ADC $0000
+809228   SEC
+809229   SBC $0114,Y  
+80922C   CMP $0002
+80922F   SEP #$20 
+809231   BCS $809242  
+809233   LDA $0004
+809236   BNE $80923F  
+809238   SEC
+809239   LDA #$FF 
+80923B   STA $0004
+80923E   RTL
+----------------   
+80923F   STY $0004
+809242   TYA
+809243   CLC
+809244   ADC #$80 
+809246   TAY
+809247   BCC $80920E  
+809249   LDA $0004
+80924C   AND #$01 
+80924E   BEQ $809251  
+809250   CLC
+809251   RTL
+----------------   
+
+;
+809252   STY $0004
+809255   STA $0005
+809258   STZ $0002
+80925B   LDA $82DD,X  
+80925E   STA $4202 ;Multiplicand
+809261   LDA $0004
+809264   STA $4203 ;Multiplicand
+809267   NOP
+809268   NOP
+809269   NOP
+80926A   NOP
+80926B   REP #$20 
+80926D   LDA $4216 ;Multiplicand result
+809270   STA $0000
+809273   LDY $0005
+809276   STY $4203;Multiplicand
+809279   NOP
+80927A   NOP
+80927B   NOP
+80927C   NOP
+80927D   LDA $4216 ;Multiplicand result
+809280   CLC
+809281   ADC $0001
+809284   STA $0001
+809287   ASL $0000
+80928A   SEP #$20 
+80928C   ROL $0002
+80928F   TXA
+809290   CMP #$81 
+809292   BMI $8092A3  
+809294   REP #$20 
+809296   LDA $0001
+809299   EOR #$FFFF   
+80929C   INC
+80929D   STA $28  
+80929F   SEP #$20 
+8092A1   BRA $8092AD  
+8092A3   LDA $0001
+8092A6   STA $28  
+8092A8   LDA $0002
+8092AB   STA $29  
+8092AD   STZ $0002
+8092B0   LDA $829D,X  
+8092B3   STA $4202;Multiplicand
+8092B6   LDA $0004
+8092B9   STA $4203;Multiplicand
+8092BC   NOP
+8092BD   NOP
+8092BE   NOP
+8092BF   NOP
+8092C0   REP #$20 
+8092C2   LDA $4216;Multiplicand result
+8092C5   STA $0000
+8092C8   LDY $0005
+8092CB   STY $4203
+8092CE   NOP
+8092CF   NOP
+8092D0   NOP
+8092D1   NOP
+8092D2   LDA $4216;Multiplicand result
+8092D5   CLC
+8092D6   ADC $0001
+8092D9   STA $0001
+8092DC   ASL $0000
+8092DF   SEP #$20 
+8092E1   ROL $0002
+8092E4   TXA
+8092E5   CLC
+8092E6   ADC #$3F 
+8092E8   CMP #$80 
+8092EA   BPL $8092FB  
+8092EC   REP #$20 
+8092EE   LDA $0001
+8092F1   EOR #$FFFF   
+8092F4   INC
+8092F5   STA $2A  
+8092F7   SEP #$20 
+8092F9   BRA $809305  
+8092FB   LDA $0001
+8092FE   STA $2A  
+809300   LDA $0002
+809303   STA $2B  
+809305   RTL
+----------------   
+--------sub start--------
+809306   JSR $934D
+809309   LDX #$00 
+80930B   JSR $9413
+80930E   REP #$20 
+809310   STZ $02  
+809312   SEP #$20 
+809314   JMP $93BF
+--------sub start--------
+809317   JSR $934D
+80931A   LDA $00B6
+80931D   CMP #$04 
+80931F   BEQ $809337  
+809321   LDX #$04 
+809323   JSR $9413
+809326   LDX #$08 
+809328   JSR $9413
+80932B   REP #$20 
+80932D   LDA #$000C   
+809330   STA $02  
+809332   SEP #$20 
+809334   JMP $93BF
+--------unidentified--------
+809337  .db $A2 $0C $20 $13 $94 $A2 $10 $20
+80933F  .db $13 $94 $C2 $20 $A9 $18 $00 $85
+809347  .db $02 $E2 $20 $4C $BF $93
+----------------   
+--------sub start--------
+80934D   REP #$30 
+80934F   STZ $06  
+809351   LDX $06  
+809353   LDA $83FE,X  
+809356   STA $02  
+809358   LDA $8400,X  
+80935B   STA $00  
+80935D   LDA $8402,X  
+809360   STA $04  
+809362   LDY $00  
+809364   LDX $02  
+809366   JSR $93A3
+809369   LDX $06  
+80936B   LDA $8404,X  
+80936E   SEC
+80936F   SBC $02  
+809371   CLC
+809372   ADC $8406,X  
+809375   TAX
+809376   LDY $00  
+809378   JSR $93A3
+80937B   LDA $00  
+80937D   CLC
+80937E   ADC #$0008   
+809381   AND #$001E   
+809384   STA $00  
+809386   LDA $02  
+809388   CLC
+809389   LDX $06  
+80938B   ADC $8408,X  
+80938E   STA $02  
+809390   DEC $04  
+809392   BNE $809362  
+809394   LDA $06  
+809396   BNE $8093A0  
+809398   CLC
+809399   ADC #$000C   
+80939C   STA $06  
+80939E   BRA $809351  
+8093A0   SEP #$30 
+8093A2   RTS
+----------------   
+--------sub start--------
+8093A3   LDA $83DE,Y  
+8093A6   STA $7FE000,X
+8093AA   LDA $83E2,Y  
+8093AD   STA $7FE040,X
+8093B1   INX
+8093B2   INX
+8093B3   INY
+8093B4   INY
+8093B5   TYA
+8093B6   AND #$0006   
+8093B9   CMP #$0004   
+8093BC   BNE $8093A3  
+8093BE   RTS
+----------------   
+8093BF   REP #$10 
+8093C1   LDA #$01 
+8093C3   STA $04  
+8093C5   LDX $02  
+8093C7   LDY $844A,X  
+8093CA   STY $00  
+8093CC   LDY $844C,X  
+8093CF   LDA $844E,X  
+8093D2   LDX $00  
+8093D4   STA $7FE001,X
+8093D8   LDA $8416,Y  
+8093DB   STA $7FE000,X
+8093DF   REP #$20 
+8093E1   INC $00  
+8093E3   INC $00  
+8093E5   SEP #$20 
+8093E7   INY
+8093E8   TYA
+8093E9   AND #$03 
+8093EB   BNE $8093F9  
+8093ED   REP #$20 
+8093EF   LDA $00  
+8093F1   CLC
+8093F2   ADC #$0038   
+8093F5   STA $00  
+8093F7   SEP #$20 
+8093F9   LDX $02  
+8093FB   TYA
+8093FC   CMP $844F,X  
+8093FF   BNE $8093CF  
+809401   REP #$21 
+809403   LDA $02  
+809405   ADC #$0006   
+809408   STA $02  
+80940A   SEP #$20 
+80940C   DEC $04  
+80940E   BEQ $8093C5  
+809410   SEP #$10 
+809412   RTS
+
+809413   REP #$30 
+809415   STZ $08  
+809417   STX $06  
+809419   LDX $06  
+80941B   LDA $8498,X  
+80941E   SEC
+80941F   SBC $8496,X  
+809422   DEC
+809423   STA $00  
+809425   AND #$003F   
+809428   LSR
+809429   STA $04  
+80942B   LDA $00  
+80942D   ASL
+80942E   ASL
+80942F   AND #$FF00   
+809432   XBA
+809433   SEP #$20 
+809435   DEC
+809436   STA $05  
+809438   REP #$20 
+80943A   TXY
+80943B   LDA $848E
+80943E   LDX $8496,Y  
+809441   STA $7FE800,X
+809445   LDA $8490
+809448   LDX $8498,Y  
+80944B   STA $7FE800,X
+80944F   LDA $8496,Y  
+809452   AND #$003F   
+809455   STA $00  
+809457   LDA $8498,Y  
+80945A   AND #$003F   
+80945D   STA $02  
+80945F   LDA $8498,Y  
+809462   AND #$FFC0   
+809465   ORA $00  
+809467   TAX
+809468   LDA $8492
+80946B   STA $7FE800,X
+80946F   LDA $8496,Y  
+809472   AND #$FFC0   
+809475   ORA $02  
+809477   TAX
+809478   LDA $8494
+80947B   STA $7FE800,X
+80947F   LDX $06  
+809481   LDA $8496,X  
+809484   STA $02  
+809486   LDA $8498,X  
+809489   STA $00  
+80948B   LDA $08  
+80948D   ASL
+80948E   TAX
+80948F   LDA $02  
+809491   CLC
+809492   ADC $84AA,X  
+809495   STA $02  
+809497   LDA $00  
+809499   SEC
+80949A   SBC $84AA,X  
+80949D   STA $00  
+80949F   LDA $08  
+8094A1   ASL
+8094A2   ASL
+8094A3   TAY
+8094A4   LDA $8486,Y  
+8094A7   LDX $02  
+8094A9   STA $7FE800,X
+8094AD   LDA $8488,Y  
+8094B0   LDX $00  
+8094B2   STA $7FE800,X
+8094B6   LDX $08  
+8094B8   SEP #$20 
+8094BA   DEC $04,X
+8094BC   REP #$20 
+8094BE   BNE $80948B  
+8094C0   LDA $08  
+8094C2   BNE $8094C8  
+8094C4   INC $08  
+8094C6   BRA $80947F  
+8094C8   SEP #$30 
+8094CA   RTS
+----------------   
+--------sub start--------
+8094CB   LDA #$0D 
+8094CD   STA $02  
+8094CF   REP #$10 
+8094D1   LDX #$010E   
+8094D4   STX $04  
+8094D6   LDY #$0000   
+8094D9   LDA #$12 
+8094DB   STA $00  
+8094DD   LDA $84AE,Y  
+8094E0   LDX $04  
+8094E2   AND #$3F 
+8094E4   STA $7FE000,X
+8094E8   LDA $84AE,Y  
+8094EB   AND #$C0 
+8094ED   ORA #$04 
+8094EF   STA $7FE001,X
+8094F3   LDA $02  
+8094F5   SEC
+8094F6   SBC #$03 
+8094F8   CMP #$09 
+8094FA   BCS $809513  
+8094FC   LDA $00  
+8094FE   CMP #$10 
+809500   BNE $809513  
+809502   REP #$21 
+809504   LDA $04  
+809506   ADC #$0018   
+809509   STA $04  
+80950B   SEP #$21 
+80950D   LDA $00  
+80950F   SBC #$0C 
+809511   STA $00  
+809513   REP #$20 
+809515   INC $04  
+809517   INC $04  
+809519   SEP #$20 
+80951B   INY
+80951C   DEC $00  
+80951E   BNE $8094DD  
+809520   REP #$21 
+809522   LDA $04  
+809524   ADC #$001C   
+809527   STA $04  
+809529   SEP #$20 
+80952B   DEC $02  
+80952D   BNE $8094D9  
+80952F   LDY #$0004   
+809532   LDA $852B,Y  
+809535   XBA
+809536   REP #$20 
+809538   LSR
+809539   LSR
+80953A   AND #$FFC0   
+80953D   ORA #$002C   
+809540   SEP #$20 
+809542   TAX
+809543   LDA $7FE000,X
+809547   ORA #$40 
+809549   STA $7FE000,X
+80954D   DEY
+80954E   BNE $809532  
+809550   SEP #$10 
+809552   RTS
+----------------   
+--------sub start--------
+809553   STZ $AF  
+809555   LDA #$08 
+809557   LDX #$10 
+809559   JSL $808104  
+80955D   RTS
+----------------   
+--------unidentified--------
+80955E  .db $64 $AF $A9 $08 $A2 $10 $4C $04
+809566  .db $81  
+----------------   
+--------sub start--------
+809567   LDA #$FF 
+809569   STA $AF  
+80956B   LDA #$0A 
+80956D   LDX #$10 
+80956F   JSL $808104  
+809573   RTS
+----------------   
+--------unidentified--------
+809574  .db $A9 $FF $85 $AF $A9 $0A $A2 $10
+80957C  .db $4C $04 $81    
+----------------   
+80957F   STZ $AF  
+809581   LDA #$0C 
+809583   LDX #$10 
+809585   JSL $808104  
+809589   RTS
+----------------   
+80958A   LDA #$FF 
+80958C   STA $AF  
+80958E   LDA #$0E 
+809590   LDX #$10 
+809592   JSL $808104  
+809596   RTS
+----------------   
+809597   SEP #$30 
+809599   LDA #$83 
+80959B   PHA
+80959C   PLB
+80959D   LDA #$01 
+80959F   JSL $808142  
+8095A3   JSR $95D3
+8095A6   JMP $8122
+8095A9   SEP #$30 
+8095AB   LDA #$83 
+8095AD   PHA
+8095AE   PLB
+8095AF   JSR $95FB
+8095B2   JMP $8122
+8095B5   SEP #$30 
+8095B7   LDA #$83 
+8095B9   PHA
+8095BA   PLB
+8095BB   LDA #$01 
+8095BD   JSL $808142  
+8095C1   JSR $9628
+8095C4   JMP $8122
+8095C7   SEP #$30 
+8095C9   LDA #$83 
+8095CB   PHA
+8095CC   PLB
+8095CD   JSR $965A
+8095D0   JMP $8122
+--------sub start--------
+8095D3   LDA $AE  
+8095D5   BNE $8095D9  
+8095D7   LDA #$04 
+8095D9   STA $B0  
+8095DB   LDA $70  
+8095DD   CMP #$0F 
+8095DF   BEQ $8095EE  
+8095E1   INC
+8095E2   AND #$7F 
+8095E4   STA $70  
+8095E6   LDA $B0  
+8095E8   JSL $808142  
+8095EC   BRA $8095DB  
+8095EE   STZ $AD  
+8095F0   STZ $AE  
+8095F2   STZ $86  
+8095F4   STZ $87  
+8095F6   STZ $88  
+8095F8   DEC $AF  
+8095FA   RTS
+----------------   
+--------sub start--------
+8095FB   LDA $AE  
+8095FD   BNE $809601  
+8095FF   LDA #$04 
+809601   STA $B0  
+809603   LDA $70  
+809605   BIT #$7F 
+809607   BEQ $809613  
+809609   DEC $70  
+80960B   LDA $B0  
+80960D   JSL $808142  
+809611   BRA $809603  
+809613   LDA $AD  
+809615   BNE $809619  
+809617   STZ $AE  
+809619   LDA #$80 
+80961B   STA $70 ;Set F-BLANK
+80961D   LDA #$1F 
+80961F   STA $86  
+809621   STA $87  
+809623   STA $88  
+809625   STZ $AF  
+809627   RTS
+----------------   
+--------sub start--------
+809628   LDA #$0F 
+80962A   STA $70  
+80962C   LDA #$1F 
+80962E   STA $86  
+809630   STA $87  
+809632   STA $88  
+809634   LDA #$B7 
+809636   STA $85  
+809638   LDA $AE  
+80963A   BNE $80963E  
+80963C   LDA #$04 
+80963E   STA $B0  
+809640   LDA $86  
+809642   BEQ $809653  
+809644   DEC
+809645   STA $86  
+809647   STA $87  
+809649   STA $88  
+80964B   LDA $B0  
+80964D   JSL $808142  
+809651   BRA $809640  
+809653   STZ $AD  
+809655   STZ $AE  
+809657   DEC $AF  
+809659   RTS
+----------------   
+--------sub start--------
+80965A   LDA #$0F 
+80965C   STA $70  
+80965E   LDA #$B7 
+809660   STA $85  
+809662   LDA $AE  
+809664   BNE $809668  
+809666   LDA #$04 
+809668   STA $B0  
+80966A   LDA $86  
+80966C   CMP #$1F 
+80966E   BEQ $80967F  
+809670   INC
+809671   STA $86  
+809673   STA $87  
+809675   STA $88  
+809677   LDA $B0  
+809679   JSL $808142  
+80967D   BRA $80966A  
+80967F   LDA $AD  
+809681   BNE $809685  
+809683   STZ $AE  
+809685   LDA #$80 
+809687   STA $70  ;Set F-BLANK  
+809689   STZ $85  
+80968B   STZ $AF  
+80968D   RTS
+----------------   
+80968E   SEP #$30 
+809690   LDA #$83 
+809692   PHA
+809693   PLB
+809694   LDA #$80 
+809696   STA $70  ;Set F-BLANK
+809698   JSR $8517
+80969B   REP #$20 
+80969D   LDX #$FE 
+80969F   LDA $7FFF00,X
+8096A3   CMP $8530,X  
+8096A6   BNE $8096F6  
+8096A8   DEX
+8096A9   DEX
+8096AA   CPX #$1E 
+8096AC   BNE $80969F  
+8096AE   SEP #$20 
+8096B0   PEA #$837F   
+8096B3   PLB
+8096B4   LDA #$00 
+8096B6   LDX #$0A 
+8096B8   ORA $FF00,X  
+8096BB   INX
+8096BC   CPX #$10 
+8096BE   BCC $8096B8  
+8096C0   LDX #$13 
+8096C2   ORA $FF00,X  
+8096C5   INX
+8096C6   CPX #$20 
+8096C8   BCC $8096C2  
+8096CA   CMP #$00 
+8096CC   BNE $8096F7  
+8096CE   LDA $FF00
+8096D1   CMP #$03 
+8096D3   BCS $8096F7  
+8096D5   LDA $FF01
+8096D8   CMP #$05 
+8096DA   BCS $8096F7  
+8096DC   LDA $FF03
+8096DF   ORA $FF05
+8096E2   ORA $FF07
+8096E5   BIT #$FE 
+8096E7   BNE $8096F7  
+8096E9   LDA $FF04
+8096EC   ORA $FF06
+8096EF   BIT #$FC 
+8096F1   BNE $8096F7  
+8096F3   PLB
+8096F4   BRA $80970A  
+8096F6   PHB
+8096F7   REP #$30 
+8096F9   LDX #$8530   
+8096FC   LDY #$FF00   
+8096FF   LDA #$00FF   
+809702   MVN $83,$7F  
+809705   SEP #$30 
+809707   PLB
+809708   BRA $80969B  
+80970A   JSR $8527
+80970D   JSR $AF2A
+809710   LDA #$00 ;Load Capcom logo ?
+809712   JSR LoadBgGfxPointerFromA;$AEE1
+809715   LDA #$01 ;Load Game Text
+809717   JSR LoadBgGfxPointerFromA;$AEE1
+80971A   JSR $8381
+80971D   LDA #$00 
+80971F   STA $7FFF12  
+809723   LDA #$06 
+809725   LDX #$18 
+809727   JSL $808104  
+80972B   LDA #$01 
+80972D   JSL $808142  
+809731   LDA #$00 
+809733   JSR $AD7D
+809736   STZ $1A55
+809739   LDA $213F
+80973C   AND #$10 
+80973E   BEQ $809751  
+809740   LDA $80FFD9  
+809744   BEQ $80974E  
+809746   CMP #$01 
+809748   BEQ $80974E  
+80974A   CMP #$0D 
+80974C   BNE $809751  
+80974E   INC $1A55
+809751   LDA #$88 
+809753   STA $A4  
+809755   LDA #$01 
+809757   JSL $808667  
+80975B   LDA #$04 
+80975D   STA $80  
+80975F   LDA #$01 
+809761   STA $AE  
+809763   JSR $9553
+809766   LDA $A4  
+809768   JSL $808142  
+80976C   LDA #$01 
+80976E   STA $AE  
+809770   JSR $9567
+809773   LDA #$10 
+809775   JSL $808142  
+809779   LDA $7FFF08  
+80977D   BNE $80979E  
+80977F   JSR $98DC
+809782   LDA #$01 
+809784   STA $7FFF08  
+809788   LDY #$F9 
+80978A   JSR $98DC
+80978D   LDA #$02 
+80978F   LDY #$F9 
+809791   JSR $98DC
+809794   LDA #$FF 
+809796   STA $7FFF10  
+80979A   STA $7FFF11  
+80979E   JSL $809A2F  
+8097A2   JSL $82B659  
+8097A6   LDA #$C3 
+8097A8   STA $1A58
+8097AB   LDA #$01 
+8097AD   STA $1A59
+8097B0   STZ $A8  
+8097B2   STZ $AE  
+8097B4   LDA #$01 
+8097B6   JSL $808142  
+8097BA   LDX $A0  
+8097BC   JSR ($97EF,X)
+8097BF   LDA $A8  
+8097C1   BEQ $8097B4  
+8097C3   STZ $A0  
+8097C5   LDA $1A5C
+8097C8   STA $AE  
+8097CA   LDA #$01 
+8097CC   JSL $808142  
+8097D0   LDA $7FFF12  
+8097D4   BEQ $8097CA  
+8097D6   LDA #$00 
+8097D8   JSR $AFD3 ; Prep GFX Transfer 
+8097DB   LDA #$01 
+8097DD   JSR $AFD3 ; Prep GFX Transfer
+8097E0   LDA #$02 
+8097E2   JSR $AFD3 ; Prep GFX Transfer
+8097E5   LDA #$0A 
+8097E7   JSR LoadBgGfxPointerFromA ; Do GFX Transfer
+8097EA   LDA #$02 
+8097EC   JMP $81BB
+
+
+8097EF ;entire thing is capcom logo going to 0x12 directly is skipping capcom logo
+dw $9803 ; 0x00
+dw $9826 ; 0x02
+dw $983D ; 0x04
+dw $9855 ; 0x06
+dw $986D ; 0x08
+dw $9855 ; 0x0A
+dw $983D ; 0x0C
+dw $9882 ; 0x0E
+dw $9897 ; 0x10
+dw $98AA ; 0x12
+
+;Capcom logo
+809803   LDA #$02 
+809805   STA $A0  
+809807   LDA #$2C 
+809809   STA $A4  
+80980B   LDA #$10 ;capcom music
+80980D   JSR PlaySong ;$99C0 ;Change Song
+809810   LDA #$01 
+809812   STA $80  
+809814   LDA #$00 
+809816   JSR $ADC9 ; load palettes
+809819   STZ $1E00
+80981C   STZ $1E01
+80981F   LDA #$00 
+809821   JSL $808667 ; set DMA Buffer
+809825   RTS
+
+
+809826   JSR $98B7
+809829   DEC $A4  
+80982B   BEQ $80982E  
+80982D   RTS
+----------------   
+80982E   LDA #$04 
+809830   STA $A0  
+809832   LDA #$4E 
+809834   STA $A4  
+809836   LDA #$02 
+809838   STA $AE  
+80983A   JMP $957F
+--------sub start--------
+80983D   JSR $98B7
+809840   DEC $A4  
+809842   BNE $809854  
+809844   LDA $A0  
+809846   CLC
+809847   ADC #$02 
+809849   STA $A0  
+80984B   LDA #$05 
+80984D   STA $A4  
+80984F   LDA #$01 
+809851   JSR $ADC9
+809854   RTS
+----------------   
+--------sub start--------
+809855   JSR $98B7
+809858   DEC $A4  
+80985A   BNE $80986C  
+80985C   LDA $A0  
+80985E   CLC
+80985F   ADC #$02 
+809861   STA $A0  
+809863   LDA #$02 
+809865   STA $A4  
+809867   LDA #$02 
+809869   JSR $ADC9
+80986C   RTS
+----------------   
+--------sub start--------
+80986D   JSR $98B7
+809870   DEC $A4  
+809872   BNE $809881  
+809874   LDA #$0A 
+809876   STA $A0  
+809878   LDA #$04 
+80987A   STA $A4  
+80987C   LDA #$03 
+80987E   JSR $ADC9
+809881   RTS
+----------------   
+--------sub start--------
+809882   JSR $98B7
+809885   DEC $A4  
+809887   BNE $809896  
+809889   LDA #$10 
+80988B   STA $A0  
+80988D   LDA #$78 
+80988F   STA $A4  
+809891   LDA #$00 
+809893   JSR $ADC9
+809896   RTS
+----------------   
+--------sub start--------
+809897   JSR $98B7
+80989A   DEC $A4  
+80989C   BEQ $80989F  
+80989E   RTS
+----------------   
+80989F   LDA #$12 
+8098A1   STA $A0  
+8098A3   LDA #$01 
+8098A5   STA $AE  
+8098A7   JMP $958A
+--------sub start--------
+8098AA   LDA $AF  
+8098AC   BNE $8098B6  
+8098AE   STZ $A0  
+8098B0   INC $A8  
+8098B2   JSL $809A2F  
+8098B6   RTS
+----------------   
+--------sub start--------
+8098B7   LDA $48 ;check for controller button
+8098B9   BIT #$10 ;are we pressing start start
+8098BB   BNE $8098C3  
+8098BD   ORA $49  
+8098BF   BIT #$C0 ;else are we pressing A,X,Y,B ?
+8098C1   BEQ $8098DB  
+8098C3   PLA
+8098C4   PLA
+8098C5   STZ $86 ;$2132 (COLDATA)
+8098C7   STZ $87 ;$2132 (COLDATA)
+8098C9   STZ $88 ;$2132 (COLDATA) 
+8098CB   LDA #$01 
+8098CD   STA $AE  
+8098CF   STA $AD  
+8098D1   STA $1A5C
+8098D4   JSR $958A
+--------unidentified--------
+8098D7  .db $A9 $12 $85 $A0
+----------------   
+8098DB   RTS
+
+;APU (Sound engine related)
+8098DC   LDX $9A ;NMI Related?
+8098DE   PHX
+8098DF   LDX #$FF 
+8098E1   STX $9A ;?
+8098E3   STY $02 ;? (FA)
+8098E5   REP #$30 
+8098E7   AND #$00FF 
+8098EA   STA $00 ;? (A = 01 or 02, or other unknown values) 
+8098EC   ASL
+8098ED   ADC $00 ;*3
+8098EF   TAX 
+8098F0   LDA $848000,X ;[$BD $0A $00] $0ABD & 7FFF
+8098F4   AND #$7FFF   
+8098F7   TAY ; Y = 0ABD
+8098F8   LDA #$8000 
+8098FB   STA $10 ;Set highbytes of APU Transfer
+8098FD   SEP #$20 
+8098FF   LDA $848002,X
+809903   ORA #$84 ;Bank 84+
+809905   STA $12 ;Set Bank of APU Transfer ;(848000)
+809907   TXA ;if X == 0
+809908   BEQ $809918  
+80990A   LDA $7FFF09 ;??  
+80990E   CMP $2142 ;check if $2142 is already that value
+809911   BNE $80990E  
+809913   LDA $02 
+809915   STA $2140 ;apuio0
+809918   REP #$20 
+80991A   LDA #$BBAA   
+80991D   CMP $2140 ;apuio0
+809920   SEP #$20 
+809922   BNE $809913 ;loop until apuio0 == BBAA (which mean the end of the data)  
+809924   LDA #$CC 
+809926   BRA $80995C 
+
+809928   LDA [$10],Y  
+80992A   INY
+80992B   BPL $809932  
+80992D   LDY #$0000   
+809930   INC $12  
+809932   XBA
+809933   LDA #$00 
+809935   BRA $809949  
+809937   XBA
+809938   LDA [$10],Y  
+80993A   INY
+80993B   BPL $809942  
+80993D   LDY #$0000   
+809940   INC $12  
+809942   XBA
+809943   CMP $2140
+809946   BNE $809943  
+809948   INC
+809949   REP #$20 
+80994B   STA $2140
+80994E   SEP #$20 
+809950   DEX
+809951   BNE $809937  
+809953   CMP $2140
+809956   BNE $809953  
+809958   ADC #$03 
+80995A   BEQ $809958
+
+80995C   PHA 
+80995D   LDA [$10],Y ;Load Song Data [00DD]
+80995F   XBA ;[DD00] 
+809960   INY
+809961   BPL $809968  
+809963   LDY #$0000   
+809966   INC $12  
+809968   LDA [$10],Y  
+80996A   XBA
+80996B   TAX
+80996C   INY
+80996D   BPL $809974  
+80996F   LDY #$0000   
+809972   INC $12  
+809974   LDA [$10],Y  
+809976   XBA
+809977   INY
+809978   BPL $80997F  
+80997A   LDY #$0000   
+80997D   INC $12  
+80997F   LDA [$10],Y  
+809981   STA $2143
+809984   INY
+809985   BPL $80998C  
+809987   LDY #$0000   
+80998A   INC $12  
+80998C   XBA
+80998D   STA $2142
+809990   CPX #$0001   
+809993   LDA #$00 
+809995   ROL
+809996   STA $2141
+809999   ADC #$7F 
+80999B   PLA
+80999C   STA $2140
+80999F   CMP $2140
+8099A2   BNE $80999F  
+8099A4   BVS $809928  
+8099A6   SEP #$30 
+8099A8   LDA #$01 
+8099AA   STA $7FFF09  
+8099AE   PLA
+8099AF   STA $9A  
+8099B1   RTS
+----------------   
+--------unidentified--------
+8099B2  .db $0B $48 $A9 $00 $EB $A9 $00 $5B
+8099BA  .db $68 $20 $C0 $99 $2B $6B
+
+;Valid ids are from 0x10 to 0x22 (game seems to have some data for 0x23 and 0x24 but they crash the game)
+PlaySong:
+{
+8099C0   SEP #$30 
+8099C2   TAX
+8099C3   LDA $8620,X  ;838620
+8099C6   BRA $8099E3  
+
+8099C8  
+CMP $7FFF10  
+BEQ $8099E2
+ 
+STA $7FFF10
+PHX 
+LDY #$F9
+JSR $98DC
+PLA 
+----------------   
+8099D9   STA $7FFF11  
+8099DD   LDY #$FA 
+8099DF   JSR $98DC
+8099E2   RTS
+----------------   
+8099E3   CMP $7FFF11  
+8099E7   BNE $8099D9  
+8099E9   LDA #$FB 
+8099EB   JMP $9A3B
+}
+
+
+NMISubRoutine1: ;Song related?, APU Related
+{
+LDX $1A5F     ;8099EE  
+CPX $1A5E     ;8099F1  
+BEQ .return   ;8099F4 Goto $809A22 
+LDA $2142     ;8099F6 APU Related 
+CMP $7FFF09   ;8099F9  
+BNE .return   ;8099FD Goto $809A22 
+INC ;8099FF  
+STA $7FFF09   ;809A00  
+LDY $1A61,X   ;809A04 
+STY $2141     ;809A07 APU Related  
+LDA $1A60,X   ;809A0A  
+CMP #$F0;809A0D  
+BCC .dontChange     ;809A0F Goto $809A17 
+STZ $2142     ;809A11 APU Related  
+STY $2143     ;809A14 APU Related  
+.dontChange
+STA $2140     ;809A17 APU Related  
+INX ;809A1A  
+INX ;809A1B  
+TXA ;809A1C  
+AND #$3F;809A1D  
+STA $1A5F     ;809A1F 
+.return 
+RTS ;809A22  
+}
+
+
+
+809A23 LDA #$F2 
+809A25 JSR $9A3D
+809A28 RTL
+
+809A29   LDA #$F1 
+809A2B   JSR $9A3D
+809A2E   RTL
+----------------   
+--------sub start--------
+809A2F   LDA #$F0 
+809A31   JSR $9A3D
+809A34   RTL
+----------------   
+--------sub start--------
+809A35   LDA #$F6 
+809A37   JSR $9A3D
+809A3A   RTL
+----------------   
+--------unidentified--------
+809A3B  .db $A0 $00  
+----------------   
+--------sub start--------
+809A3D   LDX $1A5E
+809A40   STA $1A60,X  
+809A43   TYA
+809A44   STA $1A61,X  
+809A47   TXA
+809A48   INC
+809A49   INC
+809A4A   AND #$3F 
+809A4C   STA $1A5E ;add a sound effect waiting in ram?
+809A4F   RTS
+----------------   
+--------unidentified--------
+809A50  .db $8D $C8 $00    
+----------------
+;809A53   
+PlaySFX:
+{
+;Argument A = sound played
+809A53   LDX $00C7 ; What is C7 ?
+809A56   BNE $809A69 ;Return
+809A58   LDX $1A5E ;Related to sound effects?
+809A5B   STA $1A60,X
+809A5E   STZ $1A61,X
+809A61   TXA
+809A62   INC
+809A63   INC
+809A64   AND #$3F 
+809A66   STA $1A5E ;This get increased by 2 everytime that function is called
+;Return  
+809A69   RTL  
+}    
+----------------   
+809A6A   SEP #$30 
+809A6C   LDA #$83 
+809A6E   PHA
+809A6F   PLB
+809A70   LDA #$01 
+809A72   JSL $808142  
+809A76   LDA $AF  
+809A78   BNE $809A6A  
+809A7A   STZ $B1  
+809A7C   LDA $1A58
+809A7F   STA $1A5A
+809A82   LDA $1A59
+809A85   STA $1A5B
+809A88   JSR $8527
+809A8B   LDA #$00 
+809A8D   JSR $ACC4
+809A90   LDA #$04 
+809A92   STA $80  
+809A94   LDA #$01 
+809A96   JSL $808142  
+809A9A   LDA #$01 
+809A9C   JSL $808142  
+809AA0   LDX $A0  
+809AA2   JSR ($9AA9,X)
+809AA5   INC $9F  
+809AA7   BRA $809A9A  
+--------data--------     
+809AA9  .db $9AB5, $9BC3, $9C5E, $9C79
+----------------   
+--------unidentified--------
+809AB1  .db $86 $9C  
+----------------   
+--------data--------     
+809AB3  .db $D0 $9C  
+----------------   
+--------sub start--------
+809AB5   LDX $A1  
+809AB7   JMP ($9ABA,X)
+--------data--------     
+809ABA  dw $9AC6, $9B2D, $9B44, $9B91
+809AC2  dw $9B9F, $9BB0
+----------------   
+809AC6   LDA $AF  
+809AC8   BEQ $809ACB  
+809ACA   RTS
+----------------   
+809ACB   LDA #$02 
+809ACD   STA $A1  
+809ACF   STZ $C4  
+809AD1   JSL $809A2F ;play delayed sound?
+809AD5   LDA #$07 
+809AD7   STA $80  
+809AD9   JSR $8517 ;BG Scrolls registers
+809ADC   STZ $A8  
+809ADE   STZ $A9  
+809AE0   JSR $9000 ;Data Load sprite related
+809AE3   LDA #$00 
+809AE5   JSR $E6E3 ;Data load for something? (setting address $0200, $020A, $020B) ;Sprite RAM it seems
+809AE8   LDA #$00 
+809AEA   JSR $AD7D ;Set title screen palette
+809AED   LDA #$00 
+809AEF   JSR $ADC1
+809AF2   LDA $1E20
+809AF5   STA $1E00
+809AF8   LDA $1E21
+809AFB   STA $1E01
+809AFE   LDX #$08 
+809B00   JSL $808136  
+809B04   LDX #$18 
+809B06   JSL $808136  
+809B0A   LDA #$07 
+809B0C   JSR LoadBgGfxPointerFromA;$AEE1
+809B0F   LDA #$08 
+809B11   JSR $B165
+809B14   LDA #$00 
+809B16   JSR $B1D0
+809B19   LDA #$03 
+809B1B   JSR $AF9C
+809B1E   LDA #$04 
+809B20   JSR $AF9C
+809B23   JSR $8542
+809B26   JSL $82B12F  
+809B2A   JMP $9553
+809B2D   LDA $AF  
+809B2F   BNE $809B3F  
+809B31   LDA $49  
+809B33   AND #$C0 
+809B35   ORA $48  
+809B37   BIT #$D0 
+809B39   BEQ $809B43  
+809B3B   LDA #$01 
+809B3D   STA $B0  
+809B3F   LDA #$04 
+809B41   STA $A1  
+809B43   RTS
+----------------   
+809B44   JSL $82B12F  
+809B48   LDA $A8  
+809B4A   BEQ $809B43  
+809B4C   LDX $A9  
+809B4E   JMP ($9B51,X)
+--------data--------     
+809B51 
+dw $9B59
+dw $9B7B
+dw $9B86  
+dw $9B86 
+;Intros Levels
+809B59   LDA $7FFF00  
+809B5D   STA $B2 
+809B5F   STA $B6 ;Set LEVEL ID
+809B61   TAX
+809B62   LDA $8645,X ;bank 83
+809B65   STA $B7 ;Set MAP ID
+809B67   STZ $1140
+809B6A   LDA #$14 
+809B6C   LDX #$18 
+809B6E   JSL $808104  
+809B72   STZ $AE  
+809B74   LDA #$06 
+809B76   STA $A1  
+809B78   JMP $9567
+809B7B   LDA #$08 
+809B7D   STA $A1  
+809B7F   LDA #$01 
+809B81   STA $AE  
+809B83   JMP $9567
+809B86   LDA #$0A 
+809B88   STA $A1  
+809B8A   LDA #$01 
+809B8C   STA $AE  
+809B8E   JMP $9567
+
+809B91   JSR $9D3C
+809B94   LDA $AF  
+809B96   BNE $809B9E  
+809B98   LDA #$02 
+809B9A   STA $A0  
+809B9C   STZ $A1  
+809B9E   RTS
+----------------   
+809B9F   LDA $AF  
+809BA1   BNE $809BC2  
+809BA3   STZ $A0  
+809BA5   STZ $A1  
+809BA7   STZ $A2  
+809BA9   STZ $A3  
+809BAB   LDA #$04 
+809BAD   JMP $81BB
+809BB0   LDA $AF  
+809BB2   BNE $809BC2  
+809BB4   LDA #$08 
+809BB6   LDX $A9  
+809BB8   CPX #$04 
+809BBA   BEQ $809BBE  
+809BBC   LDA #$0A 
+809BBE   STA $A0  
+809BC0   STZ $A1  
+809BC2   RTS
+----------------   
+--------sub start--------
+809BC3   JSR $9D3C
+809BC6   LDA $1140
+809BC9   BNE $809BCC  
+809BCB   RTS
+----------------   
+809BCC   LDA #$04 
+809BCE   STA $A0  
+809BD0   LDA #$17 
+809BD2   STA $80  
+809BD4   LDA $7FFF00 ;<- used to set LEVEL ID of intros level
+809BD8   STA $B2  
+809BDA   STA $C6  
+809BDC   INC
+809BDD   CMP #$03 ;<--- Loop until it reach 3 then goes back to 0
+809BDF   BCC $809BE3  
+809BE1   LDA #$00 
+809BE3   STA $7FFF00 ;<- used to set LEVEL ID of intros level  
+809BE7   REP #$20 
+809BE9   LDA #$0384   
+809BEC   STA $A4  
+809BEE   SEP #$20 
+809BF0   LDA #$C3 
+809BF2   STA $1A58
+809BF5   LDA #$01 
+809BF7   STA $1A59
+809BFA   STZ $9F  
+809BFC   LDA #$02 
+809BFE   STA $A9  
+809C00   JSR $9F3D
+809C03   LDA $B2  
+809C05   ASL
+809C06   ASL
+809C07   ASL
+809C08   TAX
+809C09   LDA $8648,X  
+809C0C   STA $1A4A
+809C0F   LDA $8649,X  
+809C12   STA $1A4B
+809C15   LDA $864A,X  
+809C18   STA $014C
+809C1B   LDA $864B,X  
+809C1E   STA $014D
+809C21   LDA $864C,X  
+809C24   STA $0142
+809C27   LDA $864D,X  
+809C2A   STA $01CC
+809C2D   LDA $864E,X  
+809C30   STA $01CD
+809C33   LDA $864F,X  
+809C36   STA $01C2
+809C39   STZ $1A56
+809C3C   LDA #$12 
+809C3E   LDX #$08 
+809C40   JSL $808104  
+809C44   STZ $1122
+809C47   STZ $1132
+809C4A   LDA #$80 
+809C4C   STA $113A
+809C4F   JSR $917F
+809C52   LDA $B6 ;Check if level == 2
+809C54   CMP #$02 
+809C56   BNE $809C5B  
+809C58   INC $1179
+809C5B   JMP $A00F
+--------sub start--------
+809C5E   JSR $9D3C
+809C61   REP #$20 
+809C63   DEC $A4  
+809C65   SEP #$20 
+809C67   BEQ $809C6C  
+809C69   JMP $A047
+809C6C   LDA #$06 
+809C6E   STA $A0  
+809C70   STZ $A1  
+809C72   LDA #$01 
+809C74   STA $AE  
+809C76   JMP $9567
+--------sub start--------
+809C79   LDA $AF  
+809C7B   BNE $809C85  
+809C7D   STZ $A0  
+809C7F   LDX #$08 
+809C81   JSL $808136  
+809C85   RTS
+----------------   
+--------unidentified--------
+809C86  .db $A6 $A1 $7C $8B $9C $91 $9C $AD
+809C8E  .db $9C $C7 $9C $A9 $02 $85 $A1 $A9
+809C96  .db $04 $85 $80 $64 $A8 $20 $00 $90
+809C9E  .db $A9 $03 $20 $E3 $E6 $20 $42 $85
+809CA6  .db $A9 $01 $85 $AE $4C $53 $95
+----------------   
+809CAD   JSL $82B12F  
+809CB1   LDA $A8  
+809CB3   BEQ $809CC6  
+809CB5   LDA #$04 
+809CB7   STA $A1  
+809CB9   LDA #$01 
+809CBB   STA $AE  
+809CBD   STA $AD  
+809CBF   JSR $9567
+809CC2   JSL $809A2F  
+809CC6   RTS
+----------------   
+--------unidentified--------
+809CC7  .db $A5 $AF $D0 $04 $64 $A0 $64 $A1
+809CCF  .db $60  
+----------------   
+--------sub start--------
+809CD0   LDX $A1  
+809CD2   JMP ($9CD5,X)
+--------data--------     
+809CD5  .db $DB $9C $AD $9C $2C $9D
+----------------   
+809CDB   LDA #$02 
+809CDD   STA $A1  
+809CDF   STA $C4  
+809CE1   LDA #$17 
+809CE3   STA $80  
+809CE5   LDA #$0D 
+809CE7   JSR $ADC1
+809CEA   LDA $1E20
+809CED   STA $1E00
+809CF0   LDA $1E21
+809CF3   STA $1E01
+809CF6   JSR $8527
+809CF9   LDA #$0E 
+809CFB   JSR LoadBgGfxPointerFromA;$AEE1
+809CFE   JSR $8CA7
+809D01   JSR $8CD6
+809D04   JSR $9306
+809D07   LDA #$18 
+809D09   JSL $808746  
+809D0D   LDA #$03 
+809D0F   JSR $AF9C
+809D12   LDA #$05 
+809D14   JSR $AF9C
+809D17   STZ $A8  
+809D19   JSR $9000
+809D1C   LDA #$09 
+809D1E   JSR $E6E3
+809D21   JSL $82B12F  
+809D25   LDA #$01 
+809D27   STA $AE  
+809D29   JMP $9553
+809D2C   LDA $AF  
+809D2E   BNE $809D38  
+809D30   LDA $A9  
+809D32   BNE $809D39  
+809D34   STZ $A0  
+809D36   STZ $A1  
+809D38   RTS
+----------------   
+809D39   JMP $9BA3
+--------sub start--------
+809D3C   LDA $49  
+809D3E   AND #$C0 
+809D40   ORA $48  
+809D42   BIT #$D0 
+809D44   BEQ $809D55  
+809D46   PLA
+809D47   PLA
+809D48   LDA #$01 
+809D4A   STA $AE  
+809D4C   STA $AD  
+809D4E   JSR $9567
+809D51   STZ $A0  
+809D53   STZ $A1  
+809D55   RTS
+
+
+;Start of Game i think?
+809D56   SEP #$30 
+809D58   LDA #$83 
+809D5A   PHA
+809D5B   PLB
+809D5C   LDA #$01 
+809D5E   JSL $808142  
+809D62   STZ $AA  
+809D64   LDA $1A5A
+809D67   STA $1A58
+809D6A   LDA $1A5B
+809D6D   STA $1A59
+809D70   JSR $8527
+809D73   LDA #$17 
+809D75   STA $80 ;Screen Destination Register
+809D77   LDA #$02 
+809D79   STA $B1   
+
+809D7B   LDA #$01 ;Game Loop ?
+809D7D   JSL $808142  
+809D81   LDA $AB ;Is game already paused?
+809D83   BNE $809D8C
+
+;Do not execute that code if game is paused
+809D85   LDX $A0 ; $A0  
+809D87   JSR ($9DD4,X) ;Subroutines using $A0
+809D8A   INC $9F
+
+;Game is already paused check for input to pause/unpause
+809D8C   LDA $AA
+809D8E   BEQ $809DD2  
+809D90   LDA $BD  
+809D92   AND #$01 
+809D94   BEQ $809D9C  
+809D96   LDA $48  
+809D98   BIT #$20 ;Check if player1 is pressing Start
+809D9A   BNE $809DA8  
+809D9C   LDA $BD ;Also checking for $BD ? not sure what is $BD
+809D9E   AND #$02 
+809DA0   BEQ $809DD2  
+809DA2   LDA $4E ;Check if player2 is pressing Start
+809DA4   BIT #$20
+809DA6   BEQ $809DD2
+
+;We pressed start on either of the controllers
+809DA8   LDA $AB ;Pause (bit0 = pause)
+809DAA   CLC
+809DAB   ADC #$31
+809DAD   JSL PlaySFX ;$809A53
+809DB1   LDA $AB 
+809DB3   EOR #$01 ;Set Pause ON
+809DB5   STA $AB  
+809DB7   EOR #$01 
+809DB9   CLC
+809DBA   ADC #$F3
+809DBC   JSL PlaySFX ;$809A53     
+809DC0   LDA $AB  
+809DC2   BNE $809DCC  
+809DC4   LDA $C8  
+809DC6   BEQ $809DCC  
+809DC8   JSL PlaySFX ;$809A53 
+809DCC   STZ $0171
+809DCF   STZ $01F1
+809DD2   BRA $809D7B ;Loop back
+
+
+GameJumpTable:
+{
+    dw $9DE4 ;00
+    dw $9E1F ;02
+    dw $9ED4 ;04
+    dw $9F6E ;06
+    dw $A047 ;08
+    dw $A266 ;0A
+    dw $A3F3 ;0C
+    dw $A65C ;0E
+}
+
+--------sub start--------
+809DE4   LDA #$02 ;Change that to 04 to go to character selection directly
+809DE6   STA $A0  
+809DE8   STZ $1A56
+809DEB   LDA #$12 
+809DED   LDX #$08 
+809DEF   JSL $808104  
+809DF3   STZ $B6 ;Set Game LEVEL ID to 0 
+809DF5   STZ $B7 ;Set Game Map ID to 0
+809DF7   STZ $CB  
+809DF9   STZ $CC  
+809DFB   LDA $C4  
+809DFD   BEQ $809E07 
+809DFF   LDA #$04 
+809E01   STA $A0  
+809E03   LDA $C3  
+809E05   STA $B6 
+809E07   LDA #$00 
+809E09   JSR $AD7D
+809E0C   STZ $F4 ;set Total Frames Played to 0
+809E0E   STZ $F5 ;set Total Seconds Played to 0 
+809E10   STZ $F6 ;set Total Minutes Played to 0 
+809E12   STZ $F7 ;set Total Hours Played to 0 
+--------sub start--------
+809E14   LDA #$3C 
+809E16   STA $F0 ;set Current Level Frames Played to #$3C ?
+809E18   STZ $F1 ;set Current Level Seconds Played to 0
+809E1A   STZ $F2 ;set Current Level Minutes Played to 0 
+809E1C   STZ $F3 ;set Current Level Hours Played to 0
+809E1E   RTS
+----------------   
+--------sub start--------
+809E1F   LDX $A1  
+809E21   JMP ($9E24,X)
+--------data--------     
+809E24  
+dw $9E2E ;00
+dw $9E51 ;02
+dw $9E89 ;04
+dw $9E92 ;06
+dw $9EB4 ;08     
+----------------   
+809E2E   LDA #$02 
+809E30   STA $A1  
+809E32   JSR $8527
+809E35   LDA #$0B 
+809E37   JSR LoadBgGfxPointerFromA;$AEE1
+809E3A   LDA #$0C 
+809E3C   JSR LoadBgGfxPointerFromA;$AEE1
+809E3F   LDA #$05 
+809E41   JSR $B1D7
+809E44   JSR $8CA7
+809E47   JSR $94CB
+809E4A   STZ $B2  
+809E4C   LDA #$15 
+809E4E   JMP PlaySong ;$99C0
+809E51   LDA #$04 
+809E53   STA $A1  
+809E55   LDA #$10 
+809E57   JSR $ADC1
+809E5A   LDX $B2  
+809E5C   LDA $86C5,X  
+809E5F   JSR $ADC1
+809E62   LDA #$94 
+809E64   STA $10  
+809E66   LDA #$E1 
+809E68   STA $11  
+809E6A   LDX $B2  
+809E6C   LDA $86C1,X  
+809E6F   JSL $808D05  
+809E73   LDA #$0C 
+809E75   JSR $AF9C
+809E78   STZ $A8  
+809E7A   JSR $9000
+809E7D   LDA #$02 
+809E7F   JSR $E6E3
+809E82   LDA #$01 
+809E84   STA $AE  
+809E86   JMP $9553
+809E89   LDA $AF  
+809E8B   BEQ $809E91  
+809E8D   LDX #$06 
+809E8F   STX $A1  
+809E91   RTS
+----------------   
+809E92   JSL $82B12F  
+809E96   LDA $A8  
+809E98   BEQ $809ECA  
+809E9A   LDX #$08 
+809E9C   STX $A1  
+809E9E   DEC
+809E9F   BNE $809EA6  
+809EA1   LDA $B2  
+809EA3   DEC
+809EA4   BEQ $809EAD  
+809EA6   LDA #$01 
+809EA8   STA $AE  
+809EAA   JMP $9567
+809EAD   LDA #$04 
+809EAF   STA $AE  
+809EB1   JMP $958A
+809EB4   LDA $AF  
+809EB6   BNE $809ECA  
+809EB8   LDA $A8  
+809EBA   CMP #$02 
+809EBC   BEQ $809ECB  
+809EBE   INC $B2  
+809EC0   LDA $B2  
+809EC2   CMP #$04 
+809EC4   BEQ $809ECB  
+809EC6   LDA #$02 
+809EC8   STA $A1  
+809ECA   RTS
+
+809ECB   LDA #$04 ;Go to intro sequence
+809ECD   STA $A0  
+809ECF   STZ $A1 
+809ED1   JMP $8527 ;Set FBlank and stuff
+
+
+809ED4   LDX $A1  
+809ED6   JMP ($9ED9,X)
+--------data--------     
+809ED9  
+dw $9EDF 
+dw $9F2A 
+dw $9F58
+----------------   
+809EDF   LDA #$02 
+809EE1   STA $A1  
+809EE3   STZ $A8  
+809EE5   JSR $9000
+809EE8   LDA #$01 
+809EEA   JSR $E6E3
+809EED   LDA #$08 
+809EEF   JSR LoadBgGfxPointerFromA;$AEE1
+809EF2   LDA #$03 
+809EF4   JSR $ADC1
+809EF7   LDA $8AE520  
+809EFB   STA $1E00
+809EFE   LDA $8AE521  
+809F02   STA $1E01
+809F05   LDA #$01 
+809F07   JSR $B165
+809F0A   LDA #$03 
+809F0C   JSR $AF9C
+809F0F   LDA #$02 
+809F11   JSR $B1D0
+809F14   LDA #$04 
+809F16   JSR $AF9C
+809F19   LDA #$0B 
+809F1B   JSR $AF9C
+809F1E   LDA #$01 
+809F20   STA $AE  
+809F22   JSR $9553
+809F25   LDA #$1A 
+809F27   JMP PlaySong ;$99C0
+809F2A   JSL $82B12F  
+809F2E   LDA $A8  
+809F30   BEQ $809F57  
+809F32   LDA #$04 
+809F34   STA $A1  
+809F36   LDA #$01 
+809F38   STA $AE  
+809F3A   JSR $9567
+--------sub start--------
+809F3D   JSR $A72D
+809F40   LDA $A9  
+809F42   LSR
+809F43   ADC $A9  
+809F45   TAX
+809F46   LDA $866F,X  
+809F49   STA $BD  
+809F4B   LDA $8670,X  
+809F4E   STA $0156
+809F51   LDA $8671,X  
+809F54   STA $01D6
+809F57   RTS
+----------------   
+809F58   JSL $82B12F  
+809F5C   LDA $AF  
+809F5E   BNE $809F6D  
+809F60   LDA #$06 
+809F62   STA $A0  
+809F64   STZ $A1  
+809F66   STZ $78  
+809F68   STZ $79  
+809F6A   JSR $8527
+809F6D   RTS
+----------------   
+--------sub start--------
+809F6E   LDX $A1  
+809F70   JMP ($9F73,X)
+--------data--------     
+809F73  .db $79 $9F $EC $9F $00 $A0
+----------------   
+809F79   JSR $8517
+809F7C   LDA #$17 
+809F7E   STA $80  
+809F80   LDA #$00 
+809F82   JSR $AD7D
+809F85   LDA $CB  
+809F87   BEQ $809F8E  
+809F89   LDA #$04 
+809F8B   STA $A1  
+809F8D   RTS
+----------------   
+809F8E   LDA #$02 
+809F90   STA $A1 ;Sort of submodule thing
+809F92   JSR $917F
+809F95   STZ $B7 ;Set MAP Index to 0
+809F97   STZ $A8 ; ?
+809F99   JSR $9000
+809F9C   LDA #$04 
+809F9E   JSR $E6E3
+809FA1   LDA #$01 
+809FA3   JSR $ADC1
+809FA6   LDA #$0C 
+809FA8   JSR $ADC1
+809FAB   LDA #$00 
+809FAD   JSR $ACC4
+809FB0   LDA #$03 
+809FB2   JSR $AFD3
+809FB5   LDA #$09 
+809FB7   JSR LoadBgGfxPointerFromA;$AEE1
+809FBA   LDA #$04 
+809FBC   JSR $B165
+809FBF   LDA #$03 
+809FC1   JSR $AF9C
+809FC4   LDA #$03 
+809FC6   JSR $B1D0
+809FC9   JSL $82B864  
+809FCD   LDA #$04 
+809FCF   JSR $AF9C
+809FD2   JSR $8542
+809FD5   LDA #$01 
+809FD7   STA $AE  
+809FD9   JSR $9553
+809FDC   STZ $1140
+809FDF   LDA #$14 
+809FE1   LDX #$18 
+809FE3   JSL $808104  
+809FE7   LDA #$17 
+809FE9   JMP PlaySong ;$99C0
+809FEC   JSL $82B12F  
+809FF0   LDA $A8  
+809FF2   BEQ $809FFF  
+809FF4   LDA #$04 
+809FF6   STA $A1  
+809FF8   LDA #$01 
+809FFA   STA $AE  
+809FFC   JSR $9567
+809FFF   RTS
+----------------   
+80A000   LDA $AF  
+80A002   BNE $809FFF  
+80A004   LDA $1140
+80A007   BEQ $809FFF  
+80A009   LDA #$08 
+80A00B   STA $A0  
+80A00D   STZ $A1  
+80A00F   STZ $A2  
+80A011   JSR $8527
+80A014   LDA #$00 
+80A016   JSR $AD7D
+80A019   LDA $B6 ; Level Index
+80A01B   ASL
+80A01C   STA $0C 
+80A01E   TAX
+80A01F   LDA $868F,X ;02
+80A022   JSR LoadBgGfxPointerFromA;$AEE1
+80A025   LDX $0C 
+80A027   LDA $8690,X ;02
+80A02A   CMP $868F,X ;02
+80A02D   BEQ $80A032  
+80A02F   JSR LoadBgGfxPointerFromA;$AEE1
+80A032   LDA #$01 ;if 2 values == same then skip 2nd load
+80A034   JSL $808142  
+80A038   LDA $B1  
+80A03A   BEQ $80A061 ;Check game state RTS
+80A03C   LDX $B6 ; Level Index
+80A03E   LDA $86A3,X  
+80A041   JSR PlaySong ;$99C0
+80A044   JMP $A74E
+
+
+NormalGameRoutine:
+{
+    80A047   LDX $A2
+    80A049   JMP ($A04C,X)
+}
+
+SecondaryJumpTable:
+{
+    dw $A05C ;0000 ; check $1140
+    dw $A11C ;0002
+    dw $A13C ;0004
+    dw $A1A9 ;0006
+    dw $A1F6 ;0008
+    dw $A20B ;000A
+    dw $A22B ;000C
+    dw $A23E ;000E
+}   
+
+
+----------------   
+80A05C   LDA $1140
+80A05F   BNE $80A062  
+80A061   RTS
+----------------   
+80A062   STZ $C8  
+80A064   JSL $809A29  
+80A068   JSR $8517
+80A06B   JSR $B011
+80A06E   LDA #$02 
+80A070   STA $A2  
+80A072   STZ $A8  
+80A074   JSR $ACF8
+80A077   JSR $8FC4
+80A07A   JSL $82C2CE  
+80A07E   JSL $80E56A  
+80A082   JSR $ABE5
+80A085   JSR $B4C2 ;write tiles?
+80A088   JSR $B631
+80A08B   JSL $82C17C  
+80A08F   JSL $829D0E  
+80A093   LDA #$03 
+80A095   JSR $AF9C
+80A098   LDA #$04 
+80A09A   JSR $AF9C
+80A09D   LDA #$01 
+80A09F   JSL $808142  
+80A0A3   JSL $82C329  
+80A0A7   JSR $ADD1 ; Write palette into palette buffer?
+80A0AA   LDA #$00 
+80A0AC   JSR $ACC4
+80A0AF   REP #$10 
+80A0B1   LDX #$0100   
+80A0B4   JSR $A0EE
+80A0B7   LDX #$0180   
+80A0BA   JSR $A0EE
+80A0BD   SEP #$10 
+80A0BF   LDA #$93 
+80A0C1   STA $1A56
+80A0C4   JSR $A8CC
+80A0C7   JSR $A80E
+80A0CA   LDY #$01 
+80A0CC   STY $AC  
+80A0CE   LDA $B1  
+80A0D0   BEQ $80A0E9  
+80A0D2   LDX $B6 ;LDX What LEVEL we are in
+80A0D4   LDA $869E,X ;$83869E ;Load Boss map
+80A0D7   CMP $B7 ;Check if we are in boss map
+80A0D9   BNE $80A0E9  
+80A0DB   LDA $86A8,X ;$8386A8
+ ;ran if we are in boss room
+80A0DE   JSR PlaySong ;$99C0
+80A0E1   LDA #$5A 
+80A0E3   JSL $808142  
+80A0E7   LDY #$06
+;We are not in boss room
+80A0E9   STY $AE  
+80A0EB   JMP $9553
+--------sub start--------
+80A0EE   STZ $70,X
+80A0F0   STZ $71,X
+80A0F2   STZ $72,X
+80A0F4   STZ $73,X
+80A0F6   LDY #$0001   
+80A0F9   LDA $0A,X
+80A0FB   BEQ $80A100  
+80A0FD   LDY #$0002   
+80A100   TYA
+80A101   AND $BD  
+80A103   BEQ $80A11B  
+80A105   LDA $57,X
+80A107   BNE $80A10D  
+80A109   LDA #$03 
+80A10B   STA $57,X
+80A10D   LDA #$02 
+80A10F   STA $00,X
+80A111   STZ $01,X
+80A113   STZ $02,X
+80A115   STZ $03,X
+80A117   STZ $04,X
+80A119   STZ $05,X
+80A11B   RTS
+
+;Happens on tranisition Intro
+80A11C   JSL $80AA8C
+80A120   LDA $AF ;? switching mode ?
+80A122   BEQ .return ;$80A13B  
+80A124   LDA #$04 ;IF $AF !=0
+80A126   STA $A2 ; then set $A2 (submodule to 04) 
+80A128   LDA $B1
+80A12A   STA $AA
+80A12C   LDX $B6 ;Level Index
+80A12E   CPX #$03 ;IF LevelIndex != 03
+80A130   BEQ .returnAlt ;$80A139  
+80A132   LDA $869E,X ;otherwise check if MapIndex == ;0E 0F 19 19 19 11 depending on LevelIndex (Boss Rooms)
+80A135   CMP $B7 ; Map Index  
+80A137   BEQ .return ;$80A13B
+.returnAlt
+80A139   STZ $AC
+.return  
+80A13B   RTS
+
+GameRoutineNormal:
+{
+80A13C   JSL $80AA8C  
+80A140   JSR $A8EA;??
+80A143   LDA $BD  
+80A145   BEQ $80A189  
+80A147   LDA $A8  
+80A149   BEQ $80A179  
+80A14B   DEC
+80A14C   BEQ $80A178  
+80A14E   LDA $BD  
+80A150   CMP $BE  
+80A152   BNE $80A178  
+80A154   LDA $BD  
+80A156   BEQ $80A189  
+80A158   BIT #$01 
+80A15A   BEQ $80A162  
+80A15C   LDA $0100
+80A15F   DEC
+80A160   BNE $80A178  
+80A162   LDA $BD  
+80A164   BIT #$02 
+80A166   BEQ $80A16E  
+80A168   LDA $0180
+80A16B   DEC
+80A16C   BNE $80A178  
+80A16E   LDA #$0A 
+80A170   STA $A2  
+80A172   LDA #$40 
+80A174   STA $A5  
+80A176   STZ $AA  
+80A178   RTS
+}
+----------------   
+80A179   LDA $B8  
+80A17B   BNE $80A182  
+80A17D   LDA $AC  
+80A17F   BNE $80A188  
+80A181   RTS
+----------------   
+80A182   LDA #$06 
+80A184   STA $A2  
+80A186   STZ $AA  
+80A188   RTS
+----------------   
+80A189   LDA #$0E 
+80A18B   STA $A0  
+80A18D   STZ $A2  
+80A18F   STZ $AA  
+80A191   LDA #$10 
+80A193   JSL $808667  
+80A197   LDA #$11 
+80A199   JSL $808667  
+80A19D   STZ $1A56
+80A1A0   LDY #$06 
+80A1A2   JSL $809A35  
+80A1A6   JMP $9567
+80A1A9   JSL $80AA8C  
+80A1AD   LDA #$08 
+80A1AF   STA $A2  
+80A1B1   LDA #$01 
+80A1B3   LDA $B8 ;Check if we collided with a transition that get setted when we touch a transition?
+80A1B5   BEQ $80A1DE ;We collided with a transition     
+
+80A1B7   JSR $A789 ;Do the transition
+80A1BA   LDA #$01 
+80A1BC   LDX $B6  ; Level Index
+80A1BE   LDY $869E,X  
+80A1C1   CPY $B7 ;Check if we are in a boss room 
+80A1C3   BNE $80A1CD  
+80A1C5   LDY #$06 
+80A1C7   JSL $809A35  
+80A1CB   LDA #$04 
+80A1CD   STA $AE  
+80A1CF   JSR $9567
+80A1D2   STZ $1140
+80A1D5   LDA #$14 
+80A1D7   LDX #$18 
+80A1D9   JSL $808104  
+80A1DD   RTS
+----------------   
+--------unidentified--------
+80A1DE  .db $A5 $45 $05 $4B $89 $40 $D0 $D4
+80A1E6  .db $A6 $B6 $A5 $B7 $1A $DD $99 $86
+80A1EE  .db $90 $02 $A9 $00 $85 $B7 $80 $C4
+----------------   
+80A1F6   JSL $80AA8C  
+80A1FA   LDA $AF  
+80A1FC   BNE $80A20A  
+80A1FE   JSR $A87F
+80A201   STZ $A2  
+80A203   JSR $A7B6
+80A206   JSL $828AEA  
+80A20A   RTS
+----------------   
+80A20B   JSL $80AA8C  
+80A20F   JSR $A8EA
+80A212   DEC $A5  
+80A214   BNE $80A20A  
+80A216   LDA #$0C 
+80A218   STA $A2  
+80A21A   STA $AC  
+80A21C   LDA #$F8 
+80A21E   STA $A5  
+80A220   LDA #$05 
+80A222   JSL $808667  
+80A226   LDA #$1C 
+80A228   JMP PlaySong ;$99C0
+80A22B   JSL $80AA8C  
+80A22F   DEC $A5  
+80A231   BNE $80A20A  
+80A233   LDA #$0E 
+80A235   STA $A2  
+80A237   LDA #$03 
+80A239   STA $AE  
+80A23B   JMP $9567
+80A23E   JSL $80AA8C  
+80A242   LDA $AF  
+80A244   BNE $80A259  
+80A246   LDA $1A55
+80A249   BNE $80A25A  
+80A24B   LDA #$0A 
+80A24D   STA $A0  
+80A24F   STZ $A1  
+80A251   STZ $A2  
+80A253   STZ $1A56
+80A256   JSR $A87F
+80A259   RTS
+----------------   
+--------unidentified--------
+80A25A  .db $A2 $08 $22 $36 $81 $80 $20 $F8
+80A262  .db $F2 $4C $E6 $A6
+----------------   
+--------sub start--------
+80A266   LDX $A1  
+80A268   JMP ($A26B,X)
+--------data--------     
+80A26B  .db $77 $A2 $2A $A3 $45 $A3 $4E $A3
+80A273  .db $C4 $A3 $D8 $A3
+----------------   
+80A277   LDA #$02 
+80A279   STA $A1  
+80A27B   JSL $809A2F  
+80A27F   LDA #$0D 
+80A281   JSR $ADC1
+80A284   LDA $1E20
+80A287   STA $1E00
+80A28A   LDA $1E21
+80A28D   STA $1E01
+80A290   JSR $8527
+80A293   LDA #$0E 
+80A295   JSR LoadBgGfxPointerFromA;$AEE1
+80A298   JSR $8CA7
+80A29B   JSR $8CD6
+80A29E   JSR $9317
+80A2A1   LDA #$03 
+80A2A3   JSR $AF9C
+80A2A6   LDA #$05 
+80A2A8   JSR $AF9C
+80A2AB   LDA #$01 
+80A2AD   JSL $808142  
+80A2B1   STZ $1140
+80A2B4   STZ $C5  
+80A2B6   LDA #$16 
+80A2B8   LDX #$18 
+80A2BA   JSL $808104  
+80A2BE   LDA #$19 
+80A2C0   JSL $808667  
+80A2C4   LDA #$B3 
+80A2C6   STA $10  
+80A2C8   LDA #$4C 
+80A2CA   STA $11  
+80A2CC   LDA $B6  ; Level Index
+80A2CE   INC
+80A2CF   STA $00  
+80A2D1   JSL $8087DC  
+80A2D5   LDA #$6B 
+80A2D7   STA $10  
+80A2D9   LDA #$4D 
+80A2DB   STA $11  
+80A2DD   LDA $F3  
+80A2DF   STA $00  
+80A2E1   JSL $8087DC  
+80A2E5   LDA #$6E 
+80A2E7   STA $10  
+80A2E9   LDA $F2  
+80A2EB   STA $00  
+80A2ED   JSL $808812  
+80A2F1   LDA #$72 
+80A2F3   STA $10  
+80A2F5   LDA $F1  
+80A2F7   STA $00  
+80A2F9   JSL $808812  
+80A2FD   JSR $A926
+80A300   LDA $B6 ; Level Index  
+80A302   CMP #$04 
+80A304   BEQ $80A30E  
+80A306   LDA #$35 
+80A308   JSL $8085CC  
+80A30C   BRA $80A314  
+--------unidentified--------
+80A30E  .db $A9 $0A $22 $46 $87 $80
+----------------   
+80A314   STZ $A8  
+80A316   JSR $9000
+80A319   LDA #$08 
+80A31B   JSR $E6E3
+80A31E   LDA #$22 
+80A320   JSR PlaySong ;$99C0
+80A323   LDA #$01 
+80A325   STA $AE  
+80A327   JMP $9553
+80A32A   JSL $82B12F  
+80A32E   LDA $A8  
+80A330   BEQ $80A34D  
+80A332   LDA #$04 
+80A334   STA $A1  
+80A336   LDY #$04 
+80A338   JSL $809A35  
+80A33C   LDA #$04 
+80A33E   STA $AE  
+80A340   STA $AD  
+80A342   JMP $9567
+80A345   LDA $AF  
+80A347   BNE $80A34D  
+80A349   LDA #$06 
+80A34B   STA $A1  
+80A34D   RTS
+----------------   
+80A34E   LDA $1140
+80A351   BNE $80A354  
+80A353   RTS
+----------------   
+80A354   LDA #$00 
+80A356   JSR $AD49
+80A359   LDA $B6 ; Level Index  
+80A35B   CMP #$04 
+80A35D   BEQ $80A3B7  
+80A35F   LDX #$00 
+80A361   JSR $AFF2
+80A364   LDA #$08 
+80A366   STA $A1  
+80A368   STZ $CB  
+80A36A   LDA #$0B 
+80A36C   JSR LoadBgGfxPointerFromA;$AEE1
+80A36F   LDA #$0C 
+80A371   LDX $B6 ; Level Index  
+80A373   CPX #$03 
+80A375   BCC $80A379  
+80A377   LDA #$0D 
+80A379   JSR LoadBgGfxPointerFromA;$AEE1
+80A37C   LDA #$06 
+80A37E   LDX $B6 ; Level Index  
+80A380   CPX #$03 
+80A382   BCC $80A385  
+80A384   INC
+80A385   JSR $B1D7
+80A388   LDA #$00 
+80A38A   JSR $AD7D
+80A38D   LDA #$10 
+80A38F   JSR $ADC1
+80A392   JSR $8CA7
+80A395   JSR $8CD6
+80A398   JSR $94CB
+80A39B   JSR $8527
+80A39E   STZ $A8  
+80A3A0   JSR $9000
+80A3A3   LDA #$06 
+80A3A5   JSR $E6E3
+80A3A8   LDA #$01 
+80A3AA   STA $AE  
+80A3AC   JSR $9553
+80A3AF   LDX $B6 ; Level Index  
+80A3B1   LDA $86AD,X  
+80A3B4   JMP PlaySong ;$99C0
+--------unidentified--------
+80A3B7  .db $A9 $0C $85 $A0 $64 $A1 $A2 $08
+80A3BF  .db $22 $36 $81 $80 $60  
+----------------   
+80A3C4   JSL $82B12F  
+80A3C8   LDA $A8  
+80A3CA   BEQ $80A3D7  
+80A3CC   LDA #$0A 
+80A3CE   STA $A1  
+80A3D0   LDA #$01 
+80A3D2   STA $AE  
+80A3D4   JSR $9567
+80A3D7   RTS
+----------------   
+80A3D8   LDA $AF  
+80A3DA   BNE $80A3F2  
+80A3DC   LDA #$06 
+80A3DE   STA $A0  
+80A3E0   STZ $A1  
+80A3E2   INC $B6 ; Level Index
+80A3E4   STZ $B7 ;Set LEVEL ID to 0
+80A3E6   JSR $9E14
+80A3E9   LDA #$06 
+80A3EB   STA $A0  
+80A3ED   STZ $A1  
+80A3EF   STZ $1A56
+80A3F2   RTS
+----------------   
+--------sub start--------
+80A3F3   LDX $A1  
+80A3F5   JMP ($A3F8,X)
+--------unidentified--------
+80A3F8  .db $0C $A4 $32 $A4 $9C $A4 $C0 $A4
+80A400  .db $F1 $A4 $88 $A5 $E9 $A5 $0F $A6
+----------------   
+--------data--------     
+80A408  .db $4A $A6  
+----------------   
+--------unidentified--------
+80A40A  .db $5B $A6 $A9 $02 $85 $A1 $85 $C7
+80A412  .db $3A $85 $B2 $20 $27 $85 $20 $A7
+80A41A  .db $8C $20 $CB $94 $A9 $00 $20 $7D
+80A422  .db $AD $A9 $10 $20 $C1 $AD $A9 $0B
+80A42A  .db $20 $E1 $AE $A9 $19 $4C $C0 $99
+80A432  .db $AD $40 $11 $D0 $01 $60 $A9 $17
+80A43A  .db $A6 $B2 $D0 $02 $A9 $04 $85 $80
+80A442  .db $20 $F2 $AF $A9 $04 $85 $A1 $A9
+80A44A  .db $07 $A6 $B2 $CA $D0 $01 $3A $20
+80A452  .db $D7 $B1 $A9 $94 $8D $10 $00 $A9
+80A45A  .db $E1 $8D $11 $00 $A6 $B2 $BD $C9
+80A462  .db $86 $30 $04 $22 $05 $8D $80 $A9
+80A46A  .db $08 $A6 $B2 $CA $D0 $02 $A9 $0B
+80A472  .db $20 $C1 $AD $A9 $0D $A6 $B2 $CA
+80A47A  .db $D0 $01 $3A $20 $E1 $AE $A9 $0C
+80A482  .db $20 $9C $AF $64 $A8 $20 $00 $90
+80A48A  .db $A9 $07 $20 $E3 $E6 $A9 $08 $85
+80A492  .db $9E $85 $9D $A9 $04 $85 $AE $4C
+80A49A  .db $53 $95 $22 $2F $B1 $82 $A5 $A8
+80A4A2  .db $F0 $1B $A9 $06 $85 $A1 $A9 $04
+80A4AA  .db $85 $AE $20 $67 $95 $9C $40 $11
+80A4B2  .db $A5 $B2 $1A $85 $C5 $A9 $16 $A2
+80A4BA  .db $18 $22 $04 $81 $80 $60 $A5 $AF
+80A4C2  .db $D0 $0E $64 $9D $A5 $B2 $C9 $03
+80A4CA  .db $F0 $07 $E6 $B2 $A9 $02 $85 $A1
+80A4D2  .db $60 $64 $B2 $64 $B1 $A9 $08 $85
+80A4DA  .db $A1 $64 $A2 $20 $BA $A5 $A0 $02
+80A4E2  .db $22 $35 $9A $80 $A9 $90 $22 $42
+80A4EA  .db $81 $80 $A9 $1D $4C $C0 $99 $AD
+80A4F2  .db $40 $11 $D0 $01 $60 $A9 $0A $85
+80A4FA  .db $A1 $A9 $17 $85 $80 $A9 $C3 $8D
+80A502  .db $58 $1A $A9 $01 $8D $59 $1A $64
+80A50A  .db $9F $A9 $02 $85 $A9 $20 $3D $9F
+80A512  .db $A5 $B2 $18 $69 $03 $85 $C6 $A5
+80A51A  .db $B2 $0A $0A $85 $00 $0A $65 $00
+80A522  .db $AA $C2 $20 $BD $CD $86 $85 $B6
+80A52A  .db $BD $CF $86 $85 $A4 $64 $A6 $E2
+80A532  .db $20 $BD $D1 $86 $8D $4A $1A $BD
+80A53A  .db $D2 $86 $8D $4B $1A $BD $D3 $86
+80A542  .db $8D $4C $01 $BD $D4 $86 $8D $4D
+80A54A  .db $01 $BD $D5 $86 $8D $42 $01 $BD
+80A552  .db $D6 $86 $8D $CC $01 $BD $D7 $86
+80A55A  .db $8D $CD $01 $BD $D8 $86 $8D $C2
+80A562  .db $01 $9C $22 $11 $9C $32 $11 $A9
+80A56A  .db $80 $8D $3A $11 $20 $7F $91 $20
+80A572  .db $0F $A0 $A9 $01 $22 $42 $81 $80
+80A57A  .db $20 $47 $A0 $A9 $02 $A6 $B2 $D0
+80A582  .db $02 $A9 $05 $85 $AE $60 $C2 $20
+80A58A  .db $E6 $A6 $C6 $A4 $E2 $20 $F0 $03
+80A592  .db $4C $47 $A0 $A5 $B2 $09 $40 $22
+80A59A  .db $67 $86 $80 $A9 $78 $22 $42 $81
+80A5A2  .db $80 $A9 $0C $85 $A1 $A9 $05 $85
+80A5AA  .db $AE $20 $67 $95 $E6 $B2 $A5 $B2
+80A5B2  .db $C9 $0E $F0 $24 $A9 $02 $85 $AE
+80A5BA  .db $A5 $B2 $0A $0A $85 $00 $0A $65
+80A5C2  .db $00 $AA $BD $CD $86 $85 $B6 $BD
+80A5CA  .db $CE $86 $85 $B7 $9C $40 $11 $A9
+80A5D2  .db $14 $A2 $18 $22 $04 $81 $80 $60
+80A5DA  .db $9C $40 $11 $A9 $04 $85 $C5 $A9
+80A5E2  .db $16 $A2 $18 $22 $04 $81 $80 $A5
+80A5EA  .db $AF $D0 $0C $A5 $B2 $C9 $0E $F0
+80A5F2  .db $07 $A9 $08 $85 $A1 $64 $A2
+----------------   
+80A5F9   RTS
+----------------   
+--------unidentified--------
+80A5FA  .db $A9 $0E $85 $A1 $A0 $02 $22 $35
+80A602  .db $9A $80 $A9 $90 $22 $42 $81 $80
+80A60A  .db $A9 $20 $4C $C0 $99 $AD $40 $11
+80A612  .db $F0 $E5 $A2 $04 $20 $F2 $AF $A9
+80A61A  .db $10 $85 $A1 $20 $27 $85 $20 $D6
+80A622  .db $8C $A9 $12 $20 $C1 $AD $A9 $00
+80A62A  .db $20 $49 $AD $AD $C0 $1F $8D $00
+80A632  .db $1E $AD $C1 $1F $8D $01 $1E $64
+80A63A  .db $A8 $20 $00 $90 $A9 $0A $20 $E3
+80A642  .db $E6 $A9 $04 $85 $AE $4C $53 $95
+----------------   
+80A64A   JSL $82B12F  
+80A64E   LDA #$05 
+80A650   JSR $AF9C
+80A653   LDA $A8  
+80A655   BEQ $80A5F9  
+80A657   LDA #$12 
+80A659   STA $A1  
+80A65B   RTS
+----------------   
+--------sub start--------
+80A65C   LDX $A1  
+80A65E   JMP ($A661,X)
+--------data--------     
+80A661  .db $69 $A6 $C6 $A6 $DE $A6
+----------------   
+--------unidentified--------
+80A667  .db $2C $A7  
+----------------   
+80A669   LDA $AF  
+80A66B   BEQ $80A66E  
+80A66D   RTS
+----------------   
+80A66E   LDA #$02 
+80A670   STA $A1  
+80A672   JSR $A87F
+80A675   JSR $8517
+80A678   STZ $A8  
+80A67A   JSR $9000
+80A67D   LDA #$05 
+80A67F   JSR $E6E3
+80A682   JSL $809A2F  
+80A686   LDA #$08 
+80A688   JSR LoadBgGfxPointerFromA;$AEE1
+80A68B   JSR $853A
+80A68E   LDA #$02 
+80A690   JSR $B1D0
+80A693   LDA #$04 
+80A695   JSR $AF9C
+80A698   LDA #$0B 
+80A69A   JSR $AF9C
+80A69D   LDA #$04 
+80A69F   LDX $CC  
+80A6A1   BNE $80A6A5  
+80A6A3   LDA #$11 
+80A6A5   JSR $ADC1
+80A6A8   LDA #$21 
+80A6AA   LDX $CC  
+80A6AC   BEQ $80A6B0  
+80A6AE   LDA #$18 
+80A6B0   JSR PlaySong ;$99C0
+80A6B3   LDA $1EE0
+80A6B6   STA $1E00
+80A6B9   LDA $1EE1
+80A6BC   STA $1E01
+80A6BF   JSL $82B12F  
+80A6C3   JMP $9553
+80A6C6   LDA $AF  
+80A6C8   BEQ $80A6DD  
+80A6CA   JSL $82B12F  
+80A6CE   LDA $A8  
+80A6D0   BEQ $80A6DD  
+80A6D2   LDA #$04 
+80A6D4   STA $A1  
+80A6D6   LDA #$01 
+80A6D8   STA $AE  
+80A6DA   JSR $9567
+80A6DD   RTS
+----------------   
+80A6DE   LDA $AF  
+80A6E0   BNE $80A6DD  
+80A6E2   LDA $A9  
+80A6E4   BNE $80A6F7  
+80A6E6   STZ $A0  
+80A6E8   STZ $A1  
+80A6EA   STZ $CB  
+80A6EC   LDX #$08 
+80A6EE   JSL $808136  
+80A6F2   LDA #$02 
+80A6F4   JMP $81BB
+--------unidentified--------
+80A6F7  .db $A9 $06 $85 $A0 $64 $A1 $85 $CB
+80A6FF  .db $C6 $CC $A0 $01 $A5 $A9 $C9 $02
+80A707  .db $F0 $02 $A0 $02 $8C $BD $00 $C2
+80A70F  .db $10 $A2 $00 $01 $88 $F0 $03 $A2
+80A717  .db $80 $01 $A5 $BF $95 $40 $A5 $C0
+80A71F  .db $95 $42 $A5 $C1 $95 $43 $A5 $C2
+80A727  .db $95 $41 $E2 $10 $60 $60
+----------------   
+--------sub start--------
+80A72D   STZ $0100
+80A730   REP #$30 
+80A732   LDX #$0100   
+80A735   LDY #$0101   
+80A738   LDA #$00FE   
+80A73B   MVN $83,$83  
+80A73E   SEP #$30 
+80A740   LDA #$02 
+80A742   STA $018A
+80A745   LSR
+80A746   STA $01F4
+80A749   STZ $BD  
+80A74B   STZ $BE  
+80A74D   RTS
+----------------   
+80A74E   LDA $B6 ; Level Index  
+80A750   ASL
+80A751   ASL
+80A752   TAY
+80A753   REP #$10 
+80A755   LDX #$0100   
+80A758   JSR $A766
+80A75B   INY
+80A75C   INY
+80A75D   LDX #$0180   
+80A760   JSR $A766
+80A763   SEP #$10 
+80A765   RTS
+----------------   
+--------sub start--------
+80A766   LDA $B7;Set Start coordinations/Map
+80A768   BNE $80A77C  
+80A76A   LDA $867B,Y  
+80A76D   STA $4C,X ; X Position
+80A76F   LDA $867C,Y  
+80A772   STA $4D,X ; Y Position
+80A774   LDA #$04 
+80A776   STA $1A4A
+80A779   STZ $1A4B
+80A77C   LDA $CB  
+80A77E   BNE $80A788  
+80A780   STZ $40,X
+80A782   STZ $42,X
+80A784   STZ $43,X
+80A786   STZ $41,X
+80A788   RTS
+----------------   
+LoadTransitionRectangleRoutine:
+;This Array informations : 
+;Length is the first byte to tell how many transitions there is for that map
+;Byte01 = Map Leading to ;TODO : There's a #$7F Mask bit 7 might be used for something else
+;Byte02 = TileMap Address HighByte
+;Byte03 = TileMap Address Low Byte
+;Byte04 = Flags, Facing Direction Destination
+;Byte05 = Destination X
+;Byte06 = Destination Y
+
+80A789   LDA #$00 
+80A78B   XBA
+80A78C   LDA $B7 ;Load MAP ID
+80A78E   ASL     ;*2
+80A78F   LDX $B6 ;Load LEVEL ID
+80A791   ADC $F303,X ;(83F303, LevelID) + (MapID*2)
+80A794   TAY
+80A795   LDA $B8 ;B8 = id to read from the array (probably setted from somewhere else :thinking:)
+80A797   AND #$0F
+;========================================================
+80A799   ASL 
+80A79A   STA $00
+80A79C   ASL
+80A79D   ADC $00 ;<- this code is doing A * 6 because there is 6 bytes of data in that array
+;========================================================
+80A79F   REP #$31 
+80A7A1   ADC $F303,Y
+80A7A4   TAX
+80A7A5   STA $1A4C ;Store Index of the transitions start for that map
+80A7A8   SEP #$20 
+80A7AA   LDA $0001,X ;Load byte 0001 Map destination
+80A7AD   AND #$7F
+80A7AF   STA $B7 ;Set Map index to transition map
+80A7B1   STZ $B8
+80A7B3   SEP #$10
+80A7B5   RTS
+----------------   
+--------sub start--------
+80A7B6   REP #$10 
+80A7B8   LDX $1A4C
+80A7BB   LDA $0001,X  
+80A7BE   AND #$80 
+80A7C0   ASL
+80A7C1   ROL
+80A7C2   LDA #$00 
+80A7C4   XBA
+80A7C5   LDA $0004,X  
+80A7C8   AND #$80 
+80A7CA   ASL
+80A7CB   ROL
+80A7CC   STA $1A4B
+80A7CF   LDA $0004,X  
+80A7D2   TAY
+80A7D3   AND #$0F 
+80A7D5   CMP #$0F 
+80A7D7   BNE $80A7DE  
+80A7D9   LDY #$000C   
+80A7DC   BRA $80A7EB  
+80A7DE   TYA
+80A7DF   AND #$60 
+80A7E1   LSR
+80A7E2   LSR
+80A7E3   LSR
+80A7E4   LSR
+80A7E5   STA $00  
+80A7E7   LSR
+80A7E8   ADC $00  
+80A7EA   TAY
+80A7EB   LDA $0005,X  
+80A7EE   STA $014C
+80A7F1   CLC
+80A7F2   ADC $8660,Y  
+80A7F5   STA $01CC
+80A7F8   LDA $0006,X  
+80A7FB   STA $014D
+80A7FE   CLC
+80A7FF   ADC $8661,Y  
+80A802   STA $01CD
+80A805   LDA $8662,Y  
+80A808   STA $1A4A
+80A80B   SEP #$10 
+80A80D   RTS
+----------------   
+--------sub start--------
+80A80E   LDX #$00 
+80A810   REP #$20 
+80A812   LDA $B6 ; Level Index  
+80A814   CMP $86B5,X  
+80A817   BEQ $80A823  
+80A819   INX
+80A81A   INX
+80A81B   CPX #$0C 
+80A81D   BNE $80A814  
+80A81F   SEP #$20 
+80A821   BRA $80A87F  
+--------unidentified--------
+80A823  .db $E2 $20 $20 $9A $A8 $20 $BF $A8
+80A82B  .db $A9 $04 $8D $70 $43 $A9 $26 $8D
+80A833  .db $71 $43 $A9 $00 $8D $72 $43 $A9
+80A83B  .db $F0 $8D $73 $43 $A9 $7F $8D $74
+80A843  .db $43 $A9 $05 $8D $2A $21 $A9 $01
+80A84B  .db $8D $2B $21 $A9 $FF $8D $23 $21
+80A853  .db $A9 $0F $8D $25 $21 $A9 $02 $85
+80A85B  .db $84 $A9 $E0 $85 $85 $A9 $13 $85
+80A863  .db $82 $A5 $80 $85 $81 $A9 $80 $85
+80A86B  .db $89 $85 $C9 $A9 $A0 $8D $07 $42
+80A873  .db $A9 $17 $8D $09 $42 $A9 $02 $85
+80A87B  .db $9E $85 $9D $60
+----------------   
+--------sub start--------
+80A87F   STZ $89  
+80A881   STZ $81  
+80A883   STZ $82  
+80A885   STZ $89  
+80A887   STZ $2123
+80A88A   STZ $2125
+80A88D   STZ $84  
+80A88F   STZ $85  
+80A891   STZ $C9  
+80A893   STZ $9D  
+80A895   RTS
+----------------   
+--------unidentified--------
+80A896  .db $A5 $C9 $F0 $24 $A2 $00 $F4 $7F
+80A89E  .db $83 $AB $C2 $30 $A9 $01 $01 $9D
+80A8A6  .db $00 $F0 $A9 $00 $01 $9D $02 $F0
+80A8AE  .db $9E $04 $F0 $E8 $E8 $E8 $E8 $E8
+80A8B6  .db $E0 $60 $04 $90 $E7 $E2 $30 $AB
+80A8BE  .db $60 $A9 $00 $AA $9F $00 $F5 $7F
+80A8C6  .db $E8 $E0 $64 $D0 $F7 $60
+----------------   
+--------sub start--------
+80A8CC   STZ $CA  
+80A8CE   LDA $B6 ; Level Index  
+80A8D0   CMP #$03 
+80A8D2   BNE $80A8E9  
+80A8D4   LDA $B7 ; Map Index    
+80A8D6   LSR
+80A8D7   LSR
+80A8D8   LSR
+80A8D9   TAY
+80A8DA   LDA $B7 ; Map Index    
+80A8DC   AND #$07 
+80A8DE   TAX
+80A8DF   LDA $86B1,Y  
+80A8E2   BIT $80B8,X  
+80A8E5   BEQ $80A8E9  
+80A8E7   INC $CA  
+80A8E9   RTS
+----------------   
+--------sub start--------
+80A8EA   DEC $F0  
+80A8EC   BNE $80A925  
+80A8EE   LDA #$3C 
+80A8F0   STA $F0  
+80A8F2   SEP #$08 
+80A8F4   LDA $F1  
+80A8F6   CLC
+80A8F7   ADC #$01 
+80A8F9   STA $F1  
+80A8FB   CMP #$5A 
+80A8FD   BCC $80A923  
+80A8FF   STZ $F1  
+80A901   LDA $F2  
+80A903   CLC
+80A904   ADC #$01 
+80A906   STA $F2  
+80A908   CMP #$5A 
+80A90A   BCC $80A923  
+80A90C   STZ $F2  
+80A90E   LDA $F3  
+80A910   CLC
+80A911   ADC #$01 
+80A913   STA $F3  
+80A915   CMP #$0A 
+80A917   BCC $80A923  
+80A919   LDA #$09 
+80A91B   STA $F3  
+80A91D   LDA #$59 
+80A91F   STA $F2  
+80A921   STA $F1  
+80A923   REP #$08 
+80A925   RTS
+----------------   
+--------sub start--------
+80A926   SEP #$08 
+80A928   LDA $F5  
+80A92A   CLC
+80A92B   ADC $F1  
+80A92D   STA $F5  
+80A92F   BCS $80A935  
+80A931   CMP #$5A 
+80A933   BCC $80A93A  
+80A935   SBC #$60 
+80A937   STA $F5  
+80A939   SEC
+80A93A   LDA $F6  
+80A93C   ADC $F2  
+80A93E   STA $F6  
+80A940   BCS $80A946  
+80A942   CMP #$5A 
+80A944   BCC $80A94B  
+80A946   SBC #$60 
+80A948   STA $F6  
+80A94A   SEC
+80A94B   LDA $F7  
+80A94D   ADC $F3  
+80A94F   STA $F7  
+80A951   CMP #$0A 
+80A953   BCC $80A95F  
+80A955   LDA #$09 
+80A957   STA $F7  
+80A959   LDA #$59 
+80A95B   STA $F6  
+80A95D   STA $F5  
+80A95F   REP #$08 
+80A961   RTS
+----------------   
+80A962   SEP #$30 
+80A964   LDA #$83 
+80A966   PHA
+80A967   PLB
+80A968   LDA $1A56
+80A96B   BEQ $80A97F  
+80A96D   LDA #$01 
+80A96F   XBA
+80A970   LDA #$00 
+80A972   TCD
+80A973   JSR $A987
+80A976   LDA #$01 
+80A978   XBA
+80A979   LDA #$80 
+80A97B   TCD
+80A97C   JSR $A987
+80A97F   LDA #$01 
+80A981   JSL $808142  
+80A985   BRA $80A968  
+--------sub start--------
+80A987   LDA $00AB
+80A98A   BEQ $80A995  
+80A98C   LDA $00  
+80A98E   BNE $80A995  
+80A990   LDX $71  
+80A992   JMP ($A9A2,X)
+80A995   LDX $70  
+80A997   JMP ($A99A,X)
+--------data--------     
+80A99A  .db $A6 $A9 $B1 $A9 $E9 $A9
+----------------   
+--------unidentified--------
+80A9A0  .db $EA $A9  
+----------------   
+--------data--------     
+80A9A2  .db $0A $AA $16 $AA
+----------------   
+80A9A6   LDA #$02 
+80A9A8   LDX $00  
+80A9AA   BEQ $80A9AE  
+80A9AC   LDA #$04 
+80A9AE   STA $70  
+80A9B0   RTS
+----------------   
+80A9B1   JSR $AA17
+80A9B4   LDX $71  
+80A9B6   JMP ($A9B9,X)
+--------data--------     
+80A9B9  .db $C3 $A9 $D4 $A9 $BF $A9
+----------------   
+80A9BF   DEC $7F  
+80A9C1   BNE $80A9D3  
+80A9C3   LDA #$02 
+80A9C5   STA $71  
+80A9C7   LDA #$20 
+80A9C9   STA $7F  
+80A9CB   LDA #$0E 
+80A9CD   ORA $74  
+80A9CF   JSL $808667  
+80A9D3   RTS
+----------------   
+80A9D4   DEC $7F  
+80A9D6   BNE $80A9E8  
+80A9D8   LDA #$04 
+80A9DA   STA $71  
+80A9DC   LDA #$18 
+80A9DE   STA $7F  
+80A9E0   LDA #$10 
+80A9E2   ORA $74  
+80A9E4   JSL $808667  
+80A9E8   RTS
+----------------   
+80A9E9   RTS
+----------------   
+--------unidentified--------
+80A9EA  .db $A6 $71 $7C $EF $A9 $F9 $A9 $D4
+80A9F2  .db $A9 $F5 $A9 $C6 $7F $D0 $10 $A9
+80A9FA  .db $02 $85 $71 $A9 $20 $85 $7F $A9
+80AA02  .db $08 $05 $74 $22 $CC $85 $80 $60
+----------------   
+80AA0A   LDA #$02 
+80AA0C   STA $71  
+80AA0E   LDA #$2A 
+80AA10   ORA $74  
+80AA12   JSL $808667  
+80AA16   RTS
+----------------   
+--------sub start--------
+80AA17   LDA $65  
+80AA19   BIT #$10 
+80AA1B   BEQ $80AA8B  
+80AA1D   PLA
+80AA1E   PLA
+80AA1F   LDA #$04 
+80AA21   STA $70  
+80AA23   STZ $71  
+80AA25   LDA #$10 
+80AA27   ORA $74  
+80AA29   JSL $808667  
+--------unidentified--------
+80AA2D  .db $A9 $03 $85 $00 $A9 $03 $85 $57
+80AA35  .db $A5 $0A $4A $A8 $1A $0D $BD $00
+80AA3D  .db $8D $BD $00 $BE $E4 $B6 $BD $40
+80AA45  .db $01 $F0 $43 $9E $40 $01 $9E $3F
+80AA4D  .db $01 $BD $41 $01 $9E $41 $01 $F0
+80AA55  .db $23 $BD $42 $01 $85 $42 $BD $5A
+80AA5D  .db $01 $85 $5A $BD $5B $01 $85 $5B
+80AA65  .db $BD $43 $01 $9E $43 $01 $9D $42
+80AA6D  .db $01 $C2 $20 $BD $5C $01 $9D $5A
+80AA75  .db $01 $E2 $20 $60 $BD $43 $01 $9E
+80AA7D  .db $43 $01 $85 $42 $BD $5C $01 $85
+80AA85  .db $5A $BD $5D $01 $85 $5B
+----------------   
+80AA8B   RTS
+
+
+GameRoutineNormalLONGJUMP1:
+{
+80AA8C   JSL ClearOAMData ;$80B8A0  
+80AA90   JSR ControllerUpdate ;$BDFF
+80AA93   JSL $828130 ; Set Directpages 
+80AA97   JSL $818000 ; Sprite Handler Main
+80AA9B   JSL $81825E ; Sprite Main
+80AA9F   JSL $82A238 ; Gate Main
+80AAA3   JSL $82ADDD ; Item (fruits, gems) Main
+80AAA7   JSL $82AFA0 ; Item (hook, shovel) Main
+80AAAB   JSL $829D53 ; Not Sure!
+80AAAF   JSR $C05E   ; Thrown Objects Main
+80AAB2   JSR $AC75   ; Not Sure!
+80AAB5   JSR $DBA1   ; Not Sure!
+80AAB8   JSR $AB9B   ; Not Sure!
+80AABB   JSR $AACD ; Beach palette?
+80AABE   JSL $82971C
+80AAC2   LDA #$00 
+80AAC4   XBA
+80AAC5   LDA #$00 
+80AAC7   TCD
+80AAC8   JSL $80B8C9 ;??  
+80AACC   RTL
+}
+
+; Load Animated Palette Code
+80AACD   LDA $1100
+80AAD0   BEQ $80AADA  
+80AAD2   LDA #$11 
+80AAD4   XBA
+80AAD5   LDA #$00 
+80AAD7   JSR $AAE8
+80AADA   LDA $1110 ; 2nd palette check
+80AADD   BEQ $80AAE7  
+80AADF   LDA #$11 
+80AAE1   XBA
+80AAE2   LDA #$10 
+80AAE4   JMP $AAE8
+80AAE7   RTS
+
+;Animated Palettes loaded per map!
+80AAE8   JMP $F343 ;do a RTS with values in $1100
+80AAEB   LDA $00B7 ;Start of palette load
+80AAEE   LDX $00B6
+80AAF1   CLC
+80AAF2   ADC $8775,X ; Load Palettes related for each maps
+80AAF5   TAY
+80AAF6   STZ $00  
+80AAF8   LDX $8775,Y  
+80AAFB   BNE $80AAFE  
+80AAFD   RTS
+
+
+80AAFE   STX $00 ; 02
+80AB00   CPX #$10 
+80AB02   BNE $80AB15
+80AB04   STX $1110
+80AB07   LDA #$12 
+80AB09   STA $1112
+80AB0C   LDA #$AB 
+80AB0E   STA $1113
+80AB11   BRA $80AB2A  
+--------unidentified--------
+80AB13   LDX #$14 ;Also load palette 0x14 if palette 0x10 is selected
+----------------   
+80AB15   CPX #$22 
+80AB17   BNE $80AB2A  
+80AB19   STX $1110 ; ID
+80AB1C   LDA #$27 ; Addr
+80AB1E   STA $1112
+80AB21   LDA #$AB ; Addr
+80AB23   STA $1113 ; palette ptr (27AB in bank 83)
+80AB26   BRA $80AB2A 
+;Return here with the implented RTS
+80AB28   LDX #$12 ;so also load value 12!
+----------------   
+80AB2A   LDA $87EA,X ;Technically start at 87EC at index 02,  index 0 is just returning
+80AB2D   STA $06  ;12
+80AB2F   LDA $87EB,X  
+80AB32   STA $07  ;88
+80AB34   STZ $04  
+80AB36   JSR $AB5D ; Load Count data+0
+80AB39   STA $05 ; Store Count
+80AB3B   JSR $AB5D ; data+1
+80AB3E   CMP #$00 ;
+80AB40   BEQ $80AB46  
+80AB42   JSL PlaySFX ;$809A53 used to play beach sfx as palette change
+80AB46   JSR $AB5D ;data+2
+80AB49   STA $08 ; data+2 is stored in $08
+80AB4B   JSR $AB5D ; data +3 is used in animated palette
+80AB4E   JSR $AB6F ; Beach animation Palette?
+80AB51   JSR $AB5D ; data +3
+80AB54   JSR $F352 ; Popping the RTS by keeping returning address in $01-$03
+80AB57   DEC $05 ;decrease count by 1
+80AB59   BNE $80AB4B ; if it doesnt != 0 continue loading data and do palette
+80AB5B   BRA $80AB34  
+--------sub start--------
+80AB5D   REP #$31 
+80AB5F   LDA $04 
+80AB61   AND #$00FF   
+80AB64   ADC $06 ;8812 
+80AB66   TAX
+80AB67   LDA $0000,X ; This is reading data not pointer
+80AB6A   SEP #$30 
+80AB6C   INC $04 
+80AB6E   RTS
+----------------   
+--------sub start--------
+80AB6F   REP #$30 ; A = 18
+80AB71   AND #$00FF
+80AB74   XBA
+80AB75   LSR
+80AB76   LSR
+80AB77   LSR ;1800 >> 3 = 0300
+80AB78   TAX
+80AB79   LDA $08 ; = 05
+80AB7B   AND #$00FF
+80AB7E   XBA
+80AB7F   LSR
+80AB80   LSR
+80AB81   LSR ;0500 >> 3 = 00A0
+80AB82   TAY
+80AB83   SEP #$20 
+80AB85   LDA #$20 
+80AB87   STA $0000
+80AB8A   LDA $8AE400,X ; Animated Palette beach !
+80AB8E   STA $1E00,Y  
+80AB91   INX
+80AB92   INY
+80AB93   DEC $0000
+80AB96   BNE $80AB8A  
+80AB98   SEP #$10 
+80AB9A   RTS
+----------------   
+--------sub start--------
+80AB9B   LDA $1000
+80AB9E   BEQ $80ABA8  
+80ABA0   LDA #$10 
+80ABA2   XBA
+80ABA3   LDA #$00 
+80ABA5   JSR $ABB6
+80ABA8   LDA $1020
+80ABAB   BEQ $80ABB5  
+80ABAD   LDA #$10 
+80ABAF   XBA
+80ABB0   LDA #$20 
+80ABB2   JSR $ABB6
+80ABB5   RTS
+----------------   
+--------sub start--------
+80ABB6   TCD
+80ABB7   LDA $02  
+80ABB9   BNE $80ABE0  
+80ABBB   LDA #$01 
+80ABBD   STA $00  
+80ABBF   STA $01  
+80ABC1   STA $02  
+80ABC3   LDA #$32 
+80ABC5   STA $1B  
+80ABC7   LDA $0D  
+80ABC9   INC
+80ABCA   AND #$04 
+80ABCC   STA $0E  
+80ABCE   LDA $0D  
+80ABD0   ASL
+80ABD1   ASL
+80ABD2   ADC $0B  
+80ABD4   TAX
+80ABD5   LDY $88DF,X  
+80ABD8   LDA $88E0,X  
+80ABDB   JSL FrameAnimationNoTimer ; $8089A3  ;Set Animation?
+80ABDF   RTS
+
+
+80ABE0   JSL $8088DF ;Not sure yet
+80ABE4   RTS
+
+;Hookshot Hooks data
+80ABE5   LDY $B6 ;Level in (01)
+80ABE7   LDX $8959,Y ; 838959  .db $05 $06 $0D $12 $15 $00 $03 $07
+80ABEA   LDA $8959,X
+80ABED   STA $0E ; Count
+80ABEF   BEQ $80ABFE
+80ABF1   LDA $B7 ; Map Index  
+80ABF3   CMP $895A,X ; IF Map match
+80ABF6   BEQ $80AC02
+80ABF8   INX
+80ABF9   INX
+80ABFA   DEC $0E
+80ABFC   BNE $80ABF3
+80ABFE   STZ $1A48
+80AC01   RTS
+
+
+80AC02   LDY $895B,X ; hook id
+80AC05   STY $1A47
+80AC08   LDX $8977,Y ; Load Offset Pointer for the hook
+80AC0B   STX $1A48
+80AC0E   LDA $1180,Y ; hookSaveRAM
+80AC11   STA $02  
+80AC13   AND #$0F 
+80AC15   BEQ $80AC1D  
+80AC17   STA $00  
+80AC19   JSL $80AC32  
+80AC1D   LDA $02  
+80AC1F   AND #$F0 
+80AC21   BEQ $80AC31  
+80AC23   LSR
+80AC24   LSR
+80AC25   LSR
+80AC26   LSR
+80AC27   STA $00  
+80AC29   INX
+80AC2A   INX
+80AC2B   INX
+80AC2C   INX
+80AC2D   JSL $80AC32  
+80AC31   RTS
+
+
+80AC32   LDY #$00 
+80AC34   LDA $1000
+80AC37   BEQ $80AC3B  
+80AC39   LDY #$20 
+80AC3B   LDA #$02 
+80AC3D   STA $1000,Y 
+80AC40   LDA $897A,X ;byte4
+80AC43   SEC
+80AC44   SBC $8978,X ;byte2 ;CHECKED
+80AC47   LSR
+80AC48   CLC
+80AC49   ADC $8978,X  ;byte2  checked
+80AC4C   ADC #$06 
+80AC4E   STA $1011,Y  
+80AC51   LDA $897B,X ;byte5  checked
+80AC54   SEC
+80AC55   SBC $8979,X  ;byte3  checked
+80AC58   LSR
+80AC59   CLC
+80AC5A   ADC $8979,X ;byte3  
+80AC5D   ADC #$06 
+80AC5F   STA $1014,Y  
+80AC62   LDA $0000
+80AC65   AND #$03 
+80AC67   STA $100D,Y  
+80AC6A   LDA $0000
+80AC6D   LSR
+80AC6E   LSR
+80AC6F   AND #$02 
+80AC71   STA $100B,Y  
+80AC74   RTL
+----------------   
+--------sub start--------
+80AC75   LDA $0AC0
+80AC78   BEQ $80AC82  
+80AC7A   LDA #$0A 
+80AC7C   XBA
+80AC7D   LDA #$C0 
+80AC7F   JSR $AC90
+80AC82   LDA $0AE0
+80AC85   BEQ $80AC8F  
+80AC87   LDA #$0A 
+80AC89   XBA
+80AC8A   LDA #$E0 
+80AC8C   JSR $AC90
+80AC8F   RTS
+----------------   
+--------sub start--------
+80AC90   TCD
+80AC91   LDA $02  
+80AC93   BNE $80ACB7  
+80AC95   LDA #$01 
+80AC97   STA $01  
+80AC99   STA $02  
+80AC9B   LDA #$32 
+80AC9D   LDX $00B6
+80ACA0   CPX #$02 
+80ACA2   BNE $80ACAD  
+80ACA4   LDX $00B7
+80ACA7   CPX #$18 
+80ACA9   BNE $80ACAD  
+80ACAB   LDA #$22 
+80ACAD   STA $1B  
+80ACAF   LDY #$BF 
+80ACB1   LDA #$89 
+80ACB3   JSL FrameAnimationNoTimer ; $8089A3  
+80ACB7   JSL SpriteSaveDirectPage ; 8088CE
+80ACBB   DEC $08  
+80ACBD   BNE $80ACC3  
+80ACBF   STZ $00
+80ACC1   STZ $01
+80ACC3   RTS
+----------------   
+;Sprites Palette Loading from small table at 838A8D
+;All call i've found are using A=00 :shrug:
+LoadStaticSpritePalettes:
+{
+80ACC4   REP #$30 
+80ACC6   AND #$00FF 
+80ACC9   STA $00 
+80ACCB   ASL 
+80ACCC   ADC $00 ;A * 3
+80ACCE   ADC #$8A8D 
+80ACD1   STA $13
+80ACD3   LDA ($13) ;838A8D + (A*3)
+80ACD5   INC $13
+80ACD7   AND #$00FF 
+80ACDA   ADC #$1F00 ;+#$1F00
+80ACDD   TAY ;Destination 7E1F00 (1E00 = palette buffer 1F00 (spr palette))
+80ACDE   LDA ($13) ;838A8E
+80ACE0   INC $13 
+80ACE2   AND #$00FF;
+80ACE5   XBA ;8F00
+80ACE6   LSR
+80ACE7   LSR
+80ACE8   LSR ;0000  
+80ACE9   ADC #$E000 ;83E000 ?
+80ACEC   TAX ;Source ->  8AE000
+80ACED   LDA ($13) ;838A8F
+80ACEF   AND #$00FF ;7F (length)
+80ACF2   MVN $8A,$83; 831F00
+80ACF5   SEP #$30 
+80ACF7   RTS
+}
+----------------   
+;Load Dynamic Sprite Palettes
+80ACF8   LDX $B6 ;Load LEVEL
+80ACFA   LDA $8A93,X ;Load Level Offset
+80ACFD   CLC
+80ACFE   ADC $B7 ;Map Index
+80AD00   TAY 
+80AD01   LDX $8A93,Y
+80AD04   LDA $8B0A,X ; groups of 4 palettes
+80AD07   STA $00 
+80AD09   LDA $8B0B,X
+80AD0C   STA $02 
+80AD0E   LDA $8B0C,X
+80AD11   STA $04 
+80AD13   LDA $8B0D,X ;Source
+80AD16   LDY #$E0 ;Destination ;it does 4 palette transfer total cause code fall in the function directly at the end
+80AD18   JSR DoDynamicPaletteTransfer;$AD2D
+80AD1B   LDA $00  ;Source 
+80AD1D   LDY #$80 ;Destination
+80AD1F   JSR DoDynamicPaletteTransfer;$AD2D
+80AD22   LDA $02  ;Source 
+80AD24   LDY #$A0 ;Destination
+80AD26   JSR DoDynamicPaletteTransfer;$AD2D
+80AD29   LDA $04  ;Source 
+80AD2B   LDY #$C0 ;Destination
+
+;See code above for explanation
+DoDynamicPaletteTransfer:
+{
+80AD2D   REP #$30 
+80AD2F   AND #$00FF
+80AD32   XBA ; Source << 8 (values varies from 00 to 1D)
+80AD33   LSR 
+80AD34   LSR 
+80AD35   LSR ; Source >> 3 basically (Source * 32)
+80AD36   ADC #$E000 ; (Source*0x20) + E000 (8AE000 = sprites palettes in ROM)
+80AD39   TAX ; Store that in X
+80AD3A   TYA ; Load Destination Low Byte
+80AD3B   CLC
+80AD3C   ADC #$1F00 ; (Dest + 1F00) ($1E00 = palettes buffer, 1F00 = lower (spr section))
+80AD3F   TAY ; Store that in Y
+80AD40   LDA #$001F ; Strip of 16 colors (32 bytes)
+80AD43   MVN $8A,$83 ; Move that from 8A to 83(7E) mirror of 83 is 7E in RAM
+80AD46   SEP #$30
+80AD48   RTS 
+}   
+----------------   
+--------sub start--------
+80AD49   REP #$30 
+80AD4B   AND #$00FF   
+80AD4E   STA $00  
+80AD50   ASL
+80AD51   ADC $00  
+80AD53   ADC #$8A90   
+80AD56   STA $13  
+80AD58   LDA ($13)
+80AD5A   INC $13  
+80AD5C   AND #$00FF   
+80AD5F   ADC #$1F00   
+80AD62   TAY
+80AD63   LDA ($13)
+80AD65   INC $13  
+80AD67   AND #$00FF   
+80AD6A   XBA
+80AD6B   LSR
+80AD6C   LSR
+80AD6D   LSR
+80AD6E   ADC #$FE00   
+80AD71   TAX
+80AD72   LDA ($13)
+80AD74   AND #$00FF   
+80AD77   MVN $8B,$83  
+80AD7A   SEP #$30 
+80AD7C   RTS
+----------------   
+--------sub start--------
+80AD7D   REP #$30 
+80AD7F   AND #$00FF   
+80AD82   STA $00  
+80AD84   ASL
+80AD85   ADC $00  
+80AD87   ADC #$89CF ; First splash screen palette
+80AD8A   STA $13  
+80AD8C   LDA ($13)
+80AD8E   INC $13  
+80AD90   AND #$00FF   
+80AD93   ADC #$1E00   
+80AD96   TAY
+80AD97   LDA ($13)
+80AD99   INC $13  
+80AD9B   AND #$00FF   
+80AD9E   ASL
+80AD9F   ASL
+80ADA0   ASL
+80ADA1   ADC #$E400   
+80ADA4   TAX
+80ADA5   LDA ($13)
+80ADA7   AND #$00FF   
+80ADAA   MVN $8A,$83  
+80ADAD   SEP #$30 
+80ADAF   RTS
+----------------   
+--------sub start--------
+80ADB0   PHD
+80ADB1   TAY
+80ADB2   REP #$30 
+80ADB4   LDA #$0000   
+80ADB7   TCD
+80ADB8   LDX #$89D2   
+80ADBB   TYA
+80ADBC   JSR $AEAA
+80ADBF   PLD
+80ADC0   RTL
+
+; Load Palette
+80ADC1   REP #$30 
+80ADC3   LDX #$89D2   
+80ADC6   JMP $AEAA
+
+; Load Palette
+80ADC9   REP #$30 
+80ADCB   LDX #$89C3 ;Get turned into $E580 
+80ADCE   JMP $AEAA
+
+
+80ADD1   LDA #$02 ; Load BG Palette for level?
+80ADD3   JSR $ADC1
+80ADD6   LDA $B6 ; Level Index  
+80ADD8   ASL
+80ADD9   TAX
+80ADDA   JMP ($ADDD,X)
+   
+80ADDD ; Routine for each level for palettes
+dw $ADE7 ; Level 01
+dw $ADF1 ; Level 02
+dw $AE17 ; Level 03
+dw $AE2E ; Level 04
+dw $AE8C ; Level 05
+
+; Level 01 Palette Routine : 
+80ADE7   LDA #$00 
+80ADE9   REP #$30 
+80ADEB   LDX #$8A0B   
+80ADEE   JMP $AEAA
+
+; Level 02 Palette Routine : 
+80ADF1   LDA #$00 
+80ADF3   JSR $AE0E
+80ADF6   LDA $B7 ; Map Index    
+80ADF8   LSR
+80ADF9   TAX
+80ADFA   LDA $8A56,X ;table of nibble 
+80ADFD   BCS $80AE03 ;if carry is setted map value was odd so use low nibble
+80ADFF   LSR ;otherwise use high nibble
+80AE00   LSR
+80AE01   LSR
+80AE02   LSR
+80AE03   AND #$0F 
+80AE05   BEQ $80AE16  
+80AE07   LDA #$01 
+80AE09   JSR $AE0E
+80AE0C   LDA #$02 
+
+80AE0E   REP #$30 
+80AE10   LDX #$8A0E   
+80AE13   JMP $AEAA
+80AE16   RTS
+
+; Level 03 Palette Routine : 
+80AE17   LDA $B7 ; Map Index    
+80AE19   LSR
+80AE1A   TAX
+80AE1B   LDA $8A5E,X ; table of nibble 
+80AE1E   BCS $80AE24 ; if carry is setted map value was odd so use low nibble
+80AE20   LSR
+80AE21   LSR
+80AE22   LSR
+80AE23   LSR
+80AE24   AND #$0F 
+80AE26   REP #$30 
+80AE28   LDX #$8A17 ; Palette base value for level 03 (nibble is used as A index)
+80AE2B   JMP $AEAA
+
+; Level 04 Palette Routine : 
+80AE2E   LDA $B7 ; Map Index    
+80AE30   LSR
+80AE31   TAX
+80AE32   LDA $8A6B,X ; table of nibble  
+80AE35   BCS $80AE3B ; if carry is setted map value was odd so use low nibble 
+80AE37   LSR
+80AE38   LSR
+80AE39   LSR
+80AE3A   LSR
+80AE3B   AND #$0F
+80AE3D   TAX
+80AE3E   LDA $8A7A,X ; use nibble to load a value from a table
+80AE41   STA $0C 
+80AE43   AND #$07 ;[0000 0111] ; First Value
+80AE45   JSR $AE84  ; do palette load
+80AE48   LDA $0C  
+80AE4A   LSR
+80AE4B   LSR
+80AE4C   LSR
+80AE4D   STA $0C 
+80AE4F   AND #$07  ;[0011 1000]>>3 ; 2nd Value
+80AE51   BEQ $80AE75 ; If 2nd value == 0 go do 3 palette load
+80AE53   CMP #$07 
+80AE55   BEQ $80AE8B ;RTS if 07
+80AE57   JSR $AE84 ; do palette load
+80AE5A   LDA $0C ; [1111 1000]
+80AE5C   AND #$38  ; [XX11 1000]
+80AE5E   CMP #$08
+80AE60   BNE $80AE67 ; branch if bits !=  [0000 1000]
+80AE62   LDA #$08 ; otherwise load palette 08
+80AE64   JMP $AE84 ; do palette load
+80AE67   CMP #$10 ; check if 
+80AE69   BNE $80AE8B; branch if bits !=  [0001 0000] (RTS)
+80AE6B   LDA #$07 ;otherwise load palette 0
+80AE6D   JSR $AE84
+
+80AE70   LDA #$0B
+80AE72   JMP $AE84
+80AE75   LDA #$0B
+80AE77   JSR $AE84
+80AE7F   LDA #$0C
+80AE81   JSR $AE84
+
+80AE84   REP #$30 
+80AE86   LDX #$8A23   
+80AE89   BRA $80AEAA  
+80AE8B   RTS
+
+; Level 05 Palette Routine : 
+80AE8C   LDA #$00 
+80AE8E   JSR $AEA3
+80AE91   LDA $B7  ; Map Index   
+80AE93   LSR
+80AE94   TAX
+80AE95   LDA $8A80,X  
+80AE98   BCS $80AE9E  
+80AE9A   LSR
+80AE9B   LSR
+80AE9C   LSR
+80AE9D   LSR
+80AE9E   AND #$0F 
+80AEA0   BNE $80AEA3  
+80AEA2   RTS
+----------------   
+
+; Load Palette Code
+80AEA3   REP #$30 
+80AEA5   LDX #$8A4D
+80AEA8   BRA $80AEAA  ; Why does it have a BRA? for readability? could be removed
+
+; Load Palette Code - used for pretty much every palettes load
+80AEAA   STZ $16  
+80AEAC   STX $10
+80AEAE   AND #$00FF   
+80AEB1   STA $00  
+80AEB3   ASL
+80AEB4   ADC $00  
+80AEB6   ADC $10 ; Lowbyte of A * 3 + X so for 8A4D (4D * 3 = E7) (8A4D + E7 = 8B34)
+80AEB8   STA $13 
+80AEBA   LDA ($13) ; 0704
+80AEBC   INC $13 
+80AEBE   AND #$00FF 
+80AEC1   ADC #$1E00   
+80AEC4   TAY  ;Destination
+80AEC5   LDA ($13) ;1507
+80AEC7   INC $13 
+80AEC9   AND #$00FF ;0007
+80AECC   XBA
+80AECD   LSR
+80AECE   LSR
+80AECF   LSR ; <<5 basically 00E0
+80AED0   ADC #$E400   
+80AED3   ADC $16 ; Always 00? unless we can reach this routine from another point
+80AED5   TAX ;Source
+80AED6   LDA ($13) 
+80AED8   AND #$00FF ;Length   
+80AEDB   MVN $8A,$83 
+80AEDE   SEP #$30 
+80AEE0   RTS
+
+LoadBgGfxPointerFromA:
+80AEE1   PHA
+80AEE2   JSR LoadBgGfxPointerJump;$B268 ;Load GFX Pointer
+80AEE5   PLA
+80AEE6   LDY $40  
+80AEE8   REP #$30 
+80AEEA   AND #$00FF   
+80AEED   ASL
+80AEEE   ADC #$8B7E   
+80AEF1   STA $10  
+80AEF3   LDA ($10)
+80AEF5   AND #$00FF   
+80AEF8   STA $00  
+80AEFA   ASL
+80AEFB   ASL
+80AEFC   ADC $00  
+80AEFE   TAX
+80AEFF   LDA $8FFE03,X
+80AF03   STA $1803,Y  
+80AF06   LDA ($10)
+80AF08   AND #$FF00   
+80AF0B   STA $1801,Y  
+80AF0E   AND #$1F00   
+80AF11   ASL
+80AF12   ADC #$8000   
+80AF15   STA $1805,Y  
+80AF18   SEP #$31 
+80AF1A   LDA #$7F 
+80AF1C   STA $1807,Y  
+80AF1F   LDA #$01 
+80AF21   STA $1800,Y  
+80AF24   TYA
+80AF25   ADC #$07 
+80AF27   STA $40  
+80AF29   RTS
+
+;
+80AF2A   LDA #$80 
+80AF2C   STA $70  ;Set F-BLANK
+80AF2E   JSR $AF36
+80AF31   LDA #$02 
+80AF33   JMP $AF9C ;Update Tiles GFX
+--------sub start--------
+80AF36   LDX #$10 
+80AF38   BRA $80AF3C  
+--------unidentified--------
+80AF3A  .db $A2 $01  
+----------------   
+80AF3C   LDA #$00 
+80AF3E   STA $10  
+80AF40   LDA #$80 
+80AF42   STA $11  
+80AF44   PEA #$837F   
+80AF47   PLB
+80AF48   STZ $00  
+80AF4A   LDA #$02 
+80AF4C   STA $0E  
+80AF4E   LDA $00  
+80AF50   STA $02  
+80AF52   LDY #$00 
+80AF54   LDA #$00 
+80AF56   LSR $02  
+80AF58   BCC $80AF5B  
+80AF5A   DEC
+80AF5B   XBA
+80AF5C   LDA #$00 
+80AF5E   LSR $02  
+80AF60   BCC $80AF63  
+80AF62   DEC
+80AF63   XBA
+80AF64   REP #$20 
+80AF66   STA ($10),Y  
+80AF68   INY
+80AF69   INY
+80AF6A   CPY #$10 
+80AF6C   BNE $80AF66  
+80AF6E   LDA $10  
+80AF70   CLC
+80AF71   ADC #$0010   
+80AF74   STA $10  
+80AF76   SEP #$20 
+80AF78   DEC $0E  
+80AF7A   BNE $80AF52  
+80AF7C   INC $00  
+80AF7E   DEX
+80AF7F   BNE $80AF4A  
+80AF81   PLB
+80AF82   RTS
+----------------   
+--------unidentified--------
+80AF83  .db $A9 $03 $20 $9C $AF $A9 $04 $5C
+80AF8B  .db $94 $B0 $80    
+----------------   
+--------sub start--------
+80AF8E   TAX
+80AF8F   PHD
+80AF90   LDA #$00 
+80AF92   XBA
+80AF93   LDA #$00 
+80AF95   TCD
+80AF96   TXA
+80AF97   JSR $AF9C
+80AF9A   PLD
+80AF9B   RTL
+----------------   
+--------sub start--------
+80AF9C   STA $00  
+80AF9E   STZ $01  
+80AFA0   LDX $40  
+80AFA2   REP #$30 
+80AFA4   AND #$00FF   
+80AFA7   ASL
+80AFA8   ASL
+80AFA9   ASL
+80AFAA   SEC
+80AFAB   SBC $00  
+80AFAD   TAY
+80AFAE   LDA $8B9C,Y  
+80AFB1   STA $1801,X  
+80AFB4   LDA $8B9E,Y  
+80AFB7   STA $1803,X  
+80AFBA   LDA $8BA0,Y  
+80AFBD   STA $1805,X  
+80AFC0   SEP #$31 
+80AFC2   LDA $8BA2,Y  
+80AFC5   STA $1807,X  
+80AFC8   LDA #$01 
+80AFCA   STA $1800,X  
+80AFCD   TXA
+80AFCE   ADC #$07 
+80AFD0   STA $40  
+80AFD2   RTS
+----------------   
+--------sub start--------
+80AFD3   ASL
+80AFD4   ASL ;A*4
+80AFD5   TAX ;in X
+80AFD6   LDY $0043 ;Load position in the "DMA Buffer"
+80AFD9   REP #$31 
+80AFDB   LDA $C99F,X  
+80AFDE   STA $1380,Y ;Set DMA delay
+80AFE1   LDA $C9A1,X  
+80AFE4   STA $1382,Y ;Set DMA delay 
+80AFE7   SEP #$31 
+80AFE9   TYA
+80AFEA   ADC #$03 
+80AFEC   AND #$7F 
+80AFEE   STA $0043 ; 3 bytes DMA thing
+80AFF1   RTS
+----------------   
+--------sub start--------
+80AFF2   LDY $8C75,X  
+80AFF5   LDA $8C7A,Y  
+80AFF8   STA $0A  
+80AFFA   LDA $8C7B,Y  
+80AFFD   STA $0C  
+80AFFF   LDA #$74 
+80B001   LDX $0A  
+80B003   LDY #$68 
+80B005   JSR $B044
+80B008   LDA #$78 
+80B00A   LDX $0C  
+80B00C   LDY #$70 
+80B00E   JMP $B044
+--------sub start--------
+80B011   LDX $B6 ; Level Index  
+80B013   LDA $8BFE,X  
+80B016   CLC
+80B017   ADC $B7 ; Map Index    
+80B019   TAX
+80B01A   LDY $8BFE,X  
+80B01D   LDA $8C7A,Y  
+80B020   STA $0A  
+80B022   LDA $8C7B,Y  
+80B025   STA $0C  
+80B027   LDA $8C7C,Y  
+80B02A   STA $0E  
+80B02C   LDA #$74 
+80B02E   LDX $0A  
+80B030   LDY #$68 
+80B032   JSR $B044
+80B035   LDA #$78 
+80B037   LDX $0C  
+80B039   LDY #$70 
+80B03B   JSR $B044
+80B03E   LDA #$7C 
+80B040   LDX $0E  
+80B042   LDY #$78 
+--------sub start--------
+80B044   STZ $13  
+80B046   STA $14  
+80B048   LDA $C959,X  
+80B04B   STA $10  
+80B04D   LDA $C95A,X  
+80B050   STA $11  
+80B052   STZ $16  
+80B054   STY $17  
+80B056   LDX $40  
+80B058   LDA #$01 
+80B05A   STA $1800,X  
+80B05D   LDA #$7F 
+80B05F   STA $1807,X  
+80B062   REP #$31 
+80B064   LDA ($10)
+80B066   INC $10  
+80B068   INC $10  
+80B06A   STA $00  
+80B06C   AND #$7FFF   
+80B06F   STA $02  
+80B071   STA $1803,X  
+80B074   LDA $13  
+80B076   STA $1801,X  
+80B079   ADC #$0100   
+80B07C   STA $13  
+80B07E   LDA $16  
+80B080   STA $1805,X  
+80B083   CLC
+80B084   ADC $02  
+80B086   STA $16  
+80B088   SEP #$31 
+80B08A   TXA
+80B08B   ADC #$07 
+80B08D   STA $40  
+80B08F   LDA $01  
+80B091   BMI $80B056  
+80B093   RTS
+----------------   
+--------unidentified--------
+80B094  .db $E2 $30 $A9 $4F $22 $CC $85 $80
+80B09C  .db $A9 $80 $8D $00 $21 $20 $CF $83
+80B0A4  .db $A9 $17 $8D $2C $21 $A9 $0F $8D
+80B0AC  .db $00 $21 $80 $FE
+----------------   
+80B0B0   SEP #$30 
+80B0B2   LDA #$83 
+80B0B4   PHA
+80B0B5   PLB
+80B0B6   LDA #$00 
+80B0B8   JSR $B215 ;sprite prep decompress or something (setting Y, 34, 3E) probably length related
+80B0BB   LDA #$7F 
+80B0BD   JSR SpriteDecompressSheet;$B2A0 ; ;That one is the shovel, hook, keys, plank, etc... sprites icons at C800 in vram
+80B0C0   LDA #$01 
+80B0C2   JSR $B215
+80B0C5   LDA #$7E 
+80B0C7   JSR SpriteDecompressSheet;$B2A0 
+80B0CA   LDA #$02 
+80B0CC   JSR $B215
+80B0CF   LDA #$7F 
+80B0D1   JSR SpriteDecompressSheet;$B2A0 pirates
+80B0D4   LDA #$01 
+80B0D6   STA $7FFF12  
+80B0DA   JMP $8122
+80B0DD   SEP #$30 
+80B0DF   LDA #$83 ;Set DataBank to 83
+80B0E1   PHA
+80B0E2   PLB ;This routine is loading the sprites GFX for the current MAP from a sprite group
+80B0E3   LDX $B6 ;Load Level Index
+80B0E5   LDA $8BFE,X ;838BFE
+80B0E8   CLC
+80B0E9   ADC $B7 ;Load Map Index
+80B0EB   TAX
+80B0EC   LDY $8BFE,X ;838BFE ;Sprite Group (3 per group)
+80B0EF   LDA $8C7A,Y 
+80B0F2   STA $1141 ;Sprite 1 Loaded
+80B0F5   LDA $8C7B,Y  
+80B0F8   STA $1142 ;Sprite 2 Loaded
+80B0FB   LDA $8C7C,Y  
+80B0FE   STA $1143 ;Sprite 3 Loaded
+
+80B101   LDA $1141 ;Load Sprite Sheet 1
+80B104   LDY #$68  ;Destination?
+80B106   JSR SpritePrepSheetTransfer;$B23D
+80B109   LDA #$7F
+80B10B   JSR SpriteDecompressSheet;$B2A0
+
+80B10E   LDA $1142
+80B111   LDY #$70 ;Destination?
+80B113   JSR SpritePrepSheetTransfer;$B23D
+80B116   LDA #$7F
+80B118   JSR SpriteDecompressSheet;$B2A0
+
+80B11B   LDA $1143
+80B11E   LDY #$78 ;Destination?
+80B120   JSR SpritePrepSheetTransfer;$B23D
+80B123   LDA #$7F 
+80B125   JSR SpriteDecompressSheet;$B2A0
+
+80B128   INC $1140
+80B12B   JMP $8122
+80B12E   SEP #$30 
+80B130   LDA #$83 
+80B132   PHA
+80B133   PLB
+80B134   LDX $C5  
+80B136   LDY $8C75,X  
+80B139   LDA $8C7A,Y  
+80B13C   STA $1141
+80B13F   LDA $8C7B,Y  
+80B142   STA $1142
+80B145   LDA $1141
+80B148   LDY #$68 
+80B14A   JSR SpritePrepSheetTransfer;$B23D
+80B14D   LDA #$7F 
+80B14F   JSR SpritePrepSheetTransfer;$B2A0
+80B152   LDA $1142
+80B155   LDY #$70 
+80B157   JSR SpritePrepSheetTransfer;$B23D
+80B15A   LDA #$7F 
+80B15C   JSR SpritePrepSheetTransfer;$B2A0
+80B15F   INC $1140
+80B162   JMP $8122
+--------sub start--------
+80B165   REP #$31 
+80B167   LDX #$E000   
+80B16A   STX $3A  
+80B16C   AND #$00FF   
+80B16F   STA $3C  
+80B171   TAX
+80B172   LDA $8CCE,X  
+80B175   XBA
+80B176   TAY
+80B177   AND #$7F00   
+80B17A   LSR
+80B17B   LSR
+80B17C   ADC $3A  
+80B17E   STA $34  
+80B180   TYA 
+80B181   BPL $80B1AE  
+80B183   PEA #$837F   
+80B186   PLB
+80B187   LDY #$0070   
+80B18A   LDX $3A  
+80B18C   CLC
+80B18D   STZ $0000,X  
+80B190   STZ $0002,X  
+80B193   STZ $0004,X  
+80B196   STZ $0006,X  
+80B199   STZ $0008,X  
+80B19C   STZ $000A,X  
+80B19F   STZ $000C,X  
+80B1A2   STZ $000E,X  
+80B1A5   TXA
+80B1A6   ADC #$0010   
+80B1A9   TAX
+80B1AA   DEY
+80B1AB   BNE $80B18D  
+80B1AD   PLB
+80B1AE   LDA $3C  
+80B1B0   ASL
+80B1B1   ASL
+80B1B2   ADC $3C  
+80B1B4   TAX
+80B1B5   LDA $8FFEA0,X
+80B1B9   TAY
+80B1BA   LDA $8FFEA2,X
+80B1BE   STA $32  
+80B1C0   LDA $8FFEA3,X
+80B1C4   CLC
+80B1C5   ADC $34  
+80B1C7   STA $3E  
+80B1C9   SEP #$20 
+80B1CB   LDA #$7F 
+80B1CD   JMP $B2A0
+--------sub start--------
+80B1D0   REP #$31 
+80B1D2   LDX #$E800   
+80B1D5   BRA $80B16A  
+--------sub start--------
+80B1D7   REP #$31 
+80B1D9   LDX #$F000   
+80B1DC   BRA $80B16A  
+
+
+;A = Gfx to load
+LoadBgGfxPointer:
+{
+    80B1DE   REP #$31 
+    80B1E0   AND #$00FF
+    80B1E3   ASL
+    80B1E4   TAX
+    80B1E5   LDA $8B7E,X ;Load GFX data? ;First value = $3D00
+    80B1E8   AND #$1F00 ; 1D00
+    80B1EB   ASL ;*2 = 3A00
+    80B1EC   ADC #$8000 ;+8000 = BA00
+    80B1EF   STA $34 ; (Source Address)
+    80B1F1   LDA $8B7E,X ;First value = $3D00 
+    80B1F4   AND #$00FF ;low byte $00  
+    80B1F7   STA $3C 
+    80B1F9   ASL
+    80B1FA   ASL
+    80B1FB   ADC $3C ;*5 
+    80B1FD   TAX 
+    ;The format of the pointer 5 bytes
+    ;00 C0 85    80 04
+    ;long addr   length or position?
+    80B1FE   LDA $8FFE00,X ; Load BG GFX Pointer
+    80B202   TAY
+    80B203   LDA $8FFE02,X ; Pointer
+    80B207   STA $32  
+    80B209   LDA $8FFE03,X ; Length
+    80B20D   CLC
+    80B20E   ADC $34 ; Add source addr
+    80B210   STA $3E ; Length+source
+    80B212   SEP #$20 
+    80B214   RTS
+}
+
+
+80B215   REP #$31 
+80B217   AND #$00FF   
+80B21A   ASL
+80B21B   STA $3C  
+80B21D   ASL
+80B21E   ADC $3C ;*6
+80B220   TAX ;X*6
+80B221   LDA $8CBB,X  ; BB and BC ;BB is not actually read it's just to get BC in high byte
+80B224   AND #$FF00   
+80B227   STA $34  
+80B229   LDA $8CBD,X  ; BD and BE
+80B22C   TAY
+80B22D   LDA $8CBF,X  ; BF and C0
+80B230   STA $32  
+80B232   LDA $8CC0,X ; C0 and C1
+80B235   CLC
+80B236   ADC $34  
+80B238   STA $3E  
+80B23A   SEP #$20 
+80B23C   RTS
+----------------   
+SpritePrepSheetTransfer:
+80B23D   REP #$31
+80B23F   AND #$00FF
+80B242   LSR ;>> 1
+80B243   STA $3C ;3C = (sprite sheet index / 2)
+80B245   ASL
+80B246   ASL
+80B247   ADC $3C 
+80B249   TAX ;((sprite sheet index/2) * 5)
+80B24A   TYA ;68
+80B24B   AND #$00FF
+80B24E   XBA ;6800 ;Y is getting turned into an offset
+80B24F   STA $34 ;0F00
+80B251   LDA $8FFF00,X ;AddressLO  ;A2C0
+80B255   TAY
+80B256   LDA $8FFF02,X ;AddressBank ;8E
+80B25A   STA $32 ;$8E   
+80B25C   LDA $8FFF03,X ;Length?  ;04E0
+80B260   CLC
+80B261   ADC $34 
+80B263   STA $3E ;3E = size of the transfer,32 = Bank, Y = Addr
+80B265   SEP #$20 
+80B267   RTS
+
+LoadBgGfxPointerJump:
+80B268   JSR LoadBgGfxPointer;$B1DE
+80B26B   LDA #$7F 
+80B26D   BRA $80B2A0  
+
+
+80B26F   BNE $80B276  
+80B271   LDY #$8000   
+80B274   INC $32  
+80B276   RTS
+----------------   
+80B277   INY
+80B278   JSR $B26F
+80B27B   LDA [$30],Y  
+80B27D   INY
+80B27E   STA $38  
+80B280   JSR $B26F
+80B283   LDA #$08 
+80B285   STA $3A  
+80B287   ASL $3C  
+80B289   BCS $80B28F  
+80B28B   LDA $38  
+80B28D   BRA $80B295  
+80B28F   LDA [$30],Y  
+80B291   INY
+80B292   JSR $B26F
+80B295   STA $0000,X  
+80B298   INX
+80B299   DEC $3A  
+80B29B   BNE $80B287  
+80B29D   JMP $B2F0
+
+SpriteDecompressSheet:
+80B2A0   LDX $34 ;Load Source Address ;80?
+80B2A2   PHB 
+80B2A3   PHA 
+80B2A4   PLB ;DataBank is now 7F
+80B2A5   JSL $808196 ;Do something with the stack?
+80B2A9   REP #$21
+80B2AB   TYA ;Destination Address
+80B2AC   ADC #$0009 ;Add #$0009 ?
+80B2AF   SEP #$20 ;Go back in 8bit mode for A
+80B2B1   LDA [$30],Y ;$30 = address of the sprite sheet data ? not sure how this is getting setted only $32 is setted
+80B2B3   STA $3C ;Header byte i think?
+80B2B5   BCS $80B277 ;??
+80B2B7   INY ;Increase Array Position
+80B2B8   CMP #$7F ;IF Header Byte == 0x7F then
+80B2BA   BEQ $80B2F8 ;Copy 8 bytes from the array
+80B2BC   LDA [$30],Y ;Load first byte of the Array (this is DataByte)
+80B2BE   INY
+80B2BF   STA $38 ;this is DataByte
+80B2C1   LDA #$00
+80B2C3   XBA 
+80B2C4   LDA $3C ;Header Byte
+80B2C6   AND #$F0
+80B2C8   LSR
+80B2C9   LSR
+80B2CA   LSR 
+80B2CB   STX $34
+80B2CD   TAX ;Upper Bits in lower bits for the jumptable
+80B2CE   JSR (GFXDecompress, X);($B334,X)
+80B2D1   REP #$21 
+80B2D3   TXA
+80B2D4   ADC #$0004   
+80B2D7   STA $34  
+80B2D9   SEP #$20 
+80B2DB   LDA #$00 
+80B2DD   XBA
+80B2DE   LDA $3C  
+80B2E0   AND #$0F
+80B2E2   ASL
+80B2E3   TAX ;Lower Bits for jumptable
+80B2E4   JSR (GFXDecompress, X);($B334,X) 
+80B2E7   REP #$21 
+80B2E9   TXA
+80B2EA   ADC #$0004 
+80B2ED   TAX
+80B2EE   SEP #$20 
+80B2F0   CPX $3E ; CMP X with $3E (Length)
+80B2F2   BNE $80B2A5 ;Loop if not equal
+80B2F4   SEP #$10 
+80B2F6   PLB
+80B2F7   RTS
+;----------------   
+80B2F8   LDA [$30],Y  
+80B2FA   INY
+80B2FB   STA $0000,X  
+80B2FE   LDA [$30],Y  
+80B300   INY
+80B301   STA $0001,X  
+80B304   LDA [$30],Y  
+80B306   INY
+80B307   STA $0002,X  
+80B30A   LDA [$30],Y  
+80B30C   INY
+80B30D   STA $0003,X  
+80B310   LDA [$30],Y  
+80B312   INY
+80B313   STA $0004,X  
+80B316   LDA [$30],Y  
+80B318   INY
+80B319   STA $0005,X  
+80B31C   LDA [$30],Y  
+80B31E   INY
+80B31F   STA $0006,X  
+80B322   LDA [$30],Y  
+80B324   INY
+80B325   STA $0007,X  
+80B328   REP #$21 
+80B32A   TXA
+80B32B   ADC #$0008   
+80B32E   TAX
+80B32F   SEP #$20 
+80B331   JMP $B2F0
+--------data--------
+GFXDecompress:
+80B334 ;Decompression Routine
+dw Decompress00 ;$B354 ;0x00
+dw Decompress01 ;$B365 ;0x01
+dw Decompress02 ;$B379 ;0x02
+dw Decompress03 ;$B38D ;0x03
+dw Decompress04 ;$B3A4 ;0x04
+dw Decompress05 ;$B3B8 ;0x05
+dw Decompress06 ;$B3CF ;0x06
+dw Decompress07 ;$B3E6 ;0x07
+dw Decompress08 ;$B400 ;0x08
+dw Decompress09 ;$B414 ;0x09
+dw Decompress0A ;$B42B ;0x0A
+dw Decompress0B ;$B442 ;0x0B
+dw Decompress0C ;$B45C ;0x0C
+dw Decompress0D ;$B473 ;0x0D
+dw Decompress0E ;$B48D ;0x0E
+dw Decompress0F ;$B4A7 ;0x0F
+
+Decompress00: ;4 time same databyte
+80B354   LDX $34  
+80B356   LDA $38  
+80B358   STA $0000,X  
+80B35B   STA $0001,X  
+80B35E   STA $0002,X  
+80B361   STA $0003,X  
+80B364   RTS
+
+Decompress01: ;3 time same databyte +1 arraybyte, INC Arraypos by 1
+80B365   LDX $34  
+80B367   LDA $38  
+80B369   STA $0000,X  
+80B36C   STA $0001,X  
+80B36F   STA $0002,X  
+80B372   LDA [$30],Y  
+80B374   INY
+80B375   STA $0003,X  
+80B378   RTS
+
+Decompress02: ;2 time same databyte +1 arrabyte + databyte,  INC Arraypos by 1
+80B379   LDX $34  
+80B37B   LDA $38  
+80B37D   STA $0000,X  
+80B380   STA $0001,X  
+80B383   STA $0003,X  
+80B386   LDA [$30],Y  
+80B388   INY
+80B389   STA $0002,X  
+80B38C   RTS  
+
+Decompress03: ;2 time same databyte +2 arrabyte,  INC Arraypos by 2
+80B38D   LDX $34  
+80B38F   LDA $38  
+80B391   STA $0000,X  
+80B394   STA $0001,X  
+80B397   LDA [$30],Y  
+80B399   INY
+80B39A   STA $0002,X  
+80B39D   LDA [$30],Y  
+80B39F   INY
+80B3A0   STA $0003,X  
+80B3A3   RTS
+
+Decompress04: ;1 time databyte +1 arrabyte +2 databyte,  INC Arraypos by 1
+80B3A4   LDX $34  
+80B3A6   LDA $38  
+80B3A8   STA $0000,X  
+80B3AB   STA $0002,X  
+80B3AE   STA $0003,X  
+80B3B1   LDA [$30],Y  
+80B3B3   INY
+80B3B4   STA $0001,X  
+80B3B7   RTS
+
+Decompress05: ;1databyte + 1 arrabyte + 1 databyte +1 arrabyte,  INC Arraypos by 2
+80B3B8   LDX $34  
+80B3BA   LDA $38  
+80B3BC   STA $0000,X  
+80B3BF   STA $0002,X  
+80B3C2   LDA [$30],Y  
+80B3C4   INY
+80B3C5   STA $0001,X  
+80B3C8   LDA [$30],Y  
+80B3CA   INY
+80B3CB   STA $0003,X  
+80B3CE   RTS   
+
+Decompress06:
+80B3CF   LDX $34  
+80B3D1   LDA $38  
+80B3D3   STA $0000,X  
+80B3D6   STA $0003,X  
+80B3D9   LDA [$30],Y  
+80B3DB   INY
+80B3DC   STA $0001,X  
+80B3DF   LDA [$30],Y  
+80B3E1   INY
+80B3E2   STA $0002,X  
+80B3E5   RTS
+
+Decompress07:
+80B3E6   LDX $34  
+80B3E8   LDA $38  
+80B3EA   STA $0000,X  
+80B3ED   LDA [$30],Y  
+80B3EF   INY
+80B3F0   STA $0001,X  
+80B3F3   LDA [$30],Y  
+80B3F5   INY
+80B3F6   STA $0002,X  
+80B3F9   LDA [$30],Y  
+80B3FB   INY
+80B3FC   STA $0003,X  
+80B3FF   RTS
+
+Decompress08:
+80B400   LDX $34  
+80B402   LDA $38  
+80B404   STA $0001,X  
+80B407   STA $0002,X  
+80B40A   STA $0003,X  
+80B40D   LDA [$30],Y  
+80B40F   INY
+80B410   STA $0000,X  
+80B413   RTS
+
+Decompress09:
+80B414   LDX $34  
+80B416   LDA $38  
+80B418   STA $0001,X  
+80B41B   STA $0002,X  
+80B41E   LDA [$30],Y  
+80B420   INY
+80B421   STA $0000,X  
+80B424   LDA [$30],Y  
+80B426   INY
+80B427   STA $0003,X  
+80B42A   RTS
+
+Decompress0A:
+80B42B   LDX $34  
+80B42D   LDA $38  
+80B42F   STA $0001,X  
+80B432   STA $0003,X  
+80B435   LDA [$30],Y  
+80B437   INY
+80B438   STA $0000,X  
+80B43B   LDA [$30],Y  
+80B43D   INY
+80B43E   STA $0002,X  
+80B441   RTS
+
+Decompress0B:
+80B442   LDX $34  
+80B444   LDA $38  
+80B446   STA $0001,X  
+80B449   LDA [$30],Y  
+80B44B   INY
+80B44C   STA $0000,X  
+80B44F   LDA [$30],Y  
+80B451   INY
+80B452   STA $0002,X  
+80B455   LDA [$30],Y  
+80B457   INY
+80B458   STA $0003,X  
+80B45B   RTS 
+
+Decompress0C:
+80B45C   LDX $34  
+80B45E   LDA $38  
+80B460   STA $0002,X  
+80B463   STA $0003,X  
+80B466   LDA [$30],Y  
+80B468   INY
+80B469   STA $0000,X  
+80B46C   LDA [$30],Y  
+80B46E   INY
+80B46F   STA $0001,X  
+80B472   RTS  
+
+Decompress0D:
+80B473   LDX $34  
+80B475   LDA $38  
+80B477   STA $0002,X  
+80B47A   LDA [$30],Y  
+80B47C   INY
+80B47D   STA $0000,X  
+80B480   LDA [$30],Y  
+80B482   INY
+80B483   STA $0001,X  
+80B486   LDA [$30],Y  
+80B488   INY
+80B489   STA $0003,X  
+80B48C   RTS  
+
+Decompress0E:
+80B48D   LDX $34  
+80B48F   LDA $38  
+80B491   STA $0003,X  
+80B494   LDA [$30],Y  
+80B496   INY
+80B497   STA $0000,X  
+80B49A   LDA [$30],Y  
+80B49C   INY
+80B49D   STA $0001,X  
+80B4A0   LDA [$30],Y  
+80B4A2   INY
+80B4A3   STA $0002,X  
+80B4A6   RTS
+
+Decompress0F:
+80B4A7   LDX $34  
+80B4A9   LDA [$30],Y  
+80B4AB   INY
+80B4AC   STA $0000,X  
+80B4AF   LDA [$30],Y  
+80B4B1   INY
+80B4B2   STA $0001,X  
+80B4B5   LDA [$30],Y  
+80B4B7   INY
+80B4B8   STA $0002,X  
+80B4BB   LDA [$30],Y  
+80B4BD   INY
+80B4BE   STA $0003,X  
+80B4C1   RTS   
+
+
+;Load Level/Map routine that is setteing $10 and $13 long pointer for map32 data
+80B4C2   LDA #$89 
+80B4C4   STA $12  
+80B4C6   STA $15  
+80B4C8   LDA $B7 ; Map Index    
+80B4CA   ASL
+80B4CB   LDX $B6 ; Level Index  
+80B4CD   ADC $8CE7,X  
+80B4D0   TAX ;offset here
+80B4D1   STA $00 
+80B4D3   LDA $8CE7,X ; value here 8bit?
+80B4D6   XBA 
+80B4D7   LDA #$00 
+80B4D9   REP #$31 
+80B4DB   LSR
+80B4DC   LSR
+80B4DD   TAY
+80B4DE   ADC #$8000 ; value * 64 + 0x8000
+80B4E1   STA $10  
+80B4E3   TYA 
+80B4E4   LSR
+80B4E5   ADC #$B700 ; value * 32 + 0xB700
+80B4E8   STA $13  
+80B4EA   LDX #$E000   
+80B4ED   STX $1C  
+80B4EF   JSR $B535
+80B4F2   LDA $1C  
+80B4F4   CLC
+80B4F5   ADC #$0100   
+80B4F8   TAX
+80B4F9   CMP #$E800   
+80B4FC   BCC $80B4ED  
+80B4FE   SEP #$30 
+80B500   LDX $00  
+80B502   LDA $838CE8,X
+80B506   XBA
+80B507   LDA #$00 
+80B509   REP #$31 
+80B50B   LSR
+80B50C   LSR
+80B50D   TAY
+80B50E   ADC #$8000   
+80B511   STA $10  
+80B513   TYA
+80B514   LSR
+80B515   ADC #$B700   
+80B518   STA $13  
+80B51A   LDX #$E800   
+80B51D   STX $1C  
+80B51F   JSR $B535
+80B522   LDA $1C  
+80B524   CLC
+80B525   ADC #$0100   
+80B528   TAX
+80B529   CMP #$F000   
+80B52C   BCC $80B51D  
+80B52E   SEP #$30 
+80B530   LDA #$83 
+80B532   PHA
+80B533   PLB
+80B534   RTS
+----------------   
+;Load Map Related
+80B535   LDA #$0004   
+80B538   STA $0E  
+80B53A   SEP #$20 
+80B53C   LDA [$13]
+80B53E   AND #$0F 
+80B540   XBA
+80B541   LDA [$10]
+80B543   REP #$20 
+80B545   INC $10  
+80B547   JSR $B563
+80B54A   SEP #$20 
+80B54C   LDA [$13]
+80B54E   LSR
+80B54F   LSR
+80B550   LSR
+80B551   LSR
+80B552   XBA
+80B553   LDA [$10]
+80B555   REP #$20 
+80B557   INC $10  
+80B559   INC $13  
+80B55B   JSR $B563
+80B55E   DEC $0E  
+80B560   BNE $80B53A  
+80B562   RTS
+----------------   
+--------sub start--------
+80B563   ASL
+80B564   TAY
+80B565   ADC #$C000   
+80B568   STA $19  
+80B56A   TYA
+80B56B   ASL
+80B56C   ADC #$8000   
+80B56F   STA $16  
+80B571   PEA #$8B8A 
+80B574   PLB
+80B575   SEP #$20 
+80B577   LDA ($19)
+80B579   AND #$0F 
+80B57B   XBA
+80B57C   LDA ($16) ;Load Tilemap32
+80B57E   REP #$20 
+80B580   ASL
+80B581   ASL
+80B582   ASL
+80B583   STA $06  
+80B585   INC $16  
+80B587   SEP #$20 
+80B589   LDA ($19)
+80B58B   LSR
+80B58C   LSR
+80B58D   LSR
+80B58E   LSR
+80B58F   XBA
+80B590   LDA ($16)
+80B592   REP #$20 
+80B594   ASL
+80B595   ASL
+80B596   ASL
+80B597   STA $08  
+80B599   INC $16  
+80B59B   INC $19  
+80B59D   SEP #$20 
+80B59F   LDA ($19)
+80B5A1   AND #$0F 
+80B5A3   XBA
+80B5A4   LDA ($16)
+80B5A6   REP #$20 
+80B5A8   ASL
+80B5A9   ASL
+80B5AA   ASL
+80B5AB   STA $0A  
+80B5AD   INC $16  
+80B5AF   SEP #$20 
+80B5B1   LDA ($19)
+80B5B3   LSR
+80B5B4   LSR
+80B5B5   LSR
+80B5B6   LSR
+80B5B7   XBA
+80B5B8   LDA ($16)
+80B5BA   REP #$21 
+80B5BC   ASL
+80B5BD   ASL
+80B5BE   ASL
+80B5BF   STA $0C  
+80B5C1   PLB
+80B5C2   LDY #$8000   
+80B5C5   LDA ($06),Y  ;Tile8 Loaded from Tile16 from tile32 loaded previously
+80B5C7   STA $7F0000,X
+80B5CB   LDA ($08),Y  
+80B5CD   STA $7F0004,X
+80B5D1   LDA ($0A),Y  
+80B5D3   STA $7F0080,X
+80B5D7   LDA ($0C),Y  
+80B5D9   STA $7F0084,X
+80B5DD   INY
+80B5DE   INY
+80B5DF   LDA ($06),Y  
+80B5E1   STA $7F0002,X
+80B5E5   LDA ($08),Y  
+80B5E7   STA $7F0006,X
+80B5EB   LDA ($0A),Y  
+80B5ED   STA $7F0082,X
+80B5F1   LDA ($0C),Y  
+80B5F3   STA $7F0086,X
+80B5F7   INY
+80B5F8   INY
+80B5F9   LDA ($06),Y  
+80B5FB   STA $7F0040,X
+80B5FF   LDA ($08),Y  
+80B601   STA $7F0044,X
+80B605   LDA ($0A),Y  
+80B607   STA $7F00C0,X
+80B60B   LDA ($0C),Y  
+80B60D   STA $7F00C4,X
+80B611   INY
+80B612   INY
+80B613   LDA ($06),Y  
+80B615   STA $7F0042,X
+80B619   LDA ($08),Y  
+80B61B   STA $7F0046,X
+80B61F   LDA ($0A),Y  
+80B621   STA $7F00C2,X
+80B625   LDA ($0C),Y  
+80B627   STA $7F00C6,X
+80B62B   TXA
+80B62C   ADC #$0008   
+80B62F   TAX
+80B630   RTS
+----------------   
+--------sub start--------
+80B631   REP #$30 
+80B633   STZ $1400
+80B636   LDX #$1400   
+80B639   LDY #$1401   
+80B63C   LDA #$03FE   
+80B63F   MVN $83,$83  
+80B642   SEP #$30 
+80B644   LDA #$89 
+80B646   STA $12  
+80B648   STA $15  
+80B64A   LDA $B7  ; Map Index   
+80B64C   ASL
+80B64D   LDX $B6 ; Level Index  
+80B64F   ADC $8CE7,X  
+80B652   TAX
+80B653   STA $00  
+80B655   LDA $8CE8,X ;Tiles offsets for each maps 
+80B658   XBA
+80B659   LDA #$00 
+80B65B   REP #$31 
+80B65D   LSR
+80B65E   LSR
+80B65F   TAY
+80B660   ADC #$8000   
+80B663   STA $10  
+80B665   TYA
+80B666   LSR
+80B667   ADC #$B700   
+80B66A   STA $13  
+80B66C   LDY #$1400   
+80B66F   STY $1C  
+80B671   JSR $B6D1 ;Tiles Related LOAD
+80B674   LDA $1C  
+80B676   CLC
+80B677   ADC #$0080   
+80B67A   TAY
+80B67B   CMP #$1800   
+80B67E   BCC $80B66F  
+80B680   SEP #$30 
+80B682   LDA #$83 
+80B684   PHA
+80B685   PLB
+80B686   JSL $82C235 ; Add Transitions?
+80B68A   REP #$30 
+80B68C   LDX #$1400   
+80B68F   LDY #$F800   
+80B692   LDA #$03FF   
+80B695   MVN $83,$7F  
+80B698   SEP #$30 
+80B69A   SEP #$30 
+80B69C   LDX $00  
+80B69E   LDA $838CE7,X
+80B6A2   XBA
+80B6A3   LDA #$00 
+80B6A5   REP #$31 
+80B6A7   LSR
+80B6A8   LSR
+80B6A9   TAY
+80B6AA   ADC #$8000   
+80B6AD   STA $10  
+80B6AF   TYA
+80B6B0   LSR
+80B6B1   ADC #$B700   
+80B6B4   STA $13  
+80B6B6   LDY #$1400   
+80B6B9   STY $1C  
+80B6BB   JSR $B6D1
+80B6BE   LDA $1C  
+80B6C0   CLC
+80B6C1   ADC #$0080   
+80B6C4   TAY
+80B6C5   CMP #$1800   
+80B6C8   BCC $80B6B9  
+80B6CA   SEP #$30 
+80B6CC   LDA #$83 
+80B6CE   PHA
+80B6CF   PLB
+80B6D0   RTS
+----------------   
+;Load Map Related
+80B6D1   LDA #$0004   
+80B6D4   STA $0E  
+80B6D6   SEP #$20 
+80B6D8   LDA [$13]
+80B6DA   AND #$0F 
+80B6DC   XBA
+80B6DD   LDA [$10]
+80B6DF   REP #$20 
+80B6E1   INC $10  
+80B6E3   JSR $B6FF
+80B6E6   SEP #$20 
+80B6E8   LDA [$13]
+80B6EA   LSR
+80B6EB   LSR
+80B6EC   LSR
+80B6ED   LSR
+80B6EE   XBA
+80B6EF   LDA [$10]
+80B6F1   REP #$20 
+80B6F3   INC $10  
+80B6F5   INC $13  
+80B6F7   JSR $B6FF
+80B6FA   DEC $0E  
+80B6FC   BNE $80B6D6  
+80B6FE   RTS
+----------------   
+--------sub start--------
+80B6FF   ASL
+80B700   TAX
+80B701   ADC #$C000   
+80B704   STA $19  
+80B706   TXA
+80B707   ASL
+80B708   ADC #$8000   
+80B70B   STA $16  
+80B70D   PEA #$898A   
+80B710   PLB
+80B711   SEP #$20 
+80B713   LDA ($19)
+80B715   AND #$0F 
+80B717   XBA
+80B718   LDA ($16)
+80B71A   REP #$21 
+80B71C   ADC #$F100   
+80B71F   STA $06  
+80B721   INC $16  
+80B723   SEP #$20 
+80B725   LDA ($19)
+80B727   LSR
+80B728   LSR
+80B729   LSR
+80B72A   LSR
+80B72B   XBA
+80B72C   LDA ($16)
+80B72E   REP #$21 
+80B730   ADC #$F100   
+80B733   STA $08  
+80B735   INC $16  
+80B737   INC $19  
+80B739   SEP #$20 
+80B73B   LDA ($19)
+80B73D   AND #$0F 
+80B73F   XBA
+80B740   LDA ($16)
+80B742   REP #$21 
+80B744   ADC #$F100   
+80B747   STA $0A  
+80B749   INC $16  
+80B74B   SEP #$20 
+80B74D   LDA ($19)
+80B74F   LSR
+80B750   LSR
+80B751   LSR
+80B752   LSR
+80B753   XBA
+80B754   LDA ($16)
+80B756   REP #$21 
+80B758   ADC #$F100   
+80B75B   STA $0C  
+80B75D   SEP #$20 
+80B75F   PLB
+80B760   LDA ($06)   ; Address of the 1st tile16
+80B762   BEQ $80B767 ; Branch IF == 0 ?
+80B764   JSR $B791 ;Set Collision map16
+80B767   INY
+80B768   INY
+80B769   LDA ($08) ; Address of the 1st tile16
+80B76B   BEQ $80B770 ; Branch IF == 0 ? 
+80B76D   JSR $B791 ;Set Collision map16
+80B770   REP #$21 
+80B772   TYA
+80B773   ADC #$003E   
+80B776   TAY
+80B777   SEP #$20 
+80B779   LDA ($0A)
+80B77B   BEQ $80B780 ; Branch IF == 0 ?  
+80B77D   JSR $B791 ;Set Collision map16
+80B780   INY
+80B781   INY
+80B782   LDA ($0C)
+80B784   BEQ $80B789 ; Branch IF == 0 ? 
+80B786   JSR $B791 ;Set Collision map16
+80B789   REP #$21 
+80B78B   TYA
+80B78C   ADC #$FFC2   
+80B78F   TAY
+80B790   RTS
+
+
+80B791   XBA
+80B792   LDA #$00 
+80B794   XBA
+80B795   STA $04  
+80B797   AND #$F0 
+80B799   STA $02  
+80B79B   LSR
+80B79C   LSR
+80B79D   LSR
+80B79E   TAX
+80B79F   JMP ($B7A2,X)
+
+80B7A2 
+dw $B808
+dw $B7C6
+dw $B7C6    
+dw $B7C6
+dw $B7F3
+dw $B7F3
+dw $B879
+dw $B879
+dw $B7C6
+dw $B879
+dw $B7C2
+dw $B879
+dw $B7C6
+dw $B7C6
+dw $B7C6
+dw $B7C6
+
+80B7C2  ;.db $A9 $81 $85 $02
+80B7C2   LDA $81 
+80B7C4   STA $02
+----------------   
+80B7C6   LDA $04  
+80B7C8   AND #$0F 
+80B7CA   ASL
+80B7CB   XBA
+80B7CC   LDA #$00 
+80B7CE   XBA
+80B7CF   TAX
+80B7D0   LDA $02  
+80B7D2   JMP ($B7D5,X)
+--------data--------     
+80B7D5  .db $0A $B8 $17 $B8 $1B $B8 $1F $B8
+80B7DD  .db $23 $B8 $27 $B8 $2E $B8 $35 $B8
+80B7E5  .db $3C $B8 $43 $B8 $4D $B8 $57 $B8
+80B7ED  .db $61 $B8  
+----------------   
+--------unidentified--------
+80B7EF  .db $6B $B8 $72 $B8
+----------------   
+80B7F3   LDA $02  
+80B7F5   STA $0000,Y  
+80B7F8   INC
+80B7F9   INC
+80B7FA   STA $0001,Y  
+80B7FD   INC
+80B7FE   INC
+80B7FF   STA $0020,Y  
+80B802   INC
+80B803   INC
+80B804   STA $0021,Y  
+80B807   RTS
+----------------   
+--------unidentified--------
+80B808   LDA #$00  
+;Set Collision map 
+;0x00
+80B80A   STA $0000,Y  
+80B80D   STA $0001,Y  
+80B810   STA $0020,Y  
+80B813   STA $0021,Y  
+80B816   RTS
+
+;0x01
+80B817   STA $0000,Y  
+80B81A   RTS
+
+;0x02
+80B81B   STA $0001,Y  
+80B81E   RTS
+
+;0x03
+80B81F   STA $0020,Y  
+80B822   RTS
+
+;0x04 
+80B823   STA $0021,Y  
+80B826   RTS
+
+;0x05
+80B827   STA $0000,Y  
+80B82A   STA $0001,Y  
+80B82D   RTS
+
+;0x06
+80B82E   STA $0020,Y  
+80B831   STA $0021,Y  
+80B834   RTS
+
+;0x07  
+80B835   STA $0000,Y  
+80B838   STA $0020,Y  
+80B83B   RTS
+
+;0x08
+80B83C   STA $0001,Y  
+80B83F   STA $0021,Y  
+80B842   RTS
+
+;0x09
+80B843   STA $0000,Y  
+80B846   STA $0001,Y  
+80B849   STA $0021,Y  
+80B84C   RTS
+
+;0x0A
+80B84D   STA $0000,Y  
+80B850   STA $0020,Y  
+80B853   STA $0021,Y  
+80B856   RTS
+
+;0x0B
+80B857   STA $0001,Y  
+80B85A   STA $0020,Y  
+80B85D   STA $0021,Y  
+80B860   RTS
+
+;0x0C 
+80B861   STA $0000,Y  
+80B864   STA $0001,Y  
+80B867   STA $0020,Y  
+80B86A   RTS
+
+;0x0D ;Unused
+80B86B   STA $0000,Y 
+80B86E   STA $0021,Y 
+80B871   RTS
+;0x0E ;Unused
+80B872   STA $0001,Y 
+80B875   STA $0020,Y 
+80B878   RTS
+
+
+
+80B87D  .db $A9 $00 $EB $A5 $04 $29 $0F $0A $0A $AA
+80B883  .db $BF $D7 $8C $83 $99 $00 $00 $BF
+80B88B  .db $D8 $8C $83 $99 $01 $00 $BF $D9
+80B893  .db $8C $83 $99 $20 $00 $BF $DA $8C
+80B89B  .db $83 $99 $21 $00 $60  
+----------------   
+
+ClearOAMData:
+{
+;not sure yet what all these addresses mean but it is definately a loop to clear OAM
+80B8A0   STZ $B3
+80B8A2   STZ $B9
+80B8A4   STZ $BA
+80B8A6   STZ $BB
+80B8A8   STZ $BC
+80B8AA   REP #$10 
+80B8AC   LDA #$E0 
+80B8AE   LDX #$1AA0
+80B8B1   STX $B4 ;This is sprite index address
+
+80B8B3   STA $01,X
+80B8B5   INX
+80B8B6   INX
+80B8B7   INX
+80B8B8   INX
+80B8B9   CPX #$1CA0   
+80B8BC   BNE $80B8B3  
+
+80B8BE   STZ $00,X
+80B8C0   INX
+80B8C1   CPX #$1CC0   
+80B8C4   BNE $80B8BE  
+80B8C6   SEP #$10 
+80B8C8   RTL   
+}   
+----------------   
+--------sub start--------
+80B8C9   JSR $BD66
+80B8CC   LDA $B9  
+80B8CE   BNE $80B8D3  
+80B8D0   JMP $B9A9
+80B8D3   DEC
+80B8D4   ASL
+80B8D5   STA $00  
+80B8D7   STZ $01  
+80B8D9   REP #$30 
+80B8DB   STZ $02  
+80B8DD   LDA $00  
+80B8DF   BEQ $80B91A  
+80B8E1   DEC
+80B8E2   DEC
+80B8E3   STA $02  
+80B8E5   LDY $00  
+80B8E7   LDX $1240,Y  
+80B8EA   LDA $14,X
+80B8EC   LDY $02  
+80B8EE   LDX $1240,Y  
+80B8F1   CMP $14,X
+80B8F3   BEQ $80B8F7  
+80B8F5   BCS $80B90E  
+80B8F7   LDY $00  
+80B8F9   LDA $1240,Y  
+80B8FC   LDY $02  
+80B8FE   STA $1240,Y  
+80B901   LDY $00  
+80B903   TXA
+80B904   STA $1240,Y  
+80B907   LDY $00  
+80B909   LDX $1240,Y  
+80B90C   LDA $14,X
+80B90E   DEC $02  
+80B910   DEC $02  
+80B912   BPL $80B8EC  
+80B914   DEC $00  
+80B916   DEC $00  
+80B918   BRA $80B8DD  
+80B91A   SEP #$30 
+80B91C   LDA $0D80
+80B91F   BEQ $80B926  
+80B921   LDA $0D8C
+80B924   BEQ $80B949  
+80B926   LDA $0DC0
+80B929   BEQ $80B930  
+80B92B   LDA $0DCC
+80B92E   BEQ $80B949
+
+80B930   LDA $B9  
+80B932   ASL
+80B933   TAY
+80B934   REP #$10 
+80B936   LDX $123E,Y  
+80B939   JSR $BA4D
+80B93C   BCS $80B946  
+80B93E   SEP #$10 
+80B940   DEC $B9
+
+80B942   BNE $80B930  
+80B944   BRA $80B975  
+--------unidentified--------
+80B946  .db $E2 $10 $6B    
+----------------   
+80B949   LDA $B9  
+80B94B   ASL
+80B94C   TAY
+80B94D   REP #$10 
+80B94F   LDX $123E,Y  
+80B952   LDA $000C,X  
+80B955   BEQ $80B96A  
+80B957   LDA #$00 
+80B959   XBA
+80B95A   LDA $BA  
+80B95C   ASL
+80B95D   TAY
+80B95E   REP #$20 
+80B960   TXA
+80B961   STA $12A0,Y  
+80B964   SEP #$20 
+80B966   INC $BA  
+80B968   BRA $80B96F  
+80B96A   JSR $BA4D
+80B96D   BCS $80B9C2  
+80B96F   SEP #$10 
+80B971   DEC $B9  
+80B973   BNE $80B949  
+80B975   LDA $BA  
+80B977   BEQ $80B991  
+80B979   STZ $B9  
+80B97B   LDA $B9  
+80B97D   ASL
+80B97E   TAY
+80B97F   REP #$10 
+80B981   LDX $12A0,Y  
+80B984   JSR $BA4D
+--------unidentified--------
+80B987  .db $B0 $39 $E2 $10 $E6 $B9 $C6 $BA
+80B98F  .db $D0 $EA  
+----------------   
+80B991   LDA $BB  
+80B993   BEQ $80B9A9  
+80B995   LDA $BB  
+80B997   ASL
+80B998   TAY
+80B999   REP #$10 
+80B99B   LDX $12FE,Y  
+80B99E   JSR $BBF1
+80B9A1   BCS $80B9C2  
+80B9A3   SEP #$10 
+80B9A5   DEC $BB  
+80B9A7   BNE $80B995  
+80B9A9   LDA $BC  
+80B9AB   BEQ $80B9C1  
+80B9AD   LDA $BC  
+80B9AF   ASL
+80B9B0   TAY
+80B9B1   REP #$10 
+80B9B3   LDX $135E,Y  
+80B9B6   JSR $BA4D
+80B9B9   BCS $80B9C2  
+80B9BB   SEP #$10 
+80B9BD   DEC $BC  
+80B9BF   BNE $80B9AD  
+80B9C1   RTL
+----------------   
+--------unidentified--------
+80B9C2  .db $E2 $10 $6B    
+----------------   
+80B9C5   LDA $B9  
+80B9C7   BNE $80B949  
+80B9C9   RTL
+----------------   
+80B9CA   LDA $0001,X  
+80B9CD   BEQ $80B9D2  
+80B9CF   JMP $BC5D
+80B9D2   CLC
+80B9D3   RTS
+----------------   
+80B9D4   STX $22  
+80B9D6   LDA $53,X
+80B9D8   BEQ $80B9F6  
+80B9DA   LDA $55,X
+80B9DC   BNE $80B9E9  
+80B9DE   JSR $BA55
+80B9E1   BCS $80B9F5  
+80B9E3   LDY $22  
+80B9E5   LDX $52,Y
+80B9E7   BRA $80BA55  
+80B9E9   LDY $52,X
+80B9EB   TYX
+80B9EC   JSR $BA55
+80B9EF   BCS $80B9F5  
+80B9F1   LDX $22  
+80B9F3   BRA $80BA55  
+--------unidentified--------
+80B9F5  .db $60  
+----------------   
+80B9F6   JSR $BA55
+80B9F9   BCS $80B9F5  
+80B9FB   LDA #$00 
+80B9FD   XBA
+80B9FE   LDA $22  
+80BA00   LSR
+80BA01   REP #$21 
+80BA03   ADC #$0D80   
+80BA06   TAX
+80BA07   SEP #$20 
+80BA09   BRA $80B9CA  
+80BA0B   STX $22  
+80BA0D   LDA $0B,X
+80BA0F   CMP #$04 
+80BA11   BEQ $80BA2B  
+80BA13   LDA $32,X
+80BA15   BEQ $80BA27  
+80BA17   LDY $31,X
+80BA19   LDA $17,X
+80BA1B   CLC
+80BA1C   ADC #$1A 
+80BA1E   STA $0017,Y  
+80BA21   TYX
+80BA22   JSR $BA55
+80BA25   BCS $80B9F5  
+80BA27   LDX $22  
+80BA29   BRA $80BA55  
+80BA2B   LDA $41,X
+80BA2D   BEQ $80BA27  
+80BA2F   LDA $46,X
+80BA31   BEQ $80BA3D  
+80BA33   JSR $BA55
+80BA36   LDY $22  
+80BA38   LDX $40,Y
+80BA3A   JMP $BA55
+80BA3D   LDY $40,X
+80BA3F   LDA $11,X
+80BA41   STA $0011,Y  
+80BA44   LDA $14,X
+80BA46   STA $0014,Y  
+80BA49   BRA $80BA19  
+80BA4B   CLC
+80BA4C   RTS
+----------------   
+--------sub start--------
+80BA4D   LDA $09,X
+80BA4F   BEQ $80B9D4  
+80BA51   CMP #$12 
+80BA53   BEQ $80BA0B
+
+;Related to Animation
+--------sub start--------
+80BA55   LDA $01,X
+80BA57   BEQ $80BA4B  
+80BA59   LDY $06,X
+80BA5B   LDA $0000,Y  
+80BA5E   STA $0E  
+80BA60   LDA $0E,X
+80BA62   STA $08  
+80BA64   REP #$20 
+80BA66   LDA $1A,X
+80BA68   STA $06  
+80BA6A   LDA $11,X
+80BA6C   STA $0A  
+80BA6E   LDA $14,X
+80BA70   STA $0C  
+80BA72   SEP #$21 
+80BA74   LDA $17,X
+80BA76   BEQ $80BAA8  
+80BA78   BPL $80BA86  
+80BA7A   LDA $B6 ; Level Index  
+80BA7C   BNE $80BA86  
+80BA7E   LDA $0C  
+80BA80   SBC $17,X
+80BA82   STA $0C  
+80BA84   BRA $80BAA8  
+80BA86   LDA $0C  
+80BA88   SBC $17,X
+80BA8A   STA $0C  
+80BA8C   LDA $0D  
+80BA8E   SBC #$00 
+80BA90   STA $0D  
+80BA92   LDA $01,X
+80BA94   DEC
+80BA95   BNE $80BAA8  
+80BA97   XBA
+80BA98   LDA $BB  
+80BA9A   ASL
+80BA9B   TAY
+80BA9C   REP #$20 
+80BA9E   TXA
+80BA9F   STA $1300,Y  
+80BAA2   SEP #$20 
+80BAA4   INC $BB  
+80BAA6   LDY $06,X
+80BAA8   LDA $0002,Y  
+80BAAB   INY
+80BAAC   INY
+80BAAD   INY
+80BAAE   STY $1F  
+80BAB0   REP #$20 
+80BAB2   AND #$00FF   
+80BAB5   ASL
+80BAB6   TAX
+80BAB7   LDY $DD43,X ;load pointer for something
+80BABA   SEP #$20 
+80BABC   LDA $08  
+80BABE   BEQ $80BAC3  
+80BAC0   JMP $BB59 
+
+;Draw Function that is handling most of the draw things
+80BAC3   LDX $B4 ;Sprite Index/Address index to read/write from
+80BAC5   STZ $03  
+80BAC7   LDA $0002,Y  
+80BACA   BPL $80BACE  
+80BACC   DEC $03
+;branch  
+80BACE   CLC
+80BACF   ADC $0C  
+80BAD1   STA $02 ;Temp Y
+80BAD3   LDA $03  
+80BAD5   ADC $0D  
+80BAD7   STA $03 ;Temp X
+80BAD9   REP #$21 
+80BADB   LDA $02 
+80BADD   ADC #$000F   
+80BAE0   CMP #$00EF   
+80BAE3   SEP #$20 
+80BAE5   BCS $80BB45  
+80BAE7   LDA $02  
+80BAE9   STA $01,X ; Store Y?
+80BAEB   STZ $01  
+80BAED   LDA $0000,Y  
+80BAF0   BPL $80BAF4  
+80BAF2   DEC $01  
+80BAF4   CLC
+80BAF5   ADC $0A  
+80BAF7   STA $00,X ; Store X?
+80BAF9   LDA $01  
+80BAFB   ADC $0B  
+80BAFD   STA $01  
+80BAFF   LDA $0003,Y  
+80BB02   AND #$40 
+80BB04   XBA
+80BB05   LDA ($1F)
+80BB07   REP #$21 
+80BB09   ADC $06  
+80BB0B   STA $02,X
+80BB0D   SEP #$20 
+80BB0F   INX
+80BB10   INX
+80BB11   INX
+80BB12   INX
+80BB13   STX $B4 ;Increase where we write sprite by 04
+80BB15   LDA $01  
+80BB17   AND #$01 
+80BB19   ORA $0003,Y  
+80BB1C   AND #$03 
+80BB1E   STA $04  
+80BB20   LDA $B3  
+80BB22   AND #$03 
+80BB24   BEQ $80BB2D  
+80BB26   ASL $04  
+80BB28   ASL $04  
+80BB2A   DEC
+80BB2B   BNE $80BB26  
+80BB2D   LDA #$00 
+80BB2F   XBA
+80BB30   LDA $B3  
+80BB32   LSR
+80BB33   LSR
+80BB34   TAX
+80BB35   LDA $04  
+80BB37   ORA $1CA0,X  
+80BB3A   STA $1CA0,X  
+80BB3D   INC $B3  
+80BB3F   LDA $B3  
+80BB41   CMP #$80 
+80BB43   BEQ $80BB57
+;Branch
+80BB45   DEC $0E  
+80BB47   BEQ $80BB55 ;Return  
+80BB49   INY
+80BB4A   INY
+80BB4B   INY
+80BB4C   INY
+80BB4D   LDX $1F  
+80BB4F   INX
+80BB50   STX $1F  
+80BB52   JMP $BAC3 ;Loop ?
+;Return
+80BB55   CLC
+80BB56   RTS
+----------------   
+--------unidentified--------
+;80BB57  .db $38 $60     code?
+SEC
+RTS
+   
+;Most likely a DRAW Routine, Y is probably sprite index argument
+;Arguments needed to make that function work ->
+;$0C ?
+;$0D ?
+;$0A ?
+;$0B ?
+;$06 tile index?
+;$0E = number of tiles? i think
+----------------   
+80BB59   LDX $B4 ;load where we write/read sprite
+80BB5B   STZ $03 ;
+80BB5D   LDA $0002,Y  
+80BB60   BPL $80BB64  
+80BB62   DEC $03  
+80BB64   CLC
+80BB65   ADC $0C  
+80BB67   STA $02  
+80BB69   LDA $03  
+80BB6B   ADC $0D  
+80BB6D   STA $03  
+80BB6F   REP #$21 
+80BB71   LDA $02
+80BB73   ADC #$000F   
+80BB76   CMP #$00EF   
+80BB79   SEP #$20 
+80BB7B   BCS $80BBDD  
+80BB7D   LDA $02  
+80BB7F   STA $01,X 
+80BB81   STZ $01  
+80BB83   LDA $0001,Y  
+80BB86   BPL $80BB8A  
+80BB88   DEC $01  
+80BB8A   CLC
+80BB8B   ADC $0A  
+80BB8D   STA $00,X
+80BB8F   LDA $01  
+80BB91   ADC $0B  
+80BB93   STA $01  
+80BB95   LDA $0003,Y  
+80BB98   AND #$40 
+80BB9A   EOR #$40 
+80BB9C   XBA
+80BB9D   LDA ($1F)
+80BB9F   REP #$21 
+80BBA1   ADC $06  
+80BBA3   STA $02,X
+80BBA5   SEP #$20 
+80BBA7   INX
+80BBA8   INX
+80BBA9   INX
+80BBAA   INX
+80BBAB   STX $B4 ;Increase where we write sprite by 4
+80BBAD   LDA $01  
+80BBAF   AND #$01 
+80BBB1   ORA $0003,Y  
+80BBB4   AND #$03 
+80BBB6   STA $04  
+80BBB8   LDA $B3  
+80BBBA   AND #$03 
+80BBBC   BEQ $80BBC5  
+80BBBE   ASL $04  
+80BBC0   ASL $04  
+80BBC2   DEC
+80BBC3   BNE $80BBBE  
+80BBC5   LDA #$00 
+80BBC7   XBA
+80BBC8   LDA $B3  
+80BBCA   LSR
+80BBCB   LSR
+80BBCC   TAX
+80BBCD   LDA $04  
+80BBCF   ORA $1CA0,X  
+80BBD2   STA $1CA0,X  
+80BBD5   INC $B3  
+80BBD7   LDA $B3  
+80BBD9   CMP #$80 
+80BBDB   BEQ $80BBEF ;if we reach 128 sprite  
+80BBDD   DEC $0E  
+80BBDF   BEQ $80BBED  
+80BBE1   INY
+80BBE2   INY
+80BBE3   INY
+80BBE4   INY
+80BBE5   LDX $1F  
+80BBE7   INX
+80BBE8   STX $1F  
+80BBEA   JMP $BB59
+80BBED   CLC
+80BBEE   RTS
+----------------   
+--------unidentified--------
+;80BBEF  .db $38 $60  
+SEC
+RTS
+
+----------------   
+;Draw routine for Shadow??
+80BBF1   REP #$20 
+80BBF3   LDA $11,X
+80BBF5   ADC #$FFF8   
+80BBF8   STA $00  
+80BBFA   LDA $14,X
+80BBFC   CLC
+80BBFD   ADC #$FFF8   
+80BC00   STA $02  
+80BC02   LDX $B4 ;load sprite index(address)
+80BC04   CLC
+80BC05   ADC #$000F   
+80BC08   CMP #$00EF   
+80BC0B   SEP #$20 
+80BC0D   BCS $80BC5B  
+80BC0F   LDA $02  
+80BC11   STA $01,X
+80BC13   LDA $00  
+80BC15   STA $00,X
+80BC17   LDA $01  
+80BC19   LDA #$00 
+80BC1B   XBA
+80BC1C   LDA #$4E 
+80BC1E   REP #$21 
+80BC20   ADC #$3600 ;Draw Shadow i think?
+80BC23   STA $02,X
+80BC25   SEP #$20 
+80BC27   INX
+80BC28   INX
+80BC29   INX
+80BC2A   INX
+80BC2B   STX $B4  
+80BC2D   LDA $01  
+80BC2F   AND #$01 
+80BC31   ORA #$02 
+80BC33   AND #$03 
+80BC35   STA $0A  
+80BC37   LDA $B3  
+80BC39   AND #$03 
+80BC3B   BEQ $80BC44  
+80BC3D   ASL $0A  
+80BC3F   ASL $0A  
+80BC41   DEC
+80BC42   BNE $80BC3D  
+80BC44   LDA #$00 
+80BC46   XBA
+80BC47   LDA $B3  
+80BC49   LSR
+80BC4A   LSR
+80BC4B   TAX
+80BC4C   LDA $0A  
+80BC4E   ORA $1CA0,X  
+80BC51   STA $1CA0,X  
+80BC54   INC $B3  
+80BC56   LDA $B3  
+80BC58   CMP #$80 
+80BC5A   RTS
+----------------   
+80BC5B   CLC
+80BC5C   RTS
+----------------   
+80BC5D   STX $22  
+80BC5F   TXY
+80BC60   LDA #$00 
+80BC62   XBA
+80BC63   LDA $0D,X
+80BC65   TAX
+80BC66   JSR ($BC70,X)
+80BC69   BCS $80BC5C  
+80BC6B   LDX $22  
+80BC6D   JMP $BA55
+--------data--------     
+80BC70  .db $78 $BC $E4 $BC $89 $BC $F0 $BC
+----------------   
+--------sub start--------
+80BC78   LDX #$226C   
+80BC7B   STX $00  
+80BC7D   LDX #$FFF0   
+80BC80   STX $02  
+80BC82   LDX #$FFF8   
+80BC85   STX $04  
+80BC87   BRA $80BC98  
+--------sub start--------
+
+;ANOTHER DRAW CODE TODO vertical hookshot ropes when used??
+80BC89   LDX #$227C   
+80BC8C   STX $00  
+80BC8E   LDX #$0018   
+80BC91   STX $02  
+80BC93   LDX #$0008   
+80BC96   STX $04  
+80BC98   TYX
+80BC99   LDA $39,X
+80BC9B   DEC
+80BC9C   DEC
+80BC9D   BMI $80BCE0  
+80BC9F   TAY
+80BCA0   REP #$20 
+80BCA2   LDA $14,X
+80BCA4   SEC
+80BCA5   SBC $02  
+80BCA7   STA $02  
+80BCA9   SEP #$21 
+80BCAB   LDA $11,X
+80BCAD   SBC #$04 
+80BCAF   STA $06  
+80BCB1   LDX $B4  
+80BCB3   LDA $06  
+80BCB5   STA $00,X
+80BCB7   LDA $02  
+80BCB9   STA $01,X
+80BCBB   REP #$20 
+80BCBD   LDA $00 ;why that one load from $00 and the one below from constant ?! wtf
+80BCBF   STA $02,X ;set byte 2 and 3
+80BCC1   LDA $02  
+80BCC3   SEC
+80BCC4   SBC $04  
+80BCC6   STA $02  
+80BCC8   CMP #$00E0   
+80BCCB   SEP #$20 
+80BCCD   BCS $80BCDB  
+80BCCF   INX
+80BCD0   INX
+80BCD1   INX
+80BCD2   INX
+80BCD3   INC $B3  
+80BCD5   LDA $B3  
+80BCD7   CMP #$80 
+80BCD9   BEQ $80BCE2  
+80BCDB   DEY
+80BCDC   BPL $80BCB3  
+80BCDE   STX $B4  
+80BCE0   CLC
+80BCE1   RTS
+----------------   
+--------unidentified--------
+80BCE2  .db $38 $60  
+----------------   
+--------sub start--------
+80BCE4   LDX #$0010   
+80BCE7   STX $02  
+80BCE9   LDX #$0008   
+80BCEC   STX $04  
+80BCEE   BRA $80BCFA  
+;Another Draw Code TODO horizontal hookshot draw code ! when used!
+80BCF0   LDX #$FFF8   
+80BCF3   STX $02  
+80BCF5   LDX #$FFF8   
+80BCF8   STX $04  
+80BCFA   TYX
+80BCFB   LDA $39,X
+80BCFD   BEQ $80BD46  
+80BCFF   TAY
+80BD00   REP #$20 
+80BD02   LDA $11,X
+80BD04   SEC
+80BD05   SBC $02  
+80BD07   STA $02  
+80BD09   SEP #$21 
+80BD0B   LDA $14,X
+80BD0D   SBC #$04 
+80BD0F   STA $06  
+80BD11   LDX $B4  
+80BD13   LDA $06  
+80BD15   STA $01,X
+80BD17   LDA $02  
+80BD19   STA $00,X
+80BD1B   REP #$20 
+80BD1D   LDA #$226D ;Horizontal rope tile
+80BD20   STA $02,X
+80BD22   LDA $02  
+80BD24   CMP #$0100   
+80BD27   BCC $80BD2C  
+80BD29   JSR $BD4A
+80BD2C   LDA $02  
+80BD2E   SEC
+80BD2F   SBC $04  
+80BD31   STA $02  
+80BD33   SEP #$20 
+80BD35   INX
+80BD36   INX
+80BD37   INX
+80BD38   INX
+80BD39   INC $B3  
+80BD3B   LDA $B3  
+80BD3D   CMP #$80 
+80BD3F   BEQ $80BD48  
+80BD41   DEY
+80BD42   BPL $80BD13  
+80BD44   STX $B4  
+80BD46   CLC
+80BD47   RTS
+----------------   
+--------unidentified--------
+80BD48  .db $38 $60 $DA $5A $E2 $30 $A5 $B3
+80BD50  .db $4A $4A $A8 $A5 $B3 $29 $03 $AA
+80BD58  .db $B9 $A0 $1C $1D $D0 $8D $99 $A0
+80BD60  .db $1C $C2 $30 $7A $FA $60
+----------------   
+--------sub start--------
+80BD66   LDA $0100
+80BD69   BEQ $80BD8A  
+80BD6B   LDA #$08 
+80BD6D   LDX #$58 
+80BD6F   JSR $BDB8
+80BD72   LDA $0142
+80BD75   BEQ $80BD8A  
+80BD77   LDA #$28 
+80BD79   LDX #$5A 
+80BD7B   JSR $BDB8
+80BD7E   LDA $0140
+80BD81   BEQ $80BD8A  
+80BD83   LDA #$38 
+80BD85   LDX #$5C 
+80BD87   JSR $BDB8
+80BD8A   LDA $0180
+80BD8D   BEQ $80BDFE  
+80BD8F   LDA $01C0
+80BD92   BNE $80BDA6  
+80BD94   LDA #$B0 
+80BD96   LDX #$D8 
+80BD98   JSR $BDB8
+80BD9B   LDA $01C2
+80BD9E   BEQ $80BDFE  
+80BDA0   LDA #$D0 
+80BDA2   LDX #$DA 
+80BDA4   BRA $80BDB8  
+--------unidentified--------
+80BDA6  .db $A9 $A0 $A2 $D8 $20 $B8 $BD $A9
+80BDAE  .db $C0 $A2 $DA $20 $B8 $BD $A9 $D0
+80BDB6  .db $A2 $DC  
+    
+DrawPlayerIcon: ;Unsure about that, that routine is writing into the OAM Buffer ($1AA0)
+80BDB8   XBA ;Save A
+80BDB9   LDA $0100,X ;Load Byte 2 (C?) 0158
+80BDBC   STA $00  
+80BDBE   LDA $0101,X ;Load Byte 3 (V?) 0159
+80BDC1   STA $01  
+80BDC3   XBA ;Restore A
+80BDC4   REP #$10
+80BDC6   LDX $B4 ;Unknown? <- Sprite index/Address to write to? (Seems Like it) probably setted by a prep oam command
+80BDC8   STA $00,X ;X 
+80BDCA   LDA #$08 
+80BDCC   STA $01,X ;Y  
+80BDCE   LDA $00  
+80BDD0   STA $02,X ;C
+80BDD2   LDA $01  
+80BDD4   STA $03,X ;vhoopppc
+80BDD6   INX
+80BDD7   INX
+80BDD8   INX
+80BDD9   INX
+80BDDA   STX $B4  
+80BDDC   SEP #$10 
+80BDDE   LDA #$02 
+80BDE0   STA $04  
+80BDE2   LDA $B3  
+80BDE4   AND #$03 
+80BDE6   BEQ $80BDEF  
+80BDE8   ASL $04  
+80BDEA   ASL $04  
+80BDEC   DEC
+80BDED   BNE $80BDE8  
+80BDEF   LDA $B3  
+80BDF1   LSR
+80BDF2   LSR
+80BDF3   TAX
+80BDF4   LDA $04  
+80BDF6   ORA $1CA0,X  
+80BDF9   STA $1CA0,X  
+80BDFC   INC $B3  
+80BDFE   RTS
+----------------   
+
+ControllerUpdate:
+80BDFF   LDA $B1 ;?
+80BE01   BEQ $80BE5C  
+80BE03   LDA $44 ;Controller1
+80BE05   AND #$0F ;Up,Down,Left,Right
+80BE07   STA $00
+80BE09   LDA $44 ;Controller1
+80BE0B   AND #$F0;B, Y, Select, Start
+80BE0D   STA $01
+80BE0F   LDA $45 ;Controller1 upper
+80BE11   LSR
+80BE12   LSR
+80BE13   LSR
+80BE14   LSR ;A,X,L,R
+80BE15   ORA $01 
+80BE17   STA $01 ;$01 = B, Y, Select, Start, A, X, L, R (Controller1)
+
+
+80BE19   LDA $4A  
+80BE1B   AND #$0F 
+80BE1D   STA $02  
+80BE1F   LDA $4A  
+80BE21   AND #$F0 
+80BE23   STA $03  
+80BE25   LDA $4B  
+80BE27   LSR
+80BE28   LSR
+80BE29   LSR
+80BE2A   LSR
+80BE2B   ORA $03  
+80BE2D   STA $03 ;$03 = B, Y, Select, Start, A, X, L, R (Controller2)
+
+;Set all the controllers variables
+80BE2F   REP #$20 
+80BE31   LDA $0160
+80BE34   STA $0162
+80BE37   LDA $00  
+80BE39   STA $0160
+80BE3C   EOR $0162
+80BE3F   AND $0160
+80BE42   STA $0164
+80BE45   LDA $01E0
+80BE48   STA $01E2
+80BE4B   LDA $02  
+80BE4D   STA $01E0
+80BE50   EOR $01E2
+80BE53   AND $01E0
+80BE56   STA $01E4
+80BE59   SEP #$20 
+80BE5B   RTS
+----------------   
+80BE5C   PEA #$8382   
+80BE5F   PLB
+80BE60   LDA #$11 
+80BE62   XBA
+80BE63   LDA #$20 
+80BE65   JSR $BEB0
+80BE68   LDA #$11 
+80BE6A   XBA
+80BE6B   LDA #$30 
+80BE6D   JSR $BEB0
+80BE70   LDA #$00 
+80BE72   XBA
+80BE73   LDA #$00 
+80BE75   TCD
+80BE76   PLB
+80BE77   LDA $112E
+80BE7A   AND #$0F 
+80BE7C   STA $00  
+80BE7E   LDA $112E
+80BE81   AND #$30 
+80BE83   LSR
+80BE84   LSR
+80BE85   LSR
+80BE86   LSR
+80BE87   STA $01  
+80BE89   LDA $112E
+80BE8C   AND #$C0 
+80BE8E   ORA $01  
+80BE90   STA $01  
+80BE92   LDA $113E
+80BE95   AND #$0F 
+80BE97   STA $02  
+80BE99   LDA $113E
+80BE9C   AND #$30 
+80BE9E   LSR
+80BE9F   LSR
+80BEA0   LSR
+80BEA1   LSR
+80BEA2   STA $03  
+80BEA4   LDA $113E
+80BEA7   AND #$C0 
+80BEA9   ORA $03  
+80BEAB   STA $03  
+80BEAD   JMP $BE2F
+--------sub start--------
+80BEB0   TCD
+80BEB1   LDX $02  
+80BEB3   JMP ($BEB6,X)
+--------data--------     
+80BEB6
+dw $BEBE 
+dw $BF09
+dw $BF1C   
+dw $BF42  
+----------------   
+80BEBE   LDA #$02 
+80BEC0   STA $02  
+80BEC2   LDX $0A  
+80BEC4   REP #$20 
+80BEC6   STZ $0160,X  
+80BEC9   STZ $0162,X  
+80BECC   STZ $0164,X  
+80BECF   SEP #$20 
+80BED1   LDA $00C6
+80BED4   ASL
+80BED5   LDX $0A  
+80BED7   BEQ $80BEDA  
+80BED9   INC
+80BEDA   ASL
+80BEDB   TAX
+80BEDC   LDA $80BF5B,X
+80BEE0   STA $0C  
+80BEE2   LDA $80BF5C,X
+80BEE6   STA $0D  
+80BEE8   LDA $1120 ; DEMO RECORDER ?
+80BEEB   BEQ $80BF02 
+
+;DEMO RECORDER:  ???
+;Clear 0x100 bytes in the "ROM" 
+80BEED   LDA #$00 
+80BEEF   LDY #$00 
+80BEF1   REP #$10 
+80BEF3   LDX $0C  
+80BEF5   STA $DE00,X ;00DE00
+80BEF8   INX
+80BEF9   INY
+80BEFA   CPY #$0100   
+80BEFD   BNE $80BEF5  
+80BEFF   SEP #$10 
+80BF01   RTS
+
+80BF02   LDA #$06 
+80BF04   STA $02  
+80BF06   JMP $BF46
+
+
+;DEMO RECORDER 1 :
+80BF09   LDA #$04 ; "Game State"
+80BF0B   STA $02
+80BF0D   LDA $0E ; Controller Input
+80BF0F   REP #$10 
+80BF11   LDX $0C ; Position Count
+80BF13   STA $DE00,X ; Store the input
+80BF16   INC $DE01,X ; Increase the duration of that input by 1
+80BF19   SEP #$10    
+80BF1B   RTS
+
+;DEMO RECORDER 2 : ; Game State 04 will always enter here
+80BF1C   LDA $0E ; Controller Input
+80BF1E   REP #$10 
+80BF20   LDX $0C ; Position Count
+80BF22   CMP $DE00,X ;IS controller input the same as previous frame?
+80BF25   BNE $BF33 ;if not go to demo recorder 3
+80BF27   LDA $DE01,X
+80BF2A   INC  ; otherwise increase duration by 1         
+80BF2B   BEQ $BF33 ;if duration = 0 go to demo recorder 3
+80BF2D   STA $DE01,X ; increase duration by 1  
+80BF30   SEP #$10
+80BF32   RTS
+
+;DEMO RECORDER 3 : 
+80BF33   INX ; Increase Position by 1
+80BF34   INX ; Increase Position by 1
+80BF35   LDA $0E  ; Controller Input
+80BF37   STA $DE00, X ; set new input
+80BF3A   INC $DE01, X ; increase timer by 1
+80BF3D   STX $0C ; set new position
+80BF3F   SEP #$10
+80BF41   RTS
+
+----------------   
+80BF42   DEC $0F  
+80BF44   BNE $80BF5A  
+80BF46   REP #$10 
+80BF48   LDX $0C  
+80BF4A   LDA $DE00,X  
+80BF4D   STA $0E  
+80BF4F   LDA $DE01,X  
+80BF52   STA $0F  
+80BF54   INX
+80BF55   INX
+80BF56   STX $0C  
+80BF58   SEP #$10 
+80BF5A   RTS
+----------------   
+--------data--------     
+80BF5B  .db $00 $00 $00 $01 $00 $02 $00 $03
+80BF63  .db $00 $04 $00 $05
+----------------   
+--------unidentified--------
+80BF67  .db $00 $06 $00 $07 $00 $08 $00 $09
+80BF6F  .db $00 $0A $00 $0B $00 $0C $00 $0D
+80BF77  .db $00 $0E $00 $0F $00 $10 $00 $11
+80BF7F  .db $00 $12 $00 $13 $00 $14 $00 $15
+80BF87  .db $00 $16 $00 $17 $00 $18 $00 $19
+80BF8F  .db $00 $1A $00 $1B $00 $1C $00 $1D
+80BF97  .db $00 $1E $00 $1F $00 $20 $00 $21
+
+
+Sprite_SetSpeeds:
+80BF9F   STY $18 ;??
+80BFA1   STA $19 ;?? 
+
+Sprite_SetSpeedsAlt:
+80BFA3   LDA $0D ;?? Direction
+80BFA5   REP #$30 
+80BFA7   AND #$00FF   
+80BFAA   ASL
+80BFAB   ASL
+80BFAC   ADC $18 ;*4 + address
+80BFAE   TAX
+80BFAF   LDA $0000,X ;Sprites Speeds??
+80BFB2   STA $28 ;HSpeed
+80BFB4   LDA $0002,X  
+80BFB7   STA $2A ;Vspeed
+80BFB9   SEP #$30 
+80BFBB   RTL
+
+80BFBC  .db $84 $18 $85 $19 $6B  
+----------------   
+
+;Set $0118 and $0119 ;Maybe an address?
+80BFC1   LDA $8DD4,Y  
+80BFC4   STA $18  
+80BFC6   LDA $8DD5,Y  
+80BFC9   STA $19  
+80BFCB   RTL
+     
+--------sub start--------
+; Boss 0 related.
+80BFCC   LDA $0D
+80BFCE   REP #$30
+80BFD0   AND #$00FF
+80BFD3   ASL
+80BFD4   ASL
+80BFD5   ADC $18
+80BFD7   TAX
+80BFD8   LDA $0000,X  ;  Fetch X acceleration?
+80BFDB   ADC $10  ; X position
+80BFDD   STA $10  ; X position
+80BFDF   SEP #$20
+80BFE1   LDA #$00
+80BFE3   LDY $0000,X  
+80BFE6   BPL $80BFE9  
+80BFE8   DEC
+80BFE9   ADC $12  ; X position
+80BFEB   STA $12  ; X position
+80BFED   REP #$21 
+80BFEF   LDA $0002,X  
+80BFF2   ADC $13  ; ????
+80BFF4   STA $13  ; ????
+80BFF6   SEP #$20 
+80BFF8   LDA #$00 
+80BFFA   LDY $0002,X  
+80BFFD   BPL $80C000  
+80BFFF   DEC
+80C000   ADC $15  ; y position
+80C002   STA $15  ; y position
+80C004   SEP #$10 
+80C006   RTL
+----------------   
+MoveSprite:
+80C007   REP #$21 
+80C009   LDA $10 ;Xsubpixel?
+80C00B   ADC $28  
+80C00D   STA $10 ;Xsubpixel?  
+80C00F   SEP #$20 
+80C011   LDA #$00 
+80C013   LDX $29 ;HSpeed
+80C015   BPL $80C018  
+80C017   DEC
+80C018   ADC $12 ;XHigh?
+80C01A   STA $12 ;XHigh?   
+80C01C   REP #$21 
+80C01E   LDA $13 ;Ysubpixel? 
+80C020   ADC $2A ;VSpeed
+80C022   STA $13 ;Ysubpixel?
+80C024   SEP #$20 
+80C026   LDA #$00 
+80C028   LDX $2B  
+80C02A   BPL $80C02D  
+80C02C   DEC
+80C02D   ADC $15 ;YHigh
+80C02F   STA $15 ;YHigh     
+80C031   RTL
+
+MoveHorizontal:
+80C032   REP #$21 
+80C034   LDA $10  
+80C036   ADC $28 ;HSpeed
+80C038   STA $10 
+80C03A   SEP #$20 
+80C03C   LDA #$00 
+80C03E   LDX $29 
+80C040   BPL $80C043  
+80C042   DEC
+80C043   ADC $12  
+80C045   STA $12  
+80C047   RTL
+----------------   
+--------sub start--------
+80C048   REP #$21 
+80C04A   LDA $13  
+80C04C   ADC $2A  
+80C04E   STA $13  
+80C050   SEP #$20 
+80C052   LDA #$00 
+80C054   LDX $2B  
+80C056   BPL $80C059  
+80C058   DEC
+80C059   ADC $15  
+80C05B   STA $15  
+80C05D   RTL
+----------------   
+
+; Thrown Object check routine to damage player
+
+80C05E   LDA $0B00 ;Check if thrown object state != 0  00
+80C061   BEQ $80C06B
+80C063   LDA #$0B
+80C065   XBA ;set D to 0B00
+80C066   LDA #$00 
+80C068   JSR $C0E1 ;Do object damage
+80C06B   LDA $0B40 ;01
+80C06E   BEQ $80C078 
+80C070   LDA #$0B 
+80C072   XBA
+80C073   LDA #$40 
+80C075   JSR $C0E1
+80C078   LDA $0B80 ;02
+80C07B   BEQ $80C085  
+80C07D   LDA #$0B 
+80C07F   XBA
+80C080   LDA #$80 
+80C082   JSR $C0E1
+80C085   LDA $0BC0 ;03
+80C088   BEQ $80C092  
+80C08A   LDA #$0B 
+80C08C   XBA
+80C08D   LDA #$C0 
+80C08F   JSR $C0E1
+80C092   LDA $0C00 ;04
+80C095   BEQ $80C09F  
+80C097   LDA #$0C 
+80C099   XBA
+80C09A   LDA #$00 
+80C09C   JSR $C0E1
+80C09F   LDA $0C40 ;05
+80C0A2   BEQ $80C0AC  
+80C0A4   LDA #$0C 
+80C0A6   XBA
+80C0A7   LDA #$40 
+80C0A9   JSR $C0E1
+80C0AC   LDA $0C80 ;06
+80C0AF   BEQ $80C0B9  
+80C0B1   LDA #$0C 
+80C0B3   XBA
+80C0B4   LDA #$80 
+80C0B6   JSR $C0E1
+80C0B9   LDA $0CC0 ;07
+80C0BC   BEQ $80C0C6  
+80C0BE   LDA #$0C 
+80C0C0   XBA
+80C0C1   LDA #$C0 
+80C0C3   JSR $C0E1
+80C0C6   LDA $0D00 ;08
+80C0C9   BEQ $80C0D3  
+80C0CB   LDA #$0D 
+80C0CD   XBA
+80C0CE   LDA #$00 
+80C0D0   JSR $C0E1
+80C0D3   LDA $0D40 ;09
+80C0D6   BEQ $80C0E0  
+80C0D8   LDA #$0D 
+80C0DA   XBA
+80C0DB   LDA #$40 
+80C0DD   JSR $C0E1
+80C0E0   RTS
+; For understanding purpose all comments use object0 addresses
+; Thrown Object subroutines
+80C0E1   TCD
+80C0E2   LDX $0A ; $0B0A
+80C0E4   JMP ($C0E7,X)
+--------data--------     
+80C0E7 
+dw $C0FD ; Throwing Object State 00
+dw $C5F7 ; Throwing Object State 02
+dw $C95B ; Throwing Object State 04
+dw $C9DD ; Throwing Object State 06
+dw $CD2F ; Throwing Object State 08
+dw $CE43 ; Throwing Object State 0A
+dw $CEEF ; Throwing Object State 0C
+dw $CFEC ; Throwing Object State 0E
+dw $D0C6 ; Throwing Object State 10
+dw $D131 ; Throwing Object State 12
+dw $D342 ; Throwing Object State 14
+
+80C0FD   LDX $02  
+80C0FF   JMP ($C102,X)
+    
+80C102 
+dw $C10A
+dw $C1F0
+dw $C404
+dw $C542
+
+ 
+80C10A   LDX $03  
+80C10C   JMP ($C10F,X)
+
+80C10F  
+dw $C11D
+dw $C1A4
+dw $C1A7
+dw $C1AC 
+dw $C1B6 
+dw $C1C0 
+dw $C1CE
+
+80C11D   JSL $808EFC  
+80C121   LDA #$05 
+80C123   STA $1C  
+80C125   LDA #$01 
+80C127   STA $00  
+80C129   STA $01  
+80C12B   STZ $0E  
+80C12D   STZ $1E  
+80C12F   STZ $35  
+80C131   STZ $37  
+80C133   STZ $2F  
+80C135   DEC
+80C136   LDX $0B  
+80C138   CPX #$0A 
+80C13A   BNE $80C140  
+80C13C   STZ $05  
+80C13E   LDA #$FF 
+80C140   STA $2E  
+80C142   LDA #$07 
+80C144   STA $3C  
+80C146   LDA #$03 
+80C148   STA $3D  
+80C14A   LDA #$09 
+80C14C   STA $3E  
+80C14E   LDA #$09 
+80C150   STA $3F  
+80C152   LDA #$04 
+80C154   STA $22  
+80C156   LDX #$37 
+80C158   LDA $0D  
+80C15A   BPL $80C162  
+80C15C   AND #$7F 
+80C15E   STA $0D  
+80C160   LDX #$27 
+80C162   STX $1B  
+80C164   LDA $1A  
+80C166   STA $2C  
+80C168   JSL $808A53  
+80C16C   LDA $0B  
+80C16E   CMP #$1A 
+80C170   BNE $80C188  
+80C172   INC $00  
+80C174   LDY $8E7E
+80C177   LDA $8E7F
+80C17A   JSL FrameAnimationNoTimer ; $8089A3  
+80C17E   LDA #$40 
+80C180   STA $1A  
+80C182   LDA #$2B 
+80C184   STA $1B  
+80C186   BRA $80C198  
+80C188   LDX $0B  
+80C18A   LDY $8E64,X  
+80C18D   LDA $8E65,X  
+80C190   JSL $8089D7  
+80C194   JSL $808A21  
+80C198   LDA #$0C 
+80C19A   STA $0F  
+80C19C   LDA $04  
+80C19E   STA $03  
+80C1A0   CMP #$04 
+80C1A2   BEQ $80C1A7  
+80C1A4   JMP $C54B
+--------unidentified--------
+80C1A7  .db $22 $CE $88 $80 $60  
+----------------   
+80C1AC   JSR $C11D
+80C1AF   LDA #$02 
+80C1B1   STA $02  
+80C1B3   STA $1E  
+80C1B5   RTS
+----------------   
+80C1B6   JSR $C11D
+80C1B9   LDA #$02 
+80C1BB   STA $03  
+80C1BD   STA $1E  
+80C1BF   RTS
+----------------   
+--------unidentified--------
+80C1C0  .db $20 $1D $C1 $A9 $02 $85 $02 $A9
+80C1C8  .db $12 $85 $03 $85 $1E $60 $20 $1D
+80C1D0  .db $C1 $A9 $02 $85 $02 $A9 $14 $85
+80C1D8  .db $03 $85 $1E $85 $2D $C2 $20 $A9
+80C1E0  .db $08 $01 $85 $11 $A9 $80 $FF $85
+80C1E8  .db $28 $E2 $20 $A9 $B7 $85 $14 $60
+----------------   
+80C1F0   LDA $00AC
+80C1F3   BNE $80C203  
+80C1F5   LDX $03  
+80C1F7   JSR ($C214,X)
+80C1FA   LDA $03  
+80C1FC   CMP #$14 
+80C1FE   BEQ $80C203  
+80C200   JSR $C5C2
+80C203   JSL SpriteSaveDirectPage ; 8088CE  
+80C207   LDA $2D  
+80C209   BNE $80C211  
+80C20B   JSR $D7C3
+80C20E   JSR $D65D
+80C211   JMP $C54B
+--------data--------     
+80C214  .db $2A $C2 $5D $C2 $79 $C2 $DA $C2
+80C21C  .db $27 $C3  
+----------------   
+--------unidentified--------
+80C21E  .db $4D $C3  
+----------------   
+--------data--------     
+80C220  .db $82 $C3  
+----------------   
+--------unidentified--------
+80C222  .db $A3 $C3  
+----------------   
+--------data--------     
+80C224  .db $C2 $C3  
+----------------   
+--------unidentified--------
+80C226  .db $C3 $C3 $EB $C3
+----------------   
+--------sub start--------
+80C22A   LDA #$02 
+80C22C   STA $03  
+80C22E   STZ $37  
+80C230   LDA $0B  
+80C232   CMP #$0A 
+80C234   BEQ $80C238  
+80C236   STZ $0C  
+80C238   REP #$20 
+80C23A   LDA #$FFE8   
+80C23D   STA $38  
+80C23F   LDA #$FF40   
+80C242   STA $3A  
+80C244   LDA #$0140   
+80C247   STA $2A  
+80C249   LDA #$8F8B   
+80C24C   STA $18  
+80C24E   SEP #$20 
+80C250   LDA $0B  
+80C252   CMP #$0A 
+80C254   BNE $80C25C  
+80C256   LDA $05  
+80C258   STZ $05  
+80C25A   STA $35  
+80C25C   RTS
+----------------   
+--------sub start--------
+80C25D   JSL $80BFCC  
+80C261   REP #$21 
+80C263   LDA $2A  ; Z position of the pot
+80C265   ADC $38  ; Initial Gravity of the pot 
+80C267   STA $2A  
+80C269   LDA $16  
+80C26B   CLC
+80C26C   ADC $2A  
+80C26E   STA $16  
+80C270   SEP #$20 
+80C272   BCC $80C278  
+80C274   LDA #$04 
+80C276   STA $03  
+80C278   RTS
+----------------   
+--------sub start--------
+80C279   JSL $80BFCC
+80C27D   REP #$21   ; Niamek : This seems to be the routine that manage the XZ pot trajectory.
+80C27F   LDA $2A  ; Z position of the pot
+80C281   ADC $3A  ; Gravity for this specific pot (I think each pot will have it gravity)
+; Note that this gravity applies after a tiny amount of time after the throw. Not immediately.
+80C283   STA $2A  
+; I think the rest of the routine is for adjusting the Y position of the thrown item on screen according to Z.
+80C285   LDA $16  ; This is the Y position of the pot (B15 to B17 are Y related from what I understand)
+80C287   CLC
+80C288   ADC $2A  
+80C28A   STA $16  
+80C28C   SEP #$20 
+80C28E   BCS $80C2A0  
+80C290   STZ $17  
+80C292   LDA $0B  
+80C294   CMP #$0A 
+80C296   BEQ $80C2A1  
+80C298   LDA #$04 
+80C29A   STA $02  
+80C29C   LDA #$02 
+80C29E   STA $03  
+80C2A0   RTS
+----------------   
+80C2A1   JSL $808A66  
+80C2A5   CMP #$30 
+80C2A7   BEQ $80C298  
+80C2A9   CMP #$F0 
+80C2AB   BEQ $80C298  
+80C2AD   LDA $35  
+80C2AF   BEQ $80C2B9  
+80C2B1   LDA #$27 
+80C2B3   STA $18  
+80C2B5   LDA #$90 
+80C2B7   STA $19  
+80C2B9   LDA #$02 
+80C2BB   STA $03  
+80C2BD   LDA $37  
+80C2BF   ASL
+80C2C0   TAX
+80C2C1   LDA $9077,X  
+80C2C4   STA $2A  
+80C2C6   LDA $9078,X  
+80C2C9   STA $2B  
+80C2CB   LDA $37  
+80C2CD   INC $37  
+80C2CF   CMP #$02 
+80C2D1   BNE $80C2D9  
+80C2D3   LDA #$10 
+80C2D5   STA $03  
+80C2D7   STA $2D  
+80C2D9   RTS
+----------------   
+--------sub start--------
+; Boss 0 related too.
+; Looks like this section of code sets the properties of the thrown item.
+80C2DA   LDA #$02
+80C2DC   STA $03  
+80C2DE   STA $1E  
+80C2E0   JSL GetRandomInt ;$808859  ; I think this is the random thing that will decide if it's a fast or a high throw. The firs tbit will be the dealbreaker.
+80C2E4   AND #$1F 
+80C2E6   STA $0000
+80C2E9   STZ $0001
+80C2EC   AND #$01 ; Take the bit that will decide if high throw or not.
+80C2EE   TAY
+80C2EF   REP #$20 
+80C2F1   TYA
+80C2F2   BEQ $80C30C  ; If A in accumulator is 1, the item will be a fast throw. if == to 0 : it will be an arching throw.
+; Looks like FF is the minimum of the throw and 00 the highest gravity possible.
+80C2F4   LDA #$FFEB   
+80C2F7   STA $38  
+80C2F9   LDA #$FFF0
+80C2FC   STA $3A  ; I have no idea what FF means, but F0 means "fast throw gravity".
+80C2FE   LDA #$0100   
+80C301   CLC
+80C302   ADC $0000
+80C305   STA $2A  
+80C307   LDA #$8F9B   
+80C30A   BRA $80C322
+80C30C   LDA #$FFEA   
+80C30F   STA $38  
+80C311   LDA #$FFD0   ; DO means high throw gravity. No idea what FF means.
+80C314   STA $3A  
+80C316   LDA #$0250   
+80C319   CLC
+80C31A   ADC $0000
+80C31D   STA $2A  
+80C31F   LDA #$8FA7   
+80C322   STA $18  ; Set pointer for Stuffs (Example : X velocity of thrown item)
+80C324   SEP #$20 
+80C326   RTS
+----------------   
+--------sub start--------
+80C327   LDA #$02 
+80C329   STA $03  
+80C32B   JSL GetRandomInt ;$808859  
+80C32F   AND #$0F 
+80C331   REP #$21 
+80C333   AND #$00FF   
+80C336   ADC #$FFD8   
+80C339   STA $38  
+80C33B   LDA #$FFD0   
+80C33E   STA $3A  
+80C340   LDA #$0300   
+80C343   STA $2A  
+80C345   LDA #$8FB3   
+80C348   STA $18  
+80C34A   SEP #$20 
+80C34C   RTS
+----------------   
+--------unidentified--------
+80C34D  .db $A9 $02 $85 $03 $64 $2B $C2 $20
+80C355  .db $A9 $DE $FF $85 $38 $A9 $DB $FF
+80C35D  .db $85 $3A $A9 $F0 $03 $85 $2A $A9
+80C365  .db $D3 $8F $A4 $36 $D0 $12 $A9 $E6
+80C36D  .db $FF $85 $38 $A9 $E8 $FF $85 $3A
+80C375  .db $A9 $F0 $03 $85 $2A $A9 $DB $8F
+80C37D  .db $85 $18 $E2 $20 $60  
+----------------   
+--------sub start--------
+80C382   LDA #$02 
+80C384   STA $03  
+80C386   STZ $2B  
+80C388   STZ $35  
+80C38A   REP #$20 
+80C38C   LDA #$FFF8   
+80C38F   STA $38  
+80C391   LDA #$FFF9   
+80C394   STA $3A  
+80C396   LDA #$0010   
+80C399   STA $2A  
+80C39B   LDA #$8FE3   
+80C39E   STA $18  
+80C3A0   SEP #$20 
+80C3A2   RTS
+----------------   
+--------unidentified--------
+80C3A3  .db $A9 $02 $85 $03 $64 $2B $C2 $20
+80C3AB  .db $A9 $B0 $FF $85 $38 $A9 $B0 $FF
+80C3B3  .db $85 $3A $A9 $00 $05 $85 $2A $A9
+80C3BB  .db $23 $90 $85 $18 $E2 $20 $60
+----------------   
+--------sub start--------
+80C3C2   RTS
+----------------   
+--------unidentified--------
+80C3C3  .db $A9 $02 $85 $03 $64 $2B $22 $59
+80C3CB  .db $88 $80 $29 $1C $C2 $21 $29 $FF
+80C3D3  .db $00 $69 $B0 $FF $85 $38 $A9 $C8
+80C3DB  .db $FF $85 $3A $A9 $00 $04 $85 $2A
+80C3E3  .db $A9 $37 $90 $85 $18 $E2 $20 $60
+80C3EB  .db $C2 $20 $22 $32 $C0 $80 $C2 $21
+80C3F3  .db $A5 $11 $69 $08 $00 $C9 $11 $01
+80C3FB  .db $E2 $20 $90 $04 $A9 $06 $85 $02
+80C403  .db $60  
+----------------   
+80C404   LDX $03  
+80C406   JSR ($C420,X)
+80C409   JSL $808A25  
+80C40D   JSR $C54B
+80C410   LDA $0B  
+80C412   CMP #$1C 
+80C414   BCS $80C41B  
+80C416   JSL SpriteSaveDirectPage ; 8088CE  
+80C41A   RTS
+----------------   
+80C41B   JSL $8088DF  
+80C41F   RTS
+----------------   
+--------data--------     
+80C420  .db $5A $C4 $2C $C4 $C1 $C4 $EB $C4
+80C428  .db $0C $C5 $31 $C5
+----------------   
+--------sub start--------
+80C42C   LDA $11  
+80C42E   STA $000A
+80C431   LDA $14  
+80C433   STA $000C
+80C436   LDX #$00 
+80C438   LDA $12  
+80C43A   BEQ $80C442  
+80C43C   BMI $80C43F  
+80C43E   DEX
+80C43F   STX $000A
+80C442   LDY #$00 
+80C444   LDA $15  
+80C446   BEQ $80C44E  
+80C448   BMI $80C44B  
+80C44A   DEY
+80C44B   STY $000C
+80C44E   JSL $808A86  
+80C452   CMP #$30 
+80C454   BEQ $80C48A  
+80C456   CMP #$F0 
+80C458   BEQ $80C4A4  
+--------sub start--------
+80C45A   LDA #$02 
+80C45C   STA $00  
+80C45E   LDA $0B  
+80C460   CMP #$1A 
+80C462   BNE $80C46C  
+80C464   LDA #$27 
+80C466   STA $1B  
+80C468   LDA $2C  
+80C46A   STA $1A  
+80C46C   LDX $0B  
+80C46E   CPX #$0A 
+80C470   BEQ $80C487  
+80C472   LDY $8E80,X  
+80C475   LDA $8E81,X  
+80C478   JSL $8089D7  
+80C47C   LDA #$04 
+80C47E   STA $03  
+80C480   LDA #$02 
+80C482   JSL PlaySFX ;$809A53
+80C486   RTS
+----------------   
+80C487   JMP $C56E
+--------unidentified--------
+80C48A  .db $A9 $0E $22 $53 $9A $80 $A5 $0B
+80C492  .db $C9 $1A $D0 $08 $A9 $27 $85 $1B
+80C49A  .db $A5 $2C $85 $1A $A9 $04 $A2 $1C
+80C4A2  .db $80 $0E  
+----------------   
+80C4A4   LDA #$0F 
+80C4A6   JSL PlaySFX ;$809A53
+80C4AA   LDA #$31 
+80C4AC   STA $1B  
+80C4AE   LDA #$04 
+80C4B0   LDX #$1E 
+80C4B2   STX $0B  
+80C4B4   STA $03  
+80C4B6   LDY $8E80,X  
+80C4B9   LDA $8E81,X  
+80C4BC   JSL $8089D7  
+80C4C0   RTS
+----------------   
+--------sub start--------
+80C4C1   JSL $8089DE  
+80C4C5   LDA $08  
+80C4C7   CMP #$70 
+80C4C9   BNE $80C4D7  
+80C4CB   LDX $0B  
+80C4CD   CPX #$04 
+80C4CF   BEQ $80C4D8  
+80C4D1   LDA #$06 
+80C4D3   STA $02  
+80C4D5   STZ $03  
+80C4D7   RTS
+----------------   
+--------unidentified--------
+80C4D8  .db $A9 $02 $85 $00 $64 $01 $A9 $0A
+80C4E0  .db $85 $0A $64 $02 $64 $03 $64 $04
+80C4E8  .db $64 $05 $60    
+----------------   
+--------sub start--------
+80C4EB   JSL $8089DE  
+80C4EF   LDA $08  
+80C4F1   CMP #$70 
+80C4F3   BCC $80C50B  
+80C4F5   LDA #$08 
+80C4F7   STA $03  
+80C4F9   LDA #$36 
+80C4FB   STA $1B  
+80C4FD   STZ $1A  
+80C4FF   LDA #$09 
+80C501   STA $3C  
+80C503   STA $3D  
+80C505   LDA #$13 
+80C507   STA $3E  
+80C509   STA $3F  
+80C50B   RTS
+----------------   
+--------sub start--------
+80C50C   JSL $8089DE  
+80C510   LDA $08  
+80C512   CMP #$70 
+80C514   BNE $80C52A  
+80C516   LDA #$01 
+80C518   STA $08  
+80C51A   JSL $8089DE  
+80C51E   LDA $2C  
+80C520   STA $1A  
+80C522   LDA #$37 
+80C524   STA $1B  
+80C526   LDA #$0A 
+80C528   STA $03  
+80C52A   JSR $D7C3
+80C52D   JSR $D65D
+80C530   RTS
+----------------   
+--------sub start--------
+80C531   JSL $8089DE  
+80C535   LDA $08  
+80C537   CMP #$70 
+80C539   BNE $80C52A  
+80C53B   LDA #$06 
+80C53D   STA $02  
+80C53F   STZ $03  
+80C541   RTS
+----------------   
+80C542   LDA $2C  
+80C544   STA $1A  
+80C546   JSL $808F4C  
+80C54A   RTS
+----------------   
+--------sub start--------
+80C54B   LDA $00AC
+80C54E   BNE $80C562  
+80C550   LDA $2E  
+80C552   BEQ $80C562  
+80C554   LDA $2F  
+80C556   BNE $80C563  
+80C558   DEC $2E  
+80C55A   BNE $80C562  
+80C55C   INC $2F  
+80C55E   LDA #$80 
+80C560   STA $2E  
+80C562   RTS
+----------------   
+80C563   DEC $2E  
+80C565   BEQ $80C56E  
+80C567   LDA $2E  
+80C569   AND #$03 
+80C56B   STA $01  
+80C56D   RTS
+----------------   
+80C56E   LDA #$02 
+80C570   STA $00  
+80C572   STA $1E  
+80C574   DEC
+80C575   STA $01  
+80C577   LDA #$04 
+80C579   STA $02  
+80C57B   LDA #$06 
+80C57D   STA $03  
+80C57F   STZ $2D  
+80C581   STZ $2F  
+80C583   STZ $2E  
+80C585   LDY #$2C 
+80C587   LDA #$8F 
+80C589   JSL $8089D7  
+80C58D   JSL $808A21  
+80C591   LDA #$09 
+80C593   JSL PlaySFX ;$809A53
+80C597   REP #$10 
+80C599   LDX $30  
+80C59B   BEQ $80C5BF  
+80C59D   STZ $0053,X  
+80C5A0   REP #$20 
+80C5A2   STZ $30  
+80C5A4   LDA $0014,X  
+80C5A7   TAY
+80C5A8   SEC
+80C5A9   SBC $14  
+80C5AB   STY $14  
+80C5AD   SEP #$30 
+80C5AF   STA $17  
+80C5B1   LDA $0100,X  
+80C5B4   DEC
+80C5B5   BNE $80C5C1  
+80C5B7   LDA $00A8
+80C5BA   BNE $80C5C1  
+80C5BC   JSR $D761
+80C5BF   SEP #$10 
+80C5C1   RTS
+----------------   
+--------sub start--------
+80C5C2   REP #$21 
+80C5C4   LDA $11  
+80C5C6   ADC #$0008   
+80C5C9   CMP #$0110   
+80C5CC   BCS $80C5ED  
+80C5CE   LDA $14  
+80C5D0   CLC
+80C5D1   ADC #$0008   
+80C5D4   CMP #$00F0   
+80C5D7   BCC $80C5F4  
+80C5D9   LDA $17  
+80C5DB   AND #$00FF   
+80C5DE   EOR #$FFFF   
+80C5E1   INC
+80C5E2   CLC
+80C5E3   ADC $14  
+80C5E5   ADC #$0008   
+80C5E8   CMP #$00F0   
+80C5EB   BCC $80C5F4  
+80C5ED   SEP #$20 
+80C5EF   LDA #$06 
+80C5F1   STA $02  
+80C5F3   RTS
+----------------   
+80C5F4   SEP #$20 
+80C5F6   RTS
+
+
+; Thrown Object State 02
+
+80C5F7   LDX $02  
+80C5F9   JMP ($C5FC,X)
+   
+80C5FC  
+dw $C604 
+dw $C64E
+dw $C69D
+dw $C713
+ 
+80C604   LDA #$02 
+80C606   STA $02  
+80C608   LDA $00  
+80C60A   DEC
+80C60B   BEQ $80C62C  
+80C60D   JSL $808EFC  
+80C611   LDA #$01 
+80C613   STA $00  
+80C615   STA $01  
+80C617   STZ $0E  
+80C619   LDA #$04 
+80C61B   STA $22  
+80C61D   LDA #$27 
+80C61F   STA $1B  
+80C621   JSL $808A53  
+80C625   JSR $C75F
+80C628   JSL $808A21  
+80C62C   LDA $0D  
+80C62E   STA $03  
+80C630   LSR
+80C631   STA $0D  
+80C633   TAX
+80C634   LDA $90A9,X  
+80C637   STA $3E  
+80C639   STZ $3F  
+80C63B   LDA $0B  
+80C63D   BEQ $80C641  
+80C63F   STZ $05  
+80C641   LDA #$91 
+80C643   LDY #$08 
+80C645   JSL Sprite_SetSpeeds ; 80BF9F  
+80C649   JSL $8088DF  
+80C64D   RTS
+
+
+80C64E   LDA $00AC
+80C651   BNE $80C658  
+80C653   LDX $03  
+80C655   JSR ($C689,X)
+80C658   JSL $8088DF  
+80C65C   LDA $00AC
+80C65F   BNE $80C697  
+80C661   LDA $0B  
+80C663   BEQ $80C66F  
+80C665   JSR $C718
+--------unidentified--------
+80C668  .db $20 $76 $C7 $22 $25 $8A $80
+----------------   
+80C66F   LDA $03  
+80C671   CMP #$08 
+80C673   BEQ $80C697  
+80C675   JSR $C810
+80C678   JSR $D4FD
+80C67B   LDA $00  
+80C67D   DEC
+80C67E   BNE $80C697  
+80C680   JSR $D5FF
+80C683   JSR $D478
+80C686   JMP $C7BE
+--------data--------     
+80C689 
+dw $C693
+dw $C698
+dw $C693
+dw $C698
+dw $C697
+
+80C693   JSL $80C048  
+80C697   RTS
+
+
+80C698   JSL MoveHorizontal; $80C032  
+80C69C   RTS
+
+
+80C69D   LDX $03  
+80C69F   JSR ($C6AB,X)
+80C6A2   JSL $808A25  
+80C6A6   JSL $8088DF  
+80C6AA   RTS
+
+
+80C6AB
+dw $C6AF
+dw $C6CD
+
+80C6AF  .db $A6 $04 $D0 $51 $A5 $0B $F0 $03
+80C6B7  .db $4C $3E $C7 $A9 $02 $85 $04 $A9
+80C6BF  .db $02 $22 $53 $9A $80 $A9 $8E $A0
+80C6C7  .db $E6 $22 $D7 $89 $80 $60
+
+80C6CD   LDA $04  
+80C6CF   BNE $80C704  
+80C6D1   LDA #$02 
+80C6D3   STA $04  
+80C6D5   LDA $37  
+80C6D7   CMP #$30 
+80C6D9   BEQ $80C6F5  
+80C6DB   LDA #$0F 
+80C6DD   JSL PlaySFX ;$809A53
+80C6E1   LDA #$21 
+80C6E3   STA $1B  
+80C6E5   LDA #$8F 
+80C6E7   LDY #$63 
+80C6E9   JSL $8089D7  
+80C6ED   LDA $14  
+80C6EF   CLC
+80C6F0   ADC #$04 
+80C6F2   STA $14  
+80C6F4   RTS
+----------------   
+80C6F5   LDA #$0E 
+80C6F7   JSL PlaySFX ;$809A53
+80C6FB   LDA #$8F 
+80C6FD   LDY #$54 
+80C6FF   JSL $8089D7  
+80C703   RTS
+----------------   
+80C704   JSL $8089DE  
+80C708   LDA $08  
+80C70A   CMP #$70 
+80C70C   BNE $80C712  
+80C70E   LDA #$06 
+80C710   STA $02  
+80C712   RTS
+----------------   
+80C713   JSL $808F4C  
+80C717   RTS
+----------------   
+--------unidentified--------
+80C718  .db $C2 $20 $C6 $30 $E2 $20 $F0 $01
+80C720  .db $60 $E6 $0B $E6 $0B $A5 $0B $C9
+80C728  .db $07 $90 $34 $A5 $03 $C9 $08 $C2
+80C730  .db $30 $D0 $08 $A6 $3C $9E $00 $14
+80C738  .db $9E $20 $14 $68 $E2 $30 $64 $0A
+80C740  .db $A9 $07 $85 $3C $A9 $03 $85 $3D
+80C748  .db $A9 $09 $85 $3E $A9 $09 $85 $3F
+80C750  .db $A9 $0A $85 $0B $A5 $1A $85 $2C
+80C758  .db $64 $30 $64 $31 $4C $6E $C5
+----------------   
+--------sub start--------
+80C75F   LDX $0B  
+80C761   LDA $9079,X  
+80C764   STA $30  
+80C766   LDA $907A,X  
+80C769   STA $31  
+80C76B   LDY $90AD,X  
+80C76E   LDA $90AE,X  
+80C771   JSL $8089D7  
+80C775   RTS
+----------------   
+--------unidentified--------
+80C776  .db $C6 $08 $D0 $43 $C2 $31 $A4 $06
+80C77E  .db $B9 $00 $00 $29 $FF $00 $69 $05
+80C786  .db $00 $65 $06 $AA $B9 $01 $00 $89
+80C78E  .db $80 $00 $F0 $04 $BD $00 $00 $AA
+80C796  .db $86 $06 $E2 $20 $BD $01 $00 $29
+80C79E  .db $7F $85 $08 $C2 $21 $BD $00 $00
+80C7A6  .db $29 $FF $00 $69 $03 $00 $65 $06
+80C7AE  .db $AA $E2 $20 $BD $00 $00 $85 $23
+80C7B6  .db $BD $01 $00 $85 $1B $E2 $10 $60
+----------------   
+80C7BE   LDX $03  
+80C7C0   JSL $80C7FA  
+80C7C4   CMP #$30 
+80C7C6   BEQ $80C7CD  
+80C7C8   CMP #$F0 
+80C7CA   BEQ $80C7CD  
+80C7CC   RTS
+----------------   
+80C7CD   STA $37  
+80C7CF   LDA $03  
+80C7D1   CLC
+80C7D2   ADC #$08 
+80C7D4   TAX
+80C7D5   JSL $80C7FA  
+80C7D9   CMP $37  
+80C7DB   BNE $80C7F1  
+80C7DD   LDA $03  
+80C7DF   CLC
+80C7E0   ADC #$10 
+80C7E2   TAX
+80C7E3   JSL $80C7FA  
+80C7E7   CMP #$F0 
+80C7E9   BEQ $80C7EF  
+80C7EB   CMP #$30 
+80C7ED   BNE $80C7F9  
+80C7EF   STA $37  
+80C7F1   LDA #$04 
+80C7F3   STA $02  
+80C7F5   LDA #$02 
+80C7F7   STA $03  
+80C7F9   RTS
+----------------   
+--------sub start--------
+80C7FA   LDA $11  
+80C7FC   CLC
+80C7FD   ADC $9081,X  
+80C800   STA $000A
+80C803   LDA $14  
+80C805   CLC
+80C806   ADC $9082,X  
+80C809   STA $000C
+80C80C   JMP $808A86  
+--------sub start--------
+80C810   LDA $03  
+80C812   ASL
+80C813   TAX
+80C814   REP #$31 
+80C816   LDA $11  
+80C818   ADC $9099,X  
+80C81B   CMP #$0100   
+80C81E   BCS $80C862  
+80C820   STA $38  
+80C822   LSR
+80C823   LSR
+80C824   LSR
+80C825   STA $3C  
+80C827   LDA $14  
+80C829   CLC
+80C82A   ADC $909B,X  
+80C82D   CMP #$00E0   
+80C830   BCS $80C862  
+80C832   STA $3A  
+80C834   AND #$00F8   
+80C837   ASL
+80C838   ASL
+80C839   ADC $3C  
+80C83B   TAX
+80C83C   ADC $3E  
+80C83E   TAY
+80C83F   SEP #$20 
+80C841   LDA $1400,X  
+80C844   LDX $1400,Y  
+80C847   SEP #$10 
+80C849   CMP #$00 
+80C84B   BPL $80C851  
+80C84D   CMP #$F0 
+80C84F   BNE $80C859  
+80C851   TXA
+80C852   BPL $80C858  
+80C854   CMP #$F0 
+80C856   BNE $80C859  
+80C858   RTS
+----------------   
+80C859   PLA
+80C85A   PLA
+80C85B   LDX $03  
+80C85D   JSR ($C91F,X)
+80C860   BRA $80C882  
+--------unidentified--------
+80C862  .db $A5 $11 $18 $69 $08 $00 $C9 $10
+80C86A  .db $01 $B0 $0B $A5 $14 $18 $69 $08
+80C872  .db $00 $C9 $F0 $00 $90 $07 $E2 $30
+80C87A  .db $A9 $06 $85 $02 $60 $E2 $30 $60
+----------------   
+80C882   LDA #$18 ;Block colliding with wall
+80C884   JSL PlaySFX ;$809A53
+80C888   LDA $11  
+80C88A   CLC
+80C88B   ADC #$F9 
+80C88D   LSR
+80C88E   LSR
+80C88F   LSR
+80C890   STA $3C  
+80C892   LDA $14  
+80C894   REP #$31 
+80C896   ADC #$FFF9   
+80C899   AND #$00F8   
+80C89C   ASL
+80C89D   ASL
+80C89E   ADC $3C  
+80C8A0   STA $3C  
+80C8A2   TAX
+80C8A3   LDA #$A2A0   
+80C8A6   STA $1400,X  
+80C8A9   LDA #$A6A4   
+80C8AC   STA $1420,X  
+80C8AF   LDA $0B  
+80C8B1   AND #$00FF   
+80C8B4   BNE $80C908  
+80C8B6   LDA $3C  
+80C8B8   ASL
+80C8B9   TAX
+80C8BA   LDA #$03B4 ;Star block tile ID
+80C8BD   STA $7FE000,X
+80C8C1   LDA $0041
+80C8C4   AND #$00FF   
+80C8C7   TAX
+80C8C8   LDA $3C  
+80C8CA   CLC
+80C8CB   ADC #$5000   
+80C8CE   STA $1901,X ;$2116
+80C8D1   CLC
+80C8D2   ADC #$0020   
+80C8D5   STA $1909,X  
+80C8D8   LDA #$0004   
+80C8DB   STA $1903,X ;2118
+80C8DE   STA $190B,X  
+80C8E1   LDA #$1FB4   
+80C8E4   STA $1904,X  
+80C8E7   INC
+80C8E8   STA $1906,X  
+80C8EB   INC
+80C8EC   STA $190C,X  
+80C8EF   INC
+80C8F0   STA $190E,X  
+80C8F3   SEP #$31 
+80C8F5   LDA #$80 
+80C8F7   STA $1900,X  
+80C8FA   STA $1908,X  
+80C8FD   TXA
+80C8FE   ADC #$0F 
+80C900   STA $0041
+80C903   LDA #$06 
+80C905   STA $02  
+80C907   RTS
+----------------   
+--------unidentified--------
+80C908  .db $A5 $3C $0A $AA $A9 $00 $00 $9F
+80C910  .db $00 $E0 $7F $7B $9F $02 $E0 $7F
+80C918  .db $E2 $31 $A9 $08 $85 $03 $60
+----------------   
+--------data--------     
+80C91F  .db $27 $C9 $34 $C9 $41 $C9 $4D $C9
+----------------   
+--------sub start--------
+80C927   LDA $3A  
+80C929   EOR #$FF 
+80C92B   AND #$07 
+80C92D   INC
+80C92E   CLC
+80C92F   ADC $14  
+80C931   STA $14  
+80C933   RTS
+----------------   
+--------sub start--------
+80C934   LDA $38  
+80C936   AND #$07 
+80C938   EOR #$FF 
+80C93A   CLC
+80C93B   ADC $11  
+80C93D   STA $11  
+80C93F   SEC
+80C940   RTS
+----------------   
+--------sub start--------
+80C941   LDA $3A  
+80C943   AND #$07 
+80C945   EOR #$FF 
+80C947   CLC
+80C948   ADC $14  
+80C94A   STA $14  
+80C94C   RTS
+----------------   
+--------sub start--------
+80C94D   LDA $38  
+80C94F   EOR #$FF 
+80C951   AND #$07 
+80C953   INC
+80C954   CLC
+80C955   ADC $11  
+80C957   STA $11  
+80C959   SEC
+80C95A   RTS
+
+
+;Thrown Object State 04
+80C95B   LDX $02  
+80C95D   JMP ($C960,X)
+ 
+80C960 
+dw $C964
+dw $C989
+
+80C964   LDA #$02 
+80C966   STA $02  
+80C968   JSL $808EFC  
+80C96C   LDA #$01 
+80C96E   STA $00  
+80C970   STA $01  
+80C972   STZ $22  
+80C974   LDA #$33 
+80C976   STA $1B  
+80C978   JSL $808A53  
+80C97C   LDY #$18 
+80C97E   LDA #$91 
+80C980   JSL $8089D7  
+80C984   JSL $808A21  
+80C988   RTS
+
+
+80C989   LDX $03  
+80C98B   JSR ($C99B,X)
+80C98E   JSL $8089DE  
+80C992   JSL $808A25  
+80C996   JSL SpriteSaveDirectPage ; 8088CE  
+80C99A   RTS
+
+
+80C99B  
+dw $C99F
+dw $C9C2
+
+80C99F   LDA $08  
+80C9A1   CMP #$70 
+80C9A3   BEQ $80C9B5  
+80C9A5   CMP #$10 
+80C9A7   BNE $80C9B4  
+80C9A9   LDA #$01 
+80C9AB   STA $08  
+80C9AD   LDA $17  
+80C9AF   CLC
+80C9B0   ADC #$05 
+80C9B2   STA $17  
+80C9B4   RTS
+
+80C9B5   LDA #$02 
+80C9B7   STA $03  
+80C9B9   LDA #$01 
+80C9BB   STA $08  
+80C9BD   LDA #$28 
+80C9BF   STA $17  
+80C9C1   RTS
+
+80C9C2   LDA $08  
+80C9C4   CMP #$70 
+80C9C6   BEQ $80C9D8  
+80C9C8   CMP #$10 
+80C9CA   BNE $80C9D7  
+80C9CC   LDA #$01 
+80C9CE   STA $08  
+80C9D0   LDA $17  
+80C9D2   CLC
+80C9D3   ADC #$02 
+80C9D5   STA $17  
+80C9D7   RTS
+
+80C9D8   JSL $808F4C  
+80C9DC   RTS
+
+;Thrown Object State 06
+
+80C9DD  .db $A6 $02 $7C $E2 $C9 $EA $C9 $5C
+80C9E5  .db $CA $1E $CC $6F $CC $A9 $02 $85
+80C9ED  .db $02 $3A $85 $00 $85 $1E $85 $0C
+80C9F5  .db $A9 $05 $85 $3C $A9 $01 $85 $3D
+80C9FD  .db $A9 $07 $85 $3E $A9 $07 $85 $3F
+80CA05  .db $A9 $40 $85 $1A $A9 $15 $85 $39
+80CA0D  .db $A9 $48 $85 $14 $A9 $07 $85 $17
+80CA15  .db $64 $2D $A6 $0B $7C $1C $CA $20
+80CA1D  .db $CA $32 $CA $A5 $0F $85 $38 $64
+80CA25  .db $0E $A9 $80 $85 $35 $A9 $01 $85
+80CA2D  .db $36 $A9 $3B $80 $27 $C2 $20 $A6
+80CA35  .db $0F $BD $5B $91 $85 $38 $E2 $20
+80CA3D  .db $A5 $0D $4A $4A $4A $18 $65 $0E
+80CA45  .db $AA $BD $6F $91 $85 $0D $A9 $15
+80CA4D  .db $85 $3A $A9 $C0 $85 $35 $A9 $01
+80CA55  .db $85 $36 $A9 $39 $85 $1B $60 $A6
+80CA5D  .db $0B $FC $6D $CA $22 $CE $88 $80
+80CA65  .db $A5 $2D $D0 $03 $20 $5D $D6 $60
+80CA6D  .db $71 $CA $4F $CB $A6 $03 $7C $76
+80CA75  .db $CA $7E $CA $B8 $CA $DB $CA $25
+80CA7D  .db $CB $C2 $10 $A6 $32 $BD $02 $00
+80CA85  .db $C9 $04 $E2 $10 $D0 $03 $4C $6F
+80CA8D  .db $CC $C6 $39 $D0 $25 $A9 $02 $85
+80CA95  .db $03 $A9 $26 $22 $53 $9A $80 $A0
+80CA9D  .db $45 $A9 $91 $22 $A3 $89 $80 $64
+80CAA5  .db $37 $A5 $0D $0A $0A $0A $0A $AA
+80CAAD  .db $A4 $35 $A5 $36 $22 $52 $92 $80
+80CAB5  .db $E6 $01 $60 $C6 $38 $D0 $07 $A9
+80CABD  .db $04 $85 $03 $64 $39 $60 $22 $A9
+80CAC5  .db $89 $80 $22 $07 $C0 $80 $20 $80
+80CACD  .db $CC $A5 $34 $F0 $08 $A9 $04 $85
+80CAD5  .db $02 $A9 $02 $64 $03 $60 $22 $A9
+80CADD  .db $89 $80 $22 $07 $C0 $80 $20 $80
+80CAE5  .db $CC $A5 $34 $F0 $09 $A9 $04 $85
+80CAED  .db $02 $A9 $02 $64 $03 $60 $C2 $21
+80CAF5  .db $A5 $38 $69 $08 $00 $85 $38 $A5
+80CAFD  .db $16 $38 $E5 $38 $85 $16 $E2 $20
+80CB05  .db $30 $01 $60 $A9 $06 $85 $03 $E6
+80CB0D  .db $2D $64 $17 $A9 $3A $85 $1B $A9
+80CB15  .db $00 $85 $1A $A0 $57 $A9 $91 $22
+80CB1D  .db $A3 $89 $80 $A9 $B4 $85 $38 $60
+80CB25  .db $A6 $04 $7C $2A $CB $2E $CB $3B
+80CB2D  .db $CB $C6 $38 $D0 $08 $A9 $02 $85
+80CB35  .db $04 $A9 $80 $85 $38 $60 $C6 $38
+80CB3D  .db $D0 $09 $A9 $06 $85 $02 $64 $03
+80CB45  .db $64 $04 $60 $A5 $38 $29 $03 $85
+80CB4D  .db $01 $60 $A6 $03 $7C $54 $CB $5C
+80CB55  .db $CB $96 $CB $B4 $CB $F4 $CB $C2
+80CB5D  .db $10 $A6 $32 $BD $02 $00 $C9 $04
+80CB65  .db $E2 $10 $D0 $03 $4C $6F $CC $C6
+80CB6D  .db $3A $D0 $25 $A9 $02 $85 $03 $A9
+80CB75  .db $26 $22 $53 $9A $80 $A0 $45 $A9
+80CB7D  .db $91 $22 $A3 $89 $80 $64 $37 $A5
+80CB85  .db $0D $0A $0A $0A $0A $AA $A4 $35
+80CB8D  .db $A5 $36 $22 $52 $92 $80 $E6 $01
+80CB95  .db $60 $C2 $20 $C6 $38 $E2 $20 $D0
+80CB9D  .db $07 $A9 $04 $85 $03 $64 $39 $60
+80CBA5  .db $22 $A9 $89 $80 $20 $80 $CC $20
+80CBAD  .db $BD $CC $22 $07 $C0 $80 $60 $22
+80CBB5  .db $A9 $89 $80 $22 $07 $C0 $80 $C2
+80CBBD  .db $21 $A5 $38 $69 $08 $00 $85 $38
+80CBC5  .db $A5 $16 $38 $E5 $38 $85 $16 $E2
+80CBCD  .db $20 $30 $07 $20 $80 $CC $20 $BD
+80CBD5  .db $CC $60 $A9 $06 $85 $03 $E6 $2D
+80CBDD  .db $64 $17 $A9 $38 $85 $1B $A9 $00
+80CBE5  .db $85 $1A $A0 $57 $A9 $91 $22 $A3
+80CBED  .db $89 $80 $A9 $B4 $85 $38 $60 $A6
+80CBF5  .db $04 $7C $F9 $CB $FD $CB $0A $CC
+80CBFD  .db $C6 $38 $D0 $08 $A9 $02 $85 $04
+80CC05  .db $A9 $80 $85 $38 $60 $C6 $38 $D0
+80CC0D  .db $09 $A9 $06 $85 $02 $64 $03 $64
+80CC15  .db $04 $60 $A5 $38 $29 $03 $85 $01
+80CC1D  .db $60 $A6 $03 $FC $2C $CC $22 $25
+80CC25  .db $8A $80 $22 $CE $88 $80 $60 $30
+80CC2D  .db $CC $57 $CC $A9 $02 $85 $03 $A9
+80CC35  .db $02 $22 $53 $9A $80 $22 $FC $8E
+80CC3D  .db $80 $A9 $04 $85 $22 $A9 $37 $85
+80CC45  .db $1B $22 $53 $8A $80 $A0 $E6 $A9
+80CC4D  .db $8E $22 $D7 $89 $80 $22 $21 $8A
+80CC55  .db $80 $60 $22 $DE $89 $80 $A5 $08
+80CC5D  .db $C9 $70 $D0 $09 $A9 $06 $85 $02
+80CC65  .db $A9 $02 $85 $03 $60 $22 $CE $88
+80CC6D  .db $80 $60 $CE $FF $00 $A5 $03 $D0
+80CC75  .db $05 $22 $58 $8F $80 $60 $22 $4C
+80CC7D  .db $8F $80 $60 $A2 $00 $C2 $21 $A5
+80CC85  .db $11 $E9 $0F $00 $30 $08 $C9 $E1
+80CC8D  .db $00 $90 $0D $E9 $E0 $00 $49 $FF
+80CC95  .db $FF $1A $18 $65 $11 $85 $11 $E8
+80CC9D  .db $A5 $14 $38 $E9 $14 $00 $30 $08
+80CCA5  .db $C9 $C9 $00 $90 $0E $E9 $C8 $00
+80CCAD  .db $49 $FF $FF $1A $18 $65 $14 $85
+80CCB5  .db $14 $E8 $E8 $E2 $20 $86 $34 $60
+80CCBD  .db $A5 $34 $D0 $01 $60 $A5 $0D $F0
+80CCC5  .db $0C $C9 $04 $F0 $08 $C9 $08 $F0
+80CCCD  .db $04 $C9 $0C $D0 $0B $A5 $0D $18
+80CCD5  .db $69 $08 $29 $0F $85 $0D $80 $42
+80CCDD  .db $A5 $34 $29 $01 $F0 $1C $A5 $0D
+80CCE5  .db $18 $69 $04 $29 $08 $D0 $09 $A9
+80CCED  .db $00 $38 $E5 $0D $29 $0F $80 $08
+80CCF5  .db $A9 $08 $38 $E5 $0D $18 $69 $08
+80CCFD  .db $85 $0D $A5 $34 $29 $02 $F0 $1A
+80CD05  .db $A5 $0D $29 $08 $F0 $0A $A9 $04
+80CD0D  .db $38 $E5 $0D $18 $69 $04 $80 $08
+80CD15  .db $A9 $0C $38 $E5 $0D $18 $69 $0C
+80CD1D  .db $85 $0D $A5 $0D $0A $0A $0A $0A
+80CD25  .db $AA $A5 $36 $A4 $35 $22 $52 $92
+80CD2D  .db $80 $60 
+
+;Thrown Object State 08
+80CD2F   LDX $02                  
+80CD31   JMP ($CD34,X)            
+--------data--------     
+80CD34 
+dw $CD3C
+dw $CDA1 ; Check damage to player from that object!
+dw $CDE8
+dw $CE32
+----------------         
+80CD3C   LDX $03                  
+80CD3E   JMP ($CD41,X)            
+--------data--------     
+80CD41
+dw $CD45 
+dw $CDB0      
+----------------         
+80CD45   LDA #$02                 
+80CD47   STA $03                  
+80CD49   DEC                      
+80CD4A   STA $00                  
+80CD4C   STA $01                  
+80CD4E   STZ $1E                  
+80CD50   STZ $0E                  
+80CD52   STZ $3B                  
+80CD54   LDA $1B                  
+80CD56   ORA #$01                 
+80CD58   STA $1B                  
+80CD5A   LDA #$40                 
+80CD5C   STA $1A                  
+80CD5E   STZ $2C                  
+80CD60   LDX $0B                  
+80CD62   LDY $9175,X              
+80CD65   LDA $9176,X              
+80CD68   JSL $8089A3              
+80CD6C   LDA #$07                 
+80CD6E   STA $3C                  
+80CD70   LDA #$03                 
+80CD72   STA $3D                  
+80CD74   LDA #$09                 
+80CD76   STA $3E                  
+80CD78   LDA #$09                 
+80CD7A   STA $3F                  
+80CD7C   LDA $0B                  
+80CD7E   CMP #$04                 
+80CD80   BNE $80CDA0              
+80CD82   STZ $0A                  
+80CD84   LDA #$1A                 
+80CD86   STA $0B                  
+80CD88   LDA #$04                 
+80CD8A   STA $22                  
+80CD8C   LDA #$FF                 
+80CD8E   STA $24                  
+80CD90   JSL $808EFC              
+
+80CD94   JSL $808A53
+80CD98   LDA $1A
+80CD9A   STA $2C    
+80CD9C   LDA #$40
+80CD9E   STA $1A
+
+80CDA0   RTS                      
+
+80CDA1   LDX $03 ; Check state 03
+80CDA3   JSR (CDB1,X)
+80CDA6   JSL $8088CE
+80CDAA   JSR $D7C3
+80CDAD   JSR $D65D ; Check Damage here?
+
+80CDB0   RTS                      
+
+
+
+80CDB1  
+dw $CDB5
+dw $CDC6 
+
+80CDB5   LDA #$02
+80CDB7   STA $03
+80CDB9   LDA #$14
+80CDBB   STA $17
+80CDBD   LDY #$7F
+80CDBF   LDA #$91
+80CDC1   JSL $80BF9F
+80CDC5   RTS
+
+
+80CDC6   JSL $80C007                    
+80CDCA   JSL $8089A9                    
+80CDCE   LDA $11                            
+80CDD0   SEC                                  
+80CDD1   SBC #$08                           
+80CDD3   CMP #$F0                           
+80CDD5   BCS $80CDE1                      
+80CDD7   LDA $14                            
+80CDD9   SEC                                  
+80CDDA   SBC #$20                           
+80CDDC   CMP #$D8                           
+80CDDE   BCS $80CDE1                      
+80CDE0   RTS                                  
+                                            
+80CDE1   LDA #$04                           
+80CDE3   STA $02                            
+80CDE5   STZ $03                            
+80CDE7   RTS
+
+80CDE8   LDX $03                            
+80CDEA   JSR ($80CDF2,X)  
+
+80CDED   JSL CODE_8088CE                    
+80CDF1   RTS                                  
+                                            
+80CDF2
+dw $CDF6
+dw $CE1F
+
+80CDF6   LDA #$02                           
+80CDF8   STA $03
+80CDFA   LDA #$04                           
+80CDFC   STA $22                            
+80CDFE   LDA #$37                           
+80CE00   STA $1B                            
+80CE02   STA $2C                            
+80CE04   JSL $808EFC                    
+80CE08   JSL $808A53                    
+80CE0C   LDY #$E6                           
+80CE0E   LDA #$8E                           
+80CE10   JSL $8089D7                    
+80CE14   JSL $808A21                    
+80CE18   LDA #$02                           
+80CE1A   JSL PlaySFX ; $809A53 
+80CE1E   RTS  
+
+80CE1F   JSL $8089DE                    
+80CE23   JSL $808A25                    
+80CE27   LDA $08                            
+80CE29   CMP #$70                           
+80CE2B   BNE $80CE31                      
+80CE2D   LDA #$06                           
+80CE2F   STA $02                            
+80CE31   RTS                                  
+                                            
+80CE32   DEC $00FF                          
+80CE35   LDA $2C                            
+80CE37   BNE $80CE3E                      
+80CE39   JSL $808F58                    
+80CE3D   RTS                                  
+                                            
+80CE3E   JSL $808F4C                    
+80CE42   RTS                                  
+; Throwing Object State 0A                                 
+80CE43   LDX $02                            
+80CE45   JMP ($CE48,X)               
+                                            
+80CE48   
+dw $CE4E                       
+dw $CE76                    
+dw $CEEA                    
+80CE4E   LDA #$02                           
+80CE50   STA $02                            
+80CE52   DEC A                                
+80CE53   STA $00                            
+80CE55   STA $01                            
+80CE57   LDA #$91                           
+80CE59   LDY #$97                           
+80CE5B   JSL $8089D7                    
+80CE5F   JSL $808A21                    
+80CE63   JSL $808859                    
+80CE67   AND #$01                           
+80CE69   STA $0D                            
+80CE6B   STA $0E                            
+80CE6D   LDY #$8F                           
+80CE6F   LDA #$91                           
+80CE71   JSL $80BF9F                    
+80CE75   RTS      
+
+80CE75  .db $60 $A6 $03 $FC $9E $CE $22 $07
+80CE7D  .db $C0 $80 $22 $DE $89 $80 $22 $25
+80CE85  .db $8A $80 $22 $CE $88 $80 $C2 $21
+80CE8D  .db $A5 $11 $69 $10 $00 $C9 $20 $01
+80CE95  .db $E2 $20 $90 $04 $A9 $04 $85 $02
+80CE9D  .db $60 $A4 $CE $B1 $CE $D8 $CE $A9
+80CEA5  .db $02 $85 $03 $A9 $10 $85 $0F $64
+80CEAD  .db $3E $64 $3F $60 $C2 $21 $A5 $16
+80CEB5  .db $65 $3E $85 $16 $A5 $3E $18 $69
+80CEBD  .db $40 $00 $85 $3E $E2 $20 $A5 $17
+80CEC5  .db $10 $04 $A9 $7F $85 $17 $C6 $0F
+80CECD  .db $D0 $08 $A9 $04 $85 $03 $A9 $08
+80CED5  .db $85 $0F $60 $C2 $21 $A5 $16 $69
+80CEDD  .db $80 $FE $85 $16 $E2 $20 $C6 $0F
+80CEE5  .db $D0 $02 $64 $03 $60 $22 $4C $8F
+80CEED  .db $80 $60 $A6 $02 $7C $F4 $CE $FC
+80CEF5  .db $CE $36 $CF $E7 $CF $E7 $CF $A9
+80CEFD  .db $02 $85 $02 $A9 $01 $85 $01 $64
+80CF05  .db $0E $22 $FC $8E $80 $A5 $1A $85
+80CF0D  .db $3C $A9 $04 $85 $22 $A9 $37 $85
+80CF15  .db $1B $22 $53 $8A $80 $A9 $0A $85
+80CF1D  .db $3D $A5 $11 $38 $E9 $10 $85 $3E
+80CF25  .db $A5 $14 $38 $E9 $1E $85 $3F $A5
+80CF2D  .db $0B $4A $AA $BD $A3 $91 $85 $03
+80CF35  .db $60 $A6 $03 $FC $44 $CF $22 $25
+80CF3D  .db $8A $80 $22 $CE $88 $80 $60 $50
+80CF45  .db $CF $7D $CF $92 $CF $B1 $CF $C9
+80CF4D  .db $CF $DD $CF $A9 $02 $85 $03 $A0
+80CF55  .db $2C $A9 $8F $22 $D7 $89 $80 $22
+80CF5D  .db $21 $8A $80 $22 $59 $88 $80 $29
+80CF65  .db $1F $18 $65 $3E $85 $11 $22 $59
+80CF6D  .db $88 $80 $29 $1F $18 $65 $3F $85
+80CF75  .db $14 $A9 $09 $22 $53 $9A $80 $60
+80CF7D  .db $22 $DE $89 $80 $A5 $08 $C9 $70
+80CF85  .db $90 $0A $A9 $04 $85 $03 $A9 $36
+80CF8D  .db $85 $1B $64 $1A $60 $22 $DE $89
+80CF95  .db $80 $A5 $08 $C9 $70 $D0 $14 $A9
+80CF9D  .db $01 $85 $08 $22 $DE $89 $80 $A9
+80CFA5  .db $37 $85 $1B $A5 $3C $85 $1A $A9
+80CFAD  .db $06 $85 $03 $60 $22 $DE $89 $80
+80CFB5  .db $A5 $08 $C9 $70 $D0 $0D $C6 $3D
+80CFBD  .db $F0 $05 $A9 $00 $85 $03 $60 $A9
+80CFC5  .db $04 $85 $02 $60 $A9 $02 $85 $03
+80CFCD  .db $3A $85 $3D $A0 $2C $A9 $8F $22
+80CFD5  .db $D7 $89 $80 $22 $21 $8A $80 $60
+80CFDD  .db $A9 $02 $85 $03 $A9 $06 $85 $3D
+80CFE5  .db $80 $E9 $22 $4C $8F $80 $60 $A6
+80CFED  .db $02 $7C $F1 $CF $F7 $CF $32 $D0
+80CFF5  .db $C1 $D0 $A9 $02 $85 $02 $3A $85
+80CFFD  .db $01 $22 $FC $8E $80 $A5 $1A $85
+80D005  .db $2C $A9 $04 $85 $22 $A9 $37 $85
+80D00D  .db $1B $22 $53 $8A $80 $A5 $28 $29
+80D015  .db $1F $1A $1A $0A $0A $0A $A6 $0B
+80D01D  .db $F0 $02 $E9 $10 $85 $10 $C2 $20
+80D025  .db $A5 $28 $4A $4A $E2 $21 $29 $F8
+80D02D  .db $69 $0F $85 $13 $60 $A6 $03 $FC
+80D035  .db $40 $D0 $22 $25 $8A $80 $22 $CE
+80D03D  .db $88 $80 $60 $48 $D0 $6F $D0 $84
+80D045  .db $D0 $A3 $D0 $A9 $02 $85 $03 $A0
+80D04D  .db $2C $A9 $8F $22 $D7 $89 $80 $22
+80D055  .db $21 $8A $80 $A6 $05 $BD $A6 $91
+80D05D  .db $65 $10 $85 $11 $BD $A7 $91 $65
+80D065  .db $13 $85 $14 $A9 $09 $22 $53 $9A
+80D06D  .db $80 $60 $22 $DE $89 $80 $A5 $08
+80D075  .db $C9 $70 $90 $0A $A9 $04 $85 $03
+80D07D  .db $A9 $36 $85 $1B $64 $1A $60 $22
+80D085  .db $DE $89 $80 $A5 $08 $C9 $70 $D0
+80D08D  .db $14 $A9 $01 $85 $08 $22 $DE $89
+80D095  .db $80 $A9 $37 $85 $1B $A5 $2C $85
+80D09D  .db $1A $A9 $06 $85 $03 $60 $22 $DE
+80D0A5  .db $89 $80 $A5 $08 $C9 $70 $D0 $13
+80D0AD  .db $A5 $05 $1A $1A $C9 $14 $F0 $07
+80D0B5  .db $85 $05 $A9 $00 $85 $03 $60 $A9
+80D0BD  .db $04 $85 $02 $60 $22 $4C $8F $80
+80D0C5  .db $60  
+
+; Throwing Object State 10
+
+80D0C6   LDX $02  
+80D0C8   JMP ($D0CB,X)
+--------data--------     
+80D0CB  .db $D3 $D0 $06 $D1 $2C $D1
+----------------   
+--------unidentified--------
+80D0D1  .db $2C $D1  
+----------------   
+80D0D3   LDA #$02 
+80D0D5   STA $02  
+80D0D7   INC $01  
+80D0D9   STZ $0E  
+80D0DB   JSL $808EFC  
+80D0DF   LDA #$04 
+80D0E1   STA $22  
+80D0E3   LDA #$31 
+80D0E5   STA $1B  
+80D0E7   JSL $808A53  
+80D0EB   LDA #$91 
+80D0ED   LDY #$BA 
+80D0EF   LDX $0B  
+80D0F1   BEQ $80D0FD  
+80D0F3   LDA #$0F 
+80D0F5   JSL PlaySFX ;$809A53
+80D0F9   LDA #$8F 
+80D0FB   LDY #$63 
+80D0FD   JSL $8089D7  
+80D101   JSL $808A21  
+80D105   RTS
+----------------   
+80D106   LDA $00AC
+80D109   BNE $80D114  
+80D10B   LDX $03  
+80D10D   JSR ($D119,X)
+80D110   JSL $808A25  
+80D114   JSL $8088DF  
+80D118   RTS
+----------------   
+--------data--------     
+80D119  .db $1B $D1  
+----------------   
+--------sub start--------
+80D11B   JSL $8089DE  
+80D11F   LDA $08  
+80D121   CMP #$70 
+80D123   BNE $80D12B  
+80D125   LDA #$04 
+80D127   STA $02  
+80D129   STZ $03  
+80D12B   RTS
+----------------   
+80D12C   JSL $808F4C  
+80D130   RTS
+
+; Throwing Object State 12
+
+80D131  .db $A6 $02 $7C $36 $D1 $3E $D1 $A4
+80D139  .db $D1 $C3 $D2 $3D $D3 $A9 $02 $85
+80D141  .db $02 $85 $01 $1A $85 $00 $A9 $05
+80D149  .db $85 $1C $A5 $0B $D0 $3A $64 $1E
+80D151  .db $A9 $03 $85 $3C $A9 $03 $85 $3D
+80D159  .db $A9 $03 $85 $3E $A9 $03 $85 $3F
+80D161  .db $A9 $3B $85 $1B $A9 $91 $A0 $E2
+80D169  .db $22 $A3 $89 $80 $A9 $40 $85 $1A
+80D171  .db $A5 $0D $0A $0A $AA $C2 $20 $BD
+80D179  .db $E2 $91 $85 $28 $BD $E4 $91 $85
+80D181  .db $2A $E2 $20 $A9 $02 $85 $03 $60
+80D189  .db $A9 $2F $85 $1B $85 $1E $A9 $C0
+80D191  .db $85 $1A $A9 $07 $85 $3C $A9 $07
+80D199  .db $85 $3D $A9 $07 $85 $3E $A9 $07
+80D1A1  .db $85 $3F $60 $AD $AC $00 $D0 $05
+80D1A9  .db $A6 $03 $FC $B8 $D1 $22 $CE $88
+80D1B1  .db $80 $20 $C3 $D7 $4C $5D $D6 $BC
+80D1B9  .db $D1 $AC $D2 $A6 $04 $7C $C1 $D1
+80D1C1  .db $C9 $D1 $05 $D2 $77 $D2 $9F $D2
+80D1C9  .db $A5 $0D $F0 $03 $4C $77 $D2 $A9
+80D1D1  .db $02 $85 $04 $A9 $2B $22 $53 $9A
+80D1D9  .db $80 $A9 $92 $A0 $22 $22 $A3 $89
+80D1E1  .db $80 $64 $28 $64 $29 $A9 $00 $85
+80D1E9  .db $2A $A9 $02 $85 $2B $A0 $03 $A5
+80D1F1  .db $11 $C9 $80 $B0 $01 $88 $84 $0D
+80D1F9  .db $22 $59 $88 $80 $29 $07 $AA $BD
+80D201  .db $31 $92 $85 $32 $22 $07 $C0 $80
+80D209  .db $C6 $32 $D0 $69 $A9 $06 $85 $02
+80D211  .db $22 $8E $8F $80 $B0 $23 $A9 $08
+80D219  .db $9D $03 $00 $9D $00 $00 $A9 $0C
+80D221  .db $9D $0A $00 $A9 $02 $9D $0B $00
+80D229  .db $A5 $11 $9D $11 $00 $9E $12 $00
+80D231  .db $A5 $14 $1A $9D $14 $00 $9E $15
+80D239  .db $00 $E2 $10 $A9 $04 $85 $31 $22
+80D241  .db $8E $8F $80 $B0 $22 $A9 $03 $9D
+80D249  .db $00 $00 $A9 $12 $9D $0A $00 $9D
+80D251  .db $0B $00 $A5 $11 $9D $11 $00 $9E
+80D259  .db $12 $00 $A5 $14 $9D $14 $00 $9E
+80D261  .db $15 $00 $A5 $0D $9D $0D $00 $E2
+80D269  .db $10 $E6 $0D $C6 $31 $D0 $D0 $A9
+80D271  .db $09 $22 $53 $9A $80 $60 $A9 $06
+80D279  .db $85 $04 $A9 $92 $A0 $29 $22 $A3
+80D281  .db $89 $80 $A9 $92 $A0 $02 $22 $9F
+80D289  .db $BF $80 $A9 $80 $85 $32 $A9 $03
+80D291  .db $85 $3C $A9 $03 $85 $3D $A9 $03
+80D299  .db $85 $3E $A9 $03 $85 $3F $22 $07
+80D2A1  .db $C0 $80 $C6 $32 $D0 $04 $A9 $06
+80D2A9  .db $85 $02 $60 $22 $07 $C0 $80 $A9
+80D2B1  .db $91 $A0 $F2 $A2 $02 $22 $7E $97
+80D2B9  .db $81 $F0 $06 $A9 $04 $85 $02 $64
+80D2C1  .db $03 $60 $A6 $03 $FC $CD $D2 $22
+80D2C9  .db $CE $88 $80 $60 $D1 $D2 $2E $D3
+80D2D1  .db $A9 $02 $85 $03 $1A $8D $00 $00
+80D2D9  .db $A5 $0B $F0 $3A $A9 $32 $85 $1B
+80D2E1  .db $64 $1A $A9 $92 $A0 $2D $22 $A3
+80D2E9  .db $89 $80 $60 $22 $8E $8F $80 $B0
+80D2F1  .db $1E $A9 $08 $9D $03 $00 $9D $00
+80D2F9  .db $00 $A9 $0C $9D $0A $00 $A5 $11
+80D301  .db $9D $11 $00 $9E $12 $00 $A5 $14
+80D309  .db $1A $9D $14 $00 $9E $15 $00 $E2
+80D311  .db $10 $A9 $06 $85 $02 $60 $A9 $02
+80D319  .db $85 $03 $1A $85 $00 $A9 $3F $85
+80D321  .db $1B $A9 $40 $85 $1A $A9 $AA $A0
+80D329  .db $16 $22 $A3 $89 $80 $22 $A9 $89
+80D331  .db $80 $A5 $08 $C9 $70 $D0 $04 $A9
+80D339  .db $06 $85 $02 $60 $22 $58 $8F $80
+80D341  .db $60 $A6 $02 $7C $47 $D3 $4F $D3
+80D349  .db $B2 $D3 $24 $D4 $6A $D4 $A6 $03
+80D351  .db $7C $54 $D3 $58 $D3 $97 $D3 $A9
+80D359  .db $01 $85 $1E $1A $85 $03 $1A $85
+80D361  .db $00 $A9 $07 $85 $3C $A9 $03 $85
+80D369  .db $3D $A9 $09 $85 $3E $A9 $09 $85
+80D371  .db $3F $A9 $04 $85 $0B $A9 $40 $85
+80D379  .db $1A $A9 $3B $85 $1B $A9 $92 $A0
+80D381  .db $39 $22 $A3 $89 $80 $64 $0E $64
+80D389  .db $2D $22 $59 $88 $80 $29 $0F $AA
+80D391  .db $BD $45 $92 $85 $3A $60 $C6 $3A
+80D399  .db $D0 $16 $A9 $02 $85 $02 $64 $03
+80D3A1  .db $A5 $14 $18 $69 $10 $85 $17 $A9
+80D3A9  .db $CD $38 $E5 $14 $85 $3A $E6 $01
+80D3B1  .db $60 $A6 $03 $FC $C3 $D3 $22 $CE
+80D3B9  .db $88 $80 $A5 $2D $D0 $03 $20 $5D
+80D3C1  .db $D6 $60 $CB $D3 $DD $D3 $05 $D4
+80D3C9  .db $12 $D4 $C6 $3A $D0 $0D $A9 $02
+80D3D1  .db $85 $03 $C2 $20 $A9 $00 $08 $85
+80D3D9  .db $38 $E2 $20 $60 $C2 $20 $A5 $16
+80D3E1  .db $38 $E5 $38 $85 $16 $E2 $20 $B0
+80D3E9  .db $1A $A9 $04 $85 $03 $64 $17 $E6
+80D3F1  .db $2D $A9 $92 $A0 $3D $22 $A3 $89
+80D3F9  .db $80 $A9 $1B $22 $53 $9A $80 $A9
+80D401  .db $78 $85 $3A $60 $C6 $3A $D0 $08
+80D409  .db $A9 $06 $85 $03 $A9 $50 $85 $3A
+80D411  .db $60 $C6 $3A $D0 $07 $A9 $06 $85
+80D419  .db $02 $64 $03 $60 $A5 $3A $29 $03
+80D421  .db $85 $01 $60 $A6 $03 $FC $32 $D4
+80D429  .db $22 $25 $8A $80 $22 $CE $88 $80
+80D431  .db $60 $36 $D4 $57 $D4 $A9 $02 $85
+80D439  .db $03 $22 $FC $8E $80 $A9 $04 $85
+80D441  .db $22 $A9 $37 $85 $1B $22 $53 $8A
+80D449  .db $80 $A0 $E6 $A9 $8E $22 $D7 $89
+80D451  .db $80 $22 $21 $8A $80 $60 $22 $DE
+80D459  .db $89 $80 $A5 $08 $C9 $70 $D0 $08
+80D461  .db $A9 $06 $85 $02 $A9 $02 $85 $03
+80D469  .db $60 $A5 $03 $D0 $05 $22 $58 $8F
+80D471  .db $80 $60 $22 $4C $8F $80 $60
+----------------   
+--------sub start--------
+80D478   LDX #$00 
+80D47A   JSR $D483
+80D47D   LDX #$80 
+80D47F   JSR $D483
+80D482   RTS
+----------------   
+--------sub start--------
+80D483   LDA $0100,X  
+80D486   AND #$03 
+80D488   BEQ $80D4AD  
+80D48A   LDA $0132,X  
+80D48D   BNE $80D4AD  
+80D48F   REP #$21 
+80D491   LDA $11  
+80D493   ADC #$000D   
+80D496   SEC
+80D497   SBC $0111,X  
+80D49A   CMP #$001B   
+80D49D   BCS $80D4AD  
+80D49F   LDA $14  
+80D4A1   ADC #$000B   
+80D4A4   SEC
+80D4A5   SBC $0114,X  
+80D4A8   CMP #$0017   
+80D4AB   BCC $80D4B0  
+80D4AD   SEP #$20 
+80D4AF   RTS
+----------------   
+--------unidentified-------- ;Contains code for kicked starry blocks (TODO:need to disassemble that)
+80D4B0  .db $68 $68 $E2 $20 $A9 $02 $85 $00
+80D4B8  .db $A9 $04 $85 $02 $64 $03 $64 $04
+80D4C0  .db $BD $00 $01 $3A $F0 $03 $64 $05
+80D4C8  .db $60 $A9 $02 $9D $00 $01 $A9 $04
+80D4D0  .db $9D $02 $01 $9E $04 $01 $9E $05
+80D4D8  .db $01 $A5 $05 $64 $05 $F0 $06 $A9 
+80D4E0  .db $02 $9D $03 $01 $60 $9E $03 $01
+80D4E8  .db $BD $1D $01 $F0 $07 $9E $1D $01
+80D4F0  .db $9E $3F $01 $60 $9E $1C $01 $A5
+80D4F8  .db $0D $9D $0D $01 $60  
+----------------   
+--------sub start--------
+80D4FD   REP #$11 
+80D4FF   LDY #$0200   
+80D502   LDA $0000,Y  
+80D505   BEQ $80D525  
+80D507   CMP #$03 
+80D509   BEQ $80D525  
+80D50B   LDA #$00 
+80D50D   XBA
+80D50E   LDA $000A,Y  
+80D511   LSR
+80D512   TAX
+80D513   LDA $928D,X  
+80D516   TAX
+80D517   STX $000C
+80D51A   JSR ($D536,X)
+80D51D   BCC $80D525  
+80D51F   LDX $000C
+80D522   JSR ($D54E,X)
+80D525   REP #$21 
+80D527   TYA
+80D528   ADC #$0050   
+80D52B   TAY
+80D52C   CMP #$0980   
+80D52F   SEP #$20 
+80D531   BCC $80D502  
+80D533   SEP #$10 
+80D535   RTS
+----------------   
+--------unidentified--------
+80D536  .db $C2 $D5 $73 $D5 $73 $D5 $73 $D5
+80D53E  .db $68 $D5 $68 $D5 $68 $D5 $68 $D5
+80D546  .db $68 $D5 $68 $D5
+----------------   
+--------data--------     
+80D54A  .db $68 $D5  
+----------------   
+--------unidentified--------
+80D54C  .db $68 $D5 $73 $D5 $EE $D5 $FE $D5
+80D554  .db $E9 $D5 $EE $D5 $FE $D5 $E9 $D5
+80D55C  .db $C6 $D5 $EE $D5 $EE $D5
+----------------   
+--------data--------     
+80D562  .db $EE $D5  
+----------------   
+--------unidentified--------
+80D564  .db $FE $D5 $DA $D5
+----------------   
+--------sub start--------
+80D568   LDA $001E,Y  
+80D56B   REP #$20 
+80D56D   ASL
+80D56E   ADC #$00A8   
+80D571   BRA $80D579  
+--------unidentified--------
+80D573  .db $B9 $0A $00 $C2 $20 $0A
+----------------   
+80D579   TAX
+80D57A   SEP #$20 
+80D57C   LDA $92E7,X  
+80D57F   ADC #$07 
+80D581   STA $1154
+80D584   ASL
+80D585   INC
+80D586   STA $115A
+80D589   REP #$21 
+80D58B   LDA $11  
+80D58D   ADC $1154
+80D590   SEC
+80D591   SBC $0011,Y  
+80D594   CMP $115A
+80D597   BCS $80D5C2  
+80D599   SEP #$20 
+80D59B   LDA $92E8,X  
+80D59E   ADC #$07 
+80D5A0   STA $1156
+80D5A3   ASL
+80D5A4   INC
+80D5A5   STA $115C
+80D5A8   REP #$21 
+80D5AA   LDA $14  
+80D5AC   ADC $1156
+80D5AF   SEC
+80D5B0   SBC $0014,Y  
+80D5B3   CMP $115C
+80D5B6   BCS $80D5C2  
+80D5B8   SEP #$20 
+80D5BA   LDA $0017,Y  
+80D5BD   BNE $80D5C2  
+80D5BF   SEP #$21 
+80D5C1   RTS
+----------------   
+80D5C2   SEP #$20 
+80D5C4   CLC
+80D5C5   RTS
+----------------   
+--------unidentified--------
+80D5C6  .db $B9 $39 $00 $F0 $33 $C9 $01 $F0
+80D5CE  .db $1F $A5 $0D $99 $0D $00 $A9 $01
+80D5D6  .db $99 $38 $00 $60 $A9 $02 $85 $00
+80D5DE  .db $A9 $04 $85 $02 $64 $03 $64 $04
+80D5E6  .db $64 $05 $60 $B9 $1F $00 $D0 $10
+----------------   
+--------sub start--------
+80D5EE   TYX
+80D5EF   LDA $0D  
+80D5F1   STA $000D,X  
+80D5F4   LDA $001C,X  
+80D5F7   INC
+80D5F8   STA $001D,X  
+80D5FB   STZ $001C,X  
+80D5FE   RTS
+----------------   
+--------sub start--------
+80D5FF   STZ $00  
+80D601   REP #$10 
+80D603   LDX #$0B00   
+80D606   LDA $0000,X  
+80D609   DEC
+80D60A   BNE $80D631  
+80D60C   LDA $000A,X  
+80D60F   CMP #$02 
+80D611   BNE $80D631  
+80D613   REP #$21 
+80D615   LDA $11  
+80D617   ADC #$000F   
+80D61A   SEC
+80D61B   SBC $0011,X  
+80D61E   CMP #$001F   
+80D621   BCS $80D631  
+80D623   LDA $14  
+80D625   ADC #$000F   
+80D628   SEC
+80D629   SBC $0014,X  
+80D62C   CMP #$001F   
+80D62F   BCC $80D644  
+80D631   REP #$21 
+80D633   TXA
+80D634   ADC #$0040   
+80D637   TAX
+80D638   CMP #$0D80   
+80D63B   SEP #$20 
+80D63D   BCC $80D606  
+80D63F   SEP #$10 
+80D641   INC $00  
+80D643   RTS
+----------------   
+--------unidentified--------
+80D644  .db $E2 $20 $A9 $02 $85 $00 $9D $00
+80D64C  .db $00 $A9 $04 $85 $02 $9D $02 $00
+80D654  .db $64 $03 $9E $03 $00 $7A $E2 $10
+80D65C  .db $60  
+----------------   
+--------sub start--------
+80D65D   LDA $00A8 ; in game?
+80D660   ORA $00AC ; transition
+80D663   BNE $80D675 
+80D665   REP #$10 
+80D667   LDX #$0100 ; Player1 Offset
+80D66A   JSR $D676
+80D66D   LDX #$0180 ; Player2 Offset
+80D670   JSR $D676
+80D673   SEP #$10
+80D675   RTS
+
+80D676   LDA $00 ; 0B00
+80D678   DEC
+80D679   BNE $80D6E1 ; IF object.alive > 0
+80D67B   LDA $0000,X ; Load Player State? ($0100)
+80D67E   AND #$03 
+80D680   BNE $80D683 
+80D682   RTS
+
+80D683   LDA $0053,X ;$0153 holding an object?
+80D686   BNE $80D6E1  
+80D688   LDA $0002,X  
+80D68B   CMP #$02 ; Normal state? (04 if getting hit) otherwise 02
+80D68D   BNE $80D6E1  
+80D68F   LDA $0003,X ; Player State 
+80D692   CMP #$04 ; If player have hands up
+80D694   BNE $80D6E1  
+80D696   REP #$21 
+80D698   LDA $11 ; Throwing Object X Position
+80D69A   ADC #$000F   
+80D69D   SEC
+80D69E   SBC $0011,X ; Player X Position
+80D6A1   CMP #$001F   
+80D6A4   BCS $80D6DF ; (IF Object.X > Player.X-1F)
+80D6A6   LDA $14 ; Throwing Object Y Position 
+80D6A8   ADC #$000D   
+80D6AB   SEC
+80D6AC   SBC $0014,X ; Player Y Position 
+80D6AF   CMP #$001B
+80D6B2   BCS $80D6DF ; (IF Object.Y > Player.Y-1F)  
+80D6B4   SEP #$20 
+80D6B6   LDA $17 ; ? height maybe? (Z)
+80D6B8   CMP #$0C 
+80D6BA   BCC $80D6E1  
+80D6BC   CMP #$30 
+80D6BE   BCS $80D6E1 ;IF Z > 0x0C and < 0x30
+80D6C0   PLY
+80D6C1   PLY
+80D6C2   STZ $02 ; Set Object State $02 to 0 Object has been catched by player!
+80D6C4   LDA #$02 
+80D6C6   STA $03  
+80D6C8   STZ $17  
+80D6CA   STX $30
+80D6CC   PHD
+80D6CD   PHX
+80D6CE   PLD
+80D6CF   PLX
+80D6D0   STX $52  
+80D6D2   SEP #$10 
+80D6D4   JSL $82962B ;Not sure
+80D6D8   LDA #$2F 
+80D6DA   JSL PlaySFX ;$809A53 - play catching object sfx
+80D6DE   RTS
+----------------   
+80D6DF   SEP #$20 
+80D6E1   LDA $0032,X  
+80D6E4   BNE $80D75C  
+80D6E6   LDA $0000,X  
+80D6E9   DEC
+80D6EA   BNE $80D75C  
+80D6EC   XBA
+80D6ED   LDA $001E,X  
+80D6F0   REP #$20 
+80D6F2   ASL
+80D6F3   TAY
+80D6F4   SEP #$20 
+80D6F6   LDA $9265,Y  
+80D6F9   ADC $3C  
+80D6FB   STA $1154
+80D6FE   ASL
+80D6FF   INC
+80D700   STA $115A
+80D703   REP #$21 
+80D705   LDA $11  
+80D707   ADC $1154
+80D70A   SEC
+80D70B   SBC $0011,X  
+80D70E   CMP $115A
+80D711   BCS $80D75A  
+80D713   SEP #$20 
+80D715   LDA $9266,Y  
+80D718   ADC $3D  
+80D71A   STA $1156
+80D71D   ASL
+80D71E   INC
+80D71F   STA $115C
+80D722   REP #$21 
+80D724   LDA $14  
+80D726   ADC $1156
+80D729   SEC
+80D72A   SBC $0014,X  
+80D72D   CMP $115C
+80D730   BCS $80D75A  
+80D732   SEP #$20 
+80D734   LDA $0017,X  
+80D737   ADC $9267,Y  
+80D73A   STA $0000
+80D73D   LDA $9268,Y  
+80D740   ADC #$07 
+80D742   STA $1158
+80D745   ASL
+80D746   INC
+80D747   STA $115E
+80D74A   LDA $17  
+80D74C   ADC #$04 
+80D74E   ADC $1158
+80D751   SEC
+80D752   SBC $0000
+80D755   CMP $115E
+80D758   BCC $80D75D  
+80D75A   SEP #$20 
+80D75C   RTS
+----------------   
+80D75D   PLY
+80D75E   PLY
+80D75F   SEP #$10 
+80D761   LDA #$02 
+80D763   STA $0100,X  
+80D766   LDA #$04 
+80D768   STA $0102,X  
+80D76B   STZ $0104,X  
+80D76E   STZ $0105,X  
+80D771   LDA #$02 
+80D773   CMP $00  
+80D775   BEQ $80D781  
+80D777   STA $00  
+80D779   LDA #$04 
+80D77B   STA $02  
+80D77D   STZ $03  
+80D77F   STZ $04  
+80D781   LDA $05  
+80D783   STZ $05  
+80D785   BEQ $80D78D ; Hit by an object thrown at you routine
+80D787   LDA #$02 
+80D789   STA $0103,X  
+80D78C   RTS
+; D = $0B00
+; Hit by an object thrown at you routine
+80D78D   STZ $0103,X  ; Player State
+80D790   LDA $011D,X  ; Player Hearts
+80D793   BEQ $80D79C  
+80D795   STZ $011D,X  ; Player Hearts 
+80D798   STZ $013F,X  ; Player Item Y?
+80D79B   RTS
+
+;IF Hearts == 0
+80D79C   STZ $011C,X  
+80D79F   LDA $0D ;$0B0D 
+80D7A1   LDY $1E ;$0B1E
+80D7A3   BEQ $80D7BF  
+80D7A5   LDA #$01 
+80D7A7   STA $0011
+80D7AA   STX $0010
+80D7AD   REP #$10 
+80D7AF   LDX $0010
+80D7B2   JSL $808B0E ; Do something with positions
+80D7B6   LSR
+80D7B7   LSR
+80D7B8   INC
+80D7B9   LSR
+80D7BA   AND #$03 
+80D7BC   LDX $0010
+80D7BF   STA $010D,X ; Player Direction
+80D7C2   RTS
+----------------   
+--------sub start--------
+80D7C3   REP #$11 
+80D7C5   LDY #$0200   
+80D7C8   LDA $0000,Y  
+80D7CB   BEQ $80D7EC  
+80D7CD   CMP #$03 
+80D7CF   BEQ $80D7EC  
+80D7D1   LDA #$00 
+80D7D3   XBA
+80D7D4   LDA $000A,Y  
+80D7D7   LSR
+80D7D8   TAX
+80D7D9   LDA $928D,X  
+80D7DC   TAX
+80D7DD   STX $000C
+80D7E0   JSR ($D7FD,X)
+80D7E3   BCC $80D7EC  
+80D7E5   PLX
+80D7E6   LDX $000C
+80D7E9   JMP ($D817,X)
+80D7EC   REP #$21 
+80D7EE   TYA
+80D7EF   ADC #$0050   
+80D7F2   TAY
+80D7F3   CMP #$0980   
+80D7F6   SEP #$20 
+80D7F8   BCC $80D7C8  
+80D7FA   SEP #$10 
+80D7FC   RTS
+----------------   
+--------data--------     
+80D7FD
+dw $D8AD
+dw $D83E
+dw $D83E
+dw $D83E
+dw $D833
+dw $D833
+dw $D833
+dw $D833
+dw $D8B1  
+dw $D833  
+dw $D927 
+dw $D83E 
+dw $D83E 
+
+80D817
+dw $D833  
+dw $D9EC 
+dw $DA24
+dw $D9DB ; Object hitting a switch?
+dw $D9EC
+dw $DA24
+dw $D9DB ; Object hitting a switch?
+dw $D9C6
+dw $D9DB ; Object hitting a switch?
+dw $DA39
+dw $D9DB ; Object hitting a switch?
+dw $DA44
+dw $DA24 
+dw $D9C3
+
+80D833   LDA $001E,Y  
+80D836   REP #$20 
+80D838   ASL
+80D839   ADC #$00A8   
+80D83C   BRA $80D844  
+--------sub start--------
+80D83E   LDA $000A,Y  
+80D841   REP #$20 
+80D843   ASL
+80D844   TAX
+80D845   SEP #$20 
+80D847   LDA $92E7,X  
+80D84A   ADC $3E  
+80D84C   STA $1154
+80D84F   ASL
+80D850   INC
+80D851   STA $115A
+80D854   REP #$21 
+80D856   LDA $11  
+80D858   ADC $1154
+80D85B   SEC
+80D85C   SBC $0011,Y  
+80D85F   CMP $115A
+80D862   BCS $80D8AD  
+80D864   SEP #$20 
+80D866   LDA $92E8,X  
+80D869   ADC $3F  
+80D86B   STA $1156
+80D86E   ASL
+80D86F   INC
+80D870   STA $115C
+80D873   REP #$21 
+80D875   LDA $14  
+80D877   ADC $1156
+80D87A   SEC
+80D87B   SBC $0014,Y  
+80D87E   CMP $115C
+80D881   BCS $80D8AD  
+80D883   SEP #$20 
+80D885   LDA $0017,Y  
+80D888   ADC $92E9,X  
+80D88B   STA $0000
+80D88E   LDA $92EA,X  
+80D891   ADC #$09 
+80D893   STA $1158
+80D896   ASL
+80D897   INC
+80D898   STA $115E
+80D89B   LDA $17  
+80D89D   ADC #$04 
+80D89F   ADC $1158
+80D8A2   SEC
+80D8A3   SBC $0000
+80D8A6   CMP $115E
+80D8A9   BCS $80D8AD  
+80D8AB   SEC
+80D8AC   RTS
+----------------   
+--------sub start--------
+80D8AD   SEP #$20 
+80D8AF   CLC
+80D8B0   RTS
+----------------   
+--------sub start--------
+80D8B1   LDA $000A,Y  
+80D8B4   REP #$20 
+80D8B6   ASL
+80D8B7   TAX
+80D8B8   SEP #$20 
+80D8BA   LDA $92E7,X  
+80D8BD   ADC $3E  
+80D8BF   STA $1154
+80D8C2   ASL
+80D8C3   INC
+80D8C4   STA $115A
+80D8C7   REP #$21 
+80D8C9   LDA $11  
+80D8CB   ADC $1154
+80D8CE   SEC
+80D8CF   SBC $0011,Y  
+80D8D2   CMP $115A
+80D8D5   BCS $80D8AD  
+80D8D7   SEP #$20 
+80D8D9   LDA $92E8,X  
+80D8DC   ADC $3F  
+80D8DE   STA $1156
+80D8E1   ASL
+80D8E2   INC
+80D8E3   STA $115C
+80D8E6   REP #$21 
+80D8E8   LDA $14  
+80D8EA   ADC $1156
+80D8ED   SEC
+80D8EE   SBC $0014,Y  
+80D8F1   CMP $115C
+80D8F4   BCS $80D8AD  
+80D8F6   SEP #$20 
+80D8F8   LDA $0030,Y  
+80D8FB   CMP #$08 
+80D8FD   BCC $80D8AD  
+80D8FF   LDA $0017,Y  
+80D902   ADC $0030,Y  
+80D905   STA $0000
+80D908   LDA $0030,Y  
+80D90B   ADC #$09 
+80D90D   STA $1158
+80D910   ASL
+80D911   INC
+80D912   STA $115E
+80D915   LDA $17  
+80D917   ADC #$04 
+80D919   ADC $1158
+80D91C   SEC
+80D91D   SBC $0000
+80D920   CMP $115E
+80D923   BCS $80D8AD  
+80D925   SEC
+80D926   RTS
+----------------   
+--------sub start--------
+80D927   LDA $00  
+80D929   DEC
+80D92A   BNE $80D933  
+80D92C   LDA $000B,Y  
+80D92F   CMP #$04 
+80D931   BEQ $80D93B  
+80D933   SEP #$20 
+80D935   LDA #$00 
+80D937   XBA
+80D938   JMP $D833
+80D93B   LDA $0044,Y  
+80D93E   BEQ $80D933  
+80D940   TYX
+80D941   STX $0010
+80D944   JSL $808B0E  
+80D948   LSR
+80D949   LSR
+80D94A   INC
+80D94B   LSR
+80D94C   INC
+80D94D   INC
+80D94E   AND #$03 
+80D950   REP #$10 
+80D952   LDY $0010
+80D955   CMP $000D,Y  
+80D958   BNE $80D933  
+80D95A   REP #$21 
+80D95C   LDA $11  
+80D95E   ADC #$000F   
+80D961   SEC
+80D962   SBC $0011,Y  
+80D965   CMP #$001F   
+80D968   BCS $80D933  
+80D96A   LDA $14  
+80D96C   ADC #$0009   
+80D96F   SEC
+80D970   SBC $0014,Y  
+80D973   CMP #$0013   
+80D976   BCS $80D933  
+80D978   SEP #$20 
+80D97A   LDA $17  
+80D97C   CMP #$0C 
+80D97E   BCC $80D933  
+80D980   CMP #$30 
+80D982   BCS $80D933  
+80D984   JSL GetRandomInt ;$808859  
+--------unidentified--------
+80D988  .db $C9 $D0 $B0 $A7 $B9 $47 $00 $C9
+80D990  .db $02 $B0 $A0 $1A $99 $47 $00 $A9
+80D998  .db $02 $99 $04 $00 $64 $02 $A9 $02
+80D9A0  .db $85 $03 $85 $1E $64 $04 $64 $05
+80D9A8  .db $A9 $FF $99 $45 $00 $1A $99 $44
+80D9B0  .db $00 $C2 $20 $7B $99 $40 $00 $FA
+80D9B8  .db $FA $E2 $30 $A9 $2F $22 $53 $9A
+80D9C0  .db $80 $18 $60 $BB $80 $45 $B9 $39
+80D9C8  .db $00 $F0 $59 $C9 $01 $F0 $1D $A5
+80D9D0  .db $0D $99 $0D $00 $A9 $01 $99 $38
+80D9D8  .db $00 $80 $49    
+----------------   
+80D9DB   LDA $001F,Y  
+80D9DE   BNE $80DA24  
+80D9E0   LDA $000B,Y  
+80D9E3   CMP #$04 
+80D9E5   BNE $80D9EC  
+80D9E7   LDA #$00 
+80D9E9   STA $0044,Y  
+80D9EC   TYX
+80D9ED   LDA $0D  
+80D9EF   STA $000D,X  
+80D9F2   LDA $1E  
+80D9F4   BEQ $80DA0B  
+80D9F6   STX $0010
+80D9F9   JSL $808B0E  
+80D9FD   LSR
+80D9FE   LSR
+80D9FF   INC
+80DA00   LSR
+80DA01   AND #$03
+80DA03   REP #$10
+80DA05   LDX $0010
+80DA08   STA $000D,X  
+80DA0B   LDA $0B  
+80DA0D   CMP #$0A 
+80DA0F   BEQ $80DA1B  
+80DA11   LDA $001C,X  
+80DA14   BEQ $80DA1D  
+80DA16   SEC
+80DA17   SBC $1C  
+80DA19   BCS $80DA1D  
+80DA1B   LDA #$00 
+80DA1D   STA $001C,X ;Increase switch press!
+80DA20   INC
+80DA21   STA $001D,X  
+80DA24   LDA #$02 
+80DA26   CMP $00  
+80DA28   BEQ $80DA36  
+80DA2A   STA $00  
+80DA2C   LDA #$04 
+80DA2E   STA $02  
+80DA30   STZ $03  
+80DA32   STZ $04  
+80DA34   STZ $05  
+80DA36   SEP #$10 
+80DA38   RTS
+----------------   
+--------unidentified--------
+80DA39  .db $BB $A9 $04 $9D $02 $00 $9E $03
+80DA41  .db $00 $80 $06 $BB $B9 $1F $00 $D0
+80DA49  .db $DA $BD $1C $00 $F0 $07 $38 $E5
+80DA51  .db $1C $B0 $02 $A9 $00 $9D $1C $00
+80DA59  .db $A9 $02 $C5 $00 $F0 $0C $85 $00
+80DA61  .db $A9 $04 $85 $02 $64 $03 $64 $04
+80DA69  .db $64 $05 $E2 $10 $60  
+----------------   
+--------sub start--------
+80DA6E   LDA $03  
+80DA70   ASL
+80DA71   TAX
+80DA72   REP #$21 
+80DA74   LDA $11  
+80DA76   ADC $9255,X  
+80DA79   STA $30  
+80DA7B   LDA $14  
+80DA7D   CLC
+80DA7E   ADC $9257,X  
+80DA81   STA $32  
+80DA83   SEP #$20 
+80DA85   REP #$11 
+80DA87   LDY #$0200 ;Sprite array
+80DA8A   LDA $0000,Y  
+80DA8D   BEQ $80DADA ;Increase by 0x50 to next sprite
+80DA8F   CMP #$03 
+80DA91   BEQ $80DADA  
+80DA93   LDA $000C,Y  
+80DA96   CMP $0C  
+80DA98   BNE $80DADA  
+80DA9A   LDA #$00 
+80DA9C   XBA
+80DA9D   LDA $000A,Y ;sprite id  
+80DAA0   LSR
+80DAA1   TAX
+80DAA2   LDA $92B7,X  
+80DAA5   TAX
+80DAA6   STX $000C
+80DAA9   JSR ($DAEC,X)
+80DAAC   BCC $80DADA  
+80DAAE   STZ $1C  
+80DAB0   LDA #$00 
+80DAB2   XBA
+80DAB3   LDA $000A,Y  
+80DAB6   CMP #$4C 
+80DAB8   BNE $80DABC  
+80DABA   INC $1C  
+80DABC   LSR
+80DABD   LSR
+80DABE   LSR
+80DABF   LSR
+80DAC0   TAX
+80DAC1   LDA $92E1,X  
+80DAC4   PHA
+80DAC5   LDA $000A,Y  
+80DAC8   LSR
+80DAC9   AND #$07 
+80DACB   TAX
+80DACC   PLA
+80DACD   AND $80B8,X  
+80DAD0   BNE $80DAD4  
+80DAD2   INC $1C  
+80DAD4   LDX $000C
+80DAD7   JMP ($DAFA,X)
+80DADA   REP #$21 
+80DADC   TYA
+80DADD   ADC #$0050   
+80DAE0   TAY
+80DAE1   CMP #$0980   
+80DAE4   SEP #$20 
+80DAE6   BCC $80DA8A  
+80DAE8   SEP #$10 
+80DAEA   CLC
+80DAEB   RTL
+
+80DAEC
+dw $DB89   
+dw $DB1C 
+dw $DB1C
+dw $DB11
+dw $DB11 
+dw $DB11
+dw $DB0A  
+dw $DB92 
+dw $DB9E
+dw $DB8D 
+dw $DB92
+dw $DB9E  
+dw $DB8D 
+dw $DB9E
+
+80DB0A  $B9 $39 $00 $C9 $02 $F0
+80DB10  $78  
+----------------   
+--------sub start--------
+80DB11   LDA $001E,Y  
+80DB14   REP #$20 
+80DB16   ASL
+80DB17   ADC #$00A8   
+80DB1A   BRA $80DB22  
+--------sub start--------
+;hitbox or something?
+80DB1C   LDA $000A,Y ;sprite ID 
+80DB1F   REP #$20 
+80DB21   ASL ; *2
+80DB22   TAX 
+80DB23   SEP #$20 
+80DB25   LDA $92E7,X  
+80DB28   ADC #$03 
+80DB2A   STA $1154
+80DB2D   ASL
+80DB2E   INC
+80DB2F   STA $115A
+80DB32   REP #$21 
+80DB34   LDA $30  
+80DB36   ADC $1154
+80DB39   SEC
+80DB3A   SBC $0011,Y ;X Pos
+80DB3D   CMP $115A
+80DB40   BCS $80DB89  
+80DB42   SEP #$20 
+80DB44   LDA $92E8,X  
+80DB47   ADC #$05 
+80DB49   STA $1156
+80DB4C   ASL
+80DB4D   INC
+80DB4E   STA $115C
+80DB51   REP #$21 
+80DB53   LDA $32  
+80DB55   ADC $1156
+80DB58   SEC
+80DB59   SBC $0014,Y ;Y Pos
+80DB5C   CMP $115C
+80DB5F   BCS $80DB89  
+80DB61   SEP #$20 
+80DB63   LDA $0017,Y  
+80DB66   ADC $92E9,X  
+80DB69   STA $0000
+80DB6C   LDA $92EA,X  
+80DB6F   ADC #$03 
+80DB71   STA $1158
+80DB74   ASL
+80DB75   INC
+80DB76   STA $115E
+80DB79   LDA #$04 
+80DB7B   ADC $1158
+80DB7E   SEC
+80DB7F   SBC $0000
+80DB82   CMP $115E
+80DB85   BCS $80DB89  
+80DB87   SEC
+80DB88   RTS
+----------------   
+80DB89   SEP #$20 
+80DB8B   CLC
+80DB8C   RTS
+----------------   
+80DB8D   LDA $001F,Y  
+80DB90   BNE $80DB9E  
+80DB92   TYX
+80DB93   LDA $0D  
+80DB95   LSR
+80DB96   STA $000D,X  
+80DB99   LDA #$FF 
+80DB9B   STA $001D,X ;kill enemy with hookshot?
+80DB9E   SEP #$11 
+80DBA0   RTL
+----------------   
+--------sub start--------
+80DBA1   LDA $00A8
+80DBA4   ORA $00AC
+80DBA7   BNE $80DBB9  
+80DBA9   LDA #$01 
+80DBAB   XBA
+80DBAC   LDA #$00 
+80DBAE   JSR $DBBA
+80DBB1   LDA #$01 
+80DBB3   XBA
+80DBB4   LDA #$80 
+80DBB6   JSR $DBBA
+80DBB9   RTS
+----------------   
+;Door Setting?
+80DBBA   TCD ;Set DP to #$0100 ?
+80DBBB   LDA $32 ;$0132??
+80DBBD   BNE $80DBB9 ;Return
+80DBBF   LDA $1E ;$011E
+80DBC1   ASL ;*2    
+80DBC2   TAX
+80DBC3   LDA $9417,X  
+80DBC6   STA $114E
+80DBC9   LDA $9418,X  
+80DBCC   STA $1150
+80DBCF   LDA $941A,X  
+80DBD2   STA $1152
+80DBD5   LDA $9419,X  
+80DBD8   STA $1153
+80DBDB   LDA #$06 
+80DBDD   STA $000E
+80DBE0   LDA $009F
+80DBE3   AND #$03 
+80DBE5   ASL
+80DBE6   TAX
+80DBE7   REP #$11 
+80DBE9   LDY $940F,X  
+80DBEC   LDA $0000,Y  
+80DBEF   DEC
+80DBF0   BNE $80DC0C  
+80DBF2   LDA #$00 
+80DBF4   XBA
+80DBF5   LDA $000A,Y  
+80DBF8   LSR
+80DBF9   TAX
+80DBFA   LDA $943F,X  
+80DBFD   TAX
+80DBFE   STX $000C
+80DC01   JSR ($DC1D,X)
+80DC04   BCC $80DC0C  
+80DC06   LDX $000C
+80DC09   JMP ($DC2F,X)
+80DC0C   REP #$21 
+80DC0E   TYA
+80DC0F   ADC #$0140   
+80DC12   TAY
+80DC13   SEP #$20 
+80DC15   DEC $000E
+80DC18   BNE $80DBEC  
+80DC1A   SEP #$10 
+80DC1C   RTS
+----------------   
+--------data--------     
+80DC1D  .db $E5 $DC $6D $DC
+----------------   
+--------unidentified--------
+80DC21  .db $6D $DC  
+----------------   
+--------data--------     
+80DC23  .db $4B $DC  
+----------------   
+--------unidentified--------
+80DC25  .db $4B $DC  
+----------------   
+--------data--------     
+80DC27  .db $65 $DC $6D $DC $5B $DC $6D $DC
+----------------   
+--------unidentified--------
+80DC2F  .db $43 $DC  
+----------------   
+--------data--------     
+80DC31  .db $17 $DD  
+----------------   
+--------unidentified--------
+80DC33  .db $43 $DD  
+----------------   
+--------data--------     
+80DC35  .db $17 $DD  
+----------------   
+--------unidentified--------
+80DC37  .db $43 $DD $17 $DD $06 $DD
+----------------   
+--------data--------     
+80DC3D  .db $5E $DD $6B $DD
+----------------   
+--------unidentified--------
+80DC41  .db $E9 $DC $B9 $1F $00 $F0 $1B $A9
+80DC49  .db $00 $EB  
+----------------   
+--------sub start--------
+80DC4B   LDA $00  
+80DC4D   DEC
+80DC4E   BNE $80DC63  
+80DC50   LDA $001E,Y  
+80DC53   REP #$20 
+80DC55   ASL
+80DC56   ADC #$00A8   
+80DC59   BRA $80DC78  
+--------sub start--------
+80DC5B   LDA $00  
+80DC5D   BEQ $80DC63  
+80DC5F   CMP #$04 
+80DC61   BNE $80DC72  
+80DC63   CLC
+80DC64   RTS
+----------------   
+--------sub start--------
+80DC65   LDA $001F,Y  
+80DC68   BEQ $80DC63  
+80DC6A   LDA #$00 
+80DC6C   XBA
+--------sub start--------
+80DC6D   LDA $00  
+80DC6F   DEC
+80DC70   BNE $80DC63  
+80DC72   LDA $000A,Y  
+80DC75   REP #$20 
+80DC77   ASL
+80DC78   TAX
+80DC79   SEP #$20 
+80DC7B   LDA $9469,X  
+80DC7E   ADC $114E
+80DC81   STA $1154
+80DC84   ASL
+80DC85   INC
+80DC86   STA $115A
+80DC89   REP #$21 
+80DC8B   LDA $11  
+80DC8D   ADC $1154
+80DC90   SEC
+80DC91   SBC $0011,Y  
+80DC94   CMP $115A
+80DC97   BCS $80DCE5  
+80DC99   SEP #$20 
+80DC9B   LDA $946A,X  
+80DC9E   ADC $1150
+80DCA1   STA $1156
+80DCA4   ASL
+80DCA5   INC
+80DCA6   STA $115C
+80DCA9   REP #$21 
+80DCAB   LDA $14  
+80DCAD   ADC $1156
+80DCB0   SEC
+80DCB1   SBC $0014,Y  
+80DCB4   CMP $115C
+80DCB7   BCS $80DCE5  
+80DCB9   SEP #$20 
+80DCBB   LDA $0017,Y  
+80DCBE   ADC $946B,X  
+80DCC1   STA $0000
+80DCC4   LDA $946C,X  
+80DCC7   ADC $1152
+80DCCA   STA $1158
+80DCCD   ASL
+80DCCE   INC
+80DCCF   STA $115E
+80DCD2   LDA $17  
+80DCD4   ADC $1153
+80DCD7   ADC $1158
+80DCDA   SEC
+80DCDB   SBC $0000
+80DCDE   CMP $115E
+80DCE1   BCS $80DCE5  
+80DCE3   SEC
+80DCE4   RTS
+----------------   
+--------sub start--------
+80DCE5   SEP #$20 
+80DCE7   CLC
+80DCE8   RTS
+----------------   
+--------unidentified--------
+80DCE9  .db $B9 $0B $00 $C9 $10 $D0 $27 $A9
+80DCF1  .db $02 $85 $2C $A9 $00 $99 $1F $00
+80DCF9  .db $7B $99 $3C $00 $E2 $10 $A9 $28
+80DD01  .db $22 $53 $9A $80 $60 $B9 $0B $00
+80DD09  .db $C9 $08 $F0 $07 $B9 $39 $00 $C9
+80DD11  .db $02 $D0 $03 $E2 $10 $60
+
+;Hit an enemy routine 
+80DD17   LDA $1D  
+80DD19   BEQ $80DD21  
+80DD1B   STZ $1D  
+80DD1D   STZ $3F  
+80DD1F   BRA $80DD32  
+80DD21   STZ $1C  
+80DD23   TYX
+80DD24   JSL $808B0E  
+80DD28   LSR
+80DD29   LSR
+80DD2A   INC
+80DD2B   LSR
+80DD2C   AND #$03 
+80DD2E   EOR #$02 
+80DD30   STA $0D  
+80DD32   SEP #$10 
+80DD34   LDA #$02 
+80DD36   STA $00  
+80DD38   LDA #$04 
+80DD3A   STA $02  
+80DD3C   STZ $03  
+80DD3E   STZ $04  
+80DD40   STZ $05  
+80DD42   RTS
+----------------   
+;Hit by flame routine (TODO: need to disassemble that)
+80DD43  .db $A5 $1D $F0 $DA $64 $1D $64 $3F
+80DD4B  .db $A9 $02 $85 $00 $A9 $04 $85 $02
+80DD53  .db $A9 $04 $85 $03 $64 $04 $64 $05
+80DD5B  .db $E2 $10 $60    
+----------------   
+80DD5E   LDA #$03 
+80DD60   STA $0000,Y  
+80DD63   LDA #$04 
+80DD65   STA $0002,Y  
+80DD68   SEP #$10 
+80DD6A   RTS
+----------------   
+80DD6B   LDA #$02 
+80DD6D   STA $0000,Y  
+80DD70   LDA #$04 
+80DD72   STA $0002,Y  
+80DD75   LDA $1D ;Hit a fireball routine?
+80DD77   BEQ $80DD21  
+80DD79   STZ $1D  
+80DD7B   STZ $3F  
+80DD7D   LDA #$02 
+80DD7F   STA $00  
+80DD81   LDA #$04 
+80DD83   STA $02  
+80DD85   LDA #$04 
+80DD87   STA $03  
+80DD89   STZ $04  
+80DD8B   STZ $05  
+80DD8D   SEP #$10 
+80DD8F   RTS
+
+;0x0E Islander Sprite
+80DD90   LDX $02 ;Sprite Main State
+80DD92   JSR ($DD96,X)
+80DD95   RTL
+ 
+80DD96 
+dw $DD9C ;0x00 Init routine
+dw $DDF2 ;0x02 Main Routine?
+dw $DE03 ;0x04
+
+80DD9C   LDA #$02 
+80DD9E   STA $02 ;Set Main State to 02
+80DDA0   DEC
+80DDA1   STA $00 ;Set the sprite to Alive state
+80DDA3   STA $01 ;Secondary Sprite State
+80DDA5   LDA #$C0 
+80DDA7   STA $1A ;OAM Address
+80DDA9   LDA #$31
+80DDAB   STA $1B ;OAM Address2 
+80DDAD   LDA $0D ;Direction
+80DDAF   STA $0E ;?
+80DDB1   LDA #$99 
+80DDB3   LDY #$2A 
+80DDB5   JSL FrameAnimationNoTimer ; $8089A3  
+80DDB9   LDA $11 ;X position Highbyte
+80DDBB   LSR
+80DDBC   LSR
+80DDBD   LSR
+80DDBE   STA $3E ;?
+80DDC0   STZ $3F ;?
+80DDC2   REP #$30 
+80DDC4   LDA #$4650   
+80DDC7   STA $3C ;Timer?
+80DDC9   LDA $14 ;Y position
+80DDCB   AND #$00F8 
+80DDCE   ASL
+80DDCF   ASL
+80DDD0   ADC $3E  
+80DDD2   TAX
+80DDD3   SEP #$20 
+80DDD5   LDA #$90 
+80DDD7   ORA $0B ;Sprite SUB ID ?
+80DDD9   STA $13FF,X 
+80DDDC   STA $1400,X 
+80DDDF   SEP #$10 
+80DDE1   LDA $00C7 ;?
+80DDE4   BNE $80DDFE 
+80DDE6   LDA $00B6 ;Check if LEVEL == 02 (castle)
+80DDE9   CMP #$02 
+80DDEB   BNE $80DDF1  
+80DDED   JSL KillSprite ; 808F1E ;Kill current sprite
+80DDF1   RTS
+
+;0x02
+ ;Make the islander flip horizontally over time 
+80DDF2   JSL SpriteSaveDirectPage ; 8088CE  
+80DDF6   REP #$20 
+80DDF8   DEC $3C ;Timer?
+80DDFA   SEP #$20 
+80DDFC   BNE $80DE02  
+80DDFE   LDA #$04 
+80DE00   STA $02 ;Change main state to 04
+80DE02   RTS
+
+;0x04
+;Main Routine?
+80DE03   JSL SpriteSaveDirectPage ; 8088CE              
+80DE07   LDX $03 ;Secondary State
+80DE09   JMP ($DE0C,X)            
+ 
+80DE0C
+dw $DE10 ;0x00
+dw $DE18 ;0x02
+ 
+
+80DE10   LDA #$02                 
+80DE12   STA $03 ;Increase Secondary State
+80DE14   STZ $3B                  
+80DE16   BRA $80DE2A
+
+
+80DE18   DEC $0F
+80DE1A   BNE $80DE31 ;Decrease 0F               
+80DE1C   LDA $0E                  
+80DE1E   EOR #$01                 
+80DE20   STA $0E                  
+80DE22   INC $3B                  
+80DE24   LDA $3B                  
+80DE26   CMP #$0C 
+80DE28   BEQ $80DE32 
+
+80DE2A   LDX $3B 
+80DE2C   LDA $9930,X ;Message ID to display? ;[08 10 20 30 08 08 0C 10 30 30 08 10 02 FF]
+80DE2F   STA $0F ;??
+80DE31   RTS
+
+
+80DE32   LDA #$02                 
+80DE34   STA $02                  
+80DE36   STZ $03                  
+80DE38   LDA #$F0                 
+80DE3A   STA $3C                  
+80DE3C   RTS                      
+
+80de3d ldx $02       [000342] A:0340 X:004c Y:0020 S:1cf2 D:0340 DB:83 nvMXdizc V:  4 H:192 F: 6
+80de3f jsr ($de43,x) [80de43] A:0340 X:0000 Y:0020 S:1cf2 D:0340 DB:83 nvMXdiZc V:  4 H:199 F: 6
+80de42 rtl  
+
+80de43
+dw $DE4D 
+dw $DEE7 
+dw $E100  
+dw $E100
+dw $E105 
+
+80DE4D   LDA #$02 
+80DE4F   STA $02  
+80DE51   DEC      
+80DE52   STA $00  
+80DE54   STA $01  
+80DE56   STZ $0E  
+80DE58   LDA #$3D 
+80DE5A   STA $1B  
+80DE5C   LDA #$80 
+80DE5E   STA $1A  
+80DE60   STZ $4B  
+80DE62   JSR $E1B3
+80DE65   LDA $0B  
+80DE67   BEQ $DE6E
+80DE69   LDA #$08
+80DE6B   STA $02
+80DE6D   RTS
+  
+  
+80DE6E   JSL $808F73
+80DE72   STX $4C    
+80DE74   LDA #$03   
+80DE76   STA $0000,X
+80DE79   LDA #$4C   
+80DE7B   STA $000A,X
+80DE7E   LDA #$08   
+80DE80   STA $000B,X
+80DE83   LDA $0D    
+80DE85   STA $000D,X
+80DE88   TDC        
+80DE89   STA $004C,X
+80DE8C   XBA        
+80DE8D   STA $004D,X
+80DE90   LDX #$ACA8 
+80DE93   STX $18    
+80DE95   SEP #$10   
+80DE97   LDX #$00   
+80DE99   LDA $00B7  
+80DE9C   CMP #$0C   
+80DE9E   BEQ $DEAF  
+80DEA0   LDA $1A4A
+80DEA3   LSR
+80DEA4   STA $0D
+80DEA6   DEC
+80DEA7   BEQ $DEAD
+80DEA9   LDA #$D4
+80DEAB   STA $11
+80DEAD   LDX #$60
+80DEAF   STX $4A    
+80DEB1   STZ $44    
+80DEB3   STZ $45    
+80DEB5   LDA #$80   
+80DEB7   STA $3E    
+80DEB9   LDA $11    
+80DEBB   LSR A      
+80DEBC   LSR A      
+80DEBD   LSR A      
+80DEBE   STA $4E    
+80DEC0   STZ $4F    
+80DEC2   REP #$30   
+80DEC4   LDA $14    
+80DEC6   AND #$00F8 
+80DEC9   ASL A      
+80DECA   ASL A      
+80DECB   ADC $4E    
+80DECD   TAX        
+80DECE   SEP #$20   
+80DED0   LDA $3E    
+80DED2   STA $13FF,X
+80DED5   STA $1400,X
+80DED8   STA $1401,X
+80DEDB   STA $13DF,X
+80DEDE   STA $13E0,X
+80DEE1   STA $13E1,X
+80DEE4   SEP #$10   
+80DEE6   RTS        
+  
+80DEE7   LDX $03                  
+80DEE9   JSR ($DEF3,X)            
+80DEEC   JSL $8088CE              
+80DEF0   JMP $E1E3      
+
+80DEF3 
+dw $DEFB
+dw $DF40  
+dw $DF4A
+dw $E0AD 
+
+80DEFB   JSR $E12B                
+80DEFE   BCC $80DF3D              
+80DF00   STX $44                  
+80DF02   LDA #$01                 
+80DF04   STA $45                  
+80DF06   LDA #$05                 
+80DF08   STA $0100,X              
+80DF0B   LDA #$01                 
+80DF0D   STA $0101,X              
+80DF10   STA $0144,X              
+80DF13   LDA #$02                 
+80DF15   STA $03                  
+80DF17   LDA #$3C                 
+80DF19   STA $0F                  
+80DF1B   LDA #$00                 
+80DF1D   JSR $DEB7                
+80DF20   STZ $41                  
+80DF22   JSR $E16F                
+80DF25   LDX #$00                 
+80DF27   BIT #$08                 
+80DF29   BNE $80DF36              
+80DF2B   INX                      
+80DF2C   BIT #$01                 
+80DF2E   BNE $80DF36              
+80DF30   INX                      
+80DF31   BIT #$04                 
+80DF33   BNE $80DF36              
+80DF35   INX                      
+80DF36   STX $0D                  
+80DF38   LDA #$09                 
+80DF3A   STA $3F                  
+80DF3C   RTS                      
+----------------         
+80DF3D   JMP $DEB5                
+--------sub start--------
+80DF40   DEC $0F                  
+80DF42   BNE $80DF48              
+80DF44   LDA #$04                 
+80DF46   STA $03                  
+80DF48   BRA $80DF80              
+--------sub start--------
+80DF4A   JSL $80BFCC              
+80DF4E   JSR $E1A9                
+80DF51   DEC $3F                  
+80DF53   BNE $80DF5F              
+80DF55   LDA #$09                 
+80DF57   STA $3F                  
+80DF59   LDA #$14                 
+80DF5B   JSL $809A53              
+80DF5F   JSR $E16F                
+80DF62   BEQ $80DF80              
+80DF64   LDX $0D                  
+80DF66   AND $AC6C,X              
+80DF69   STA $40                  
+80DF6B   ASL                      
+80DF6C   TAX                      
+80DF6D   LDY $44                  
+80DF6F   LDA $0160,Y              
+80DF72   JSR ($DF83,X)            
+80DF75   LDA $0D                  
+80DF77   CMP $42                  
+80DF79   BEQ $80DF80              
+80DF7B   STA $42                  
+80DF7D   JSR $E1B3                
+80DF80   JMP $E1CB                
+--------data--------     
+80DF83
+dw $DFA1
+dw $DFDE
+dw $DFF7
+dw $E011
+dw $E01B
+dw $E035
+dw $E04A
+dw $E0A2           
+dw $E060
+dw $E076
+dw $E08C
+dw $E0A2
+dw $E0A2
+dw $E0AD
+dw $E0AD
+
+
+80DFA1   LDA #$06                 
+80DFA3   STA $03                  
+80DFA5   STZ $04                  
+80DFA7   LDA $11                  
+80DFA9   AND #$F8                 
+80DFAB   ORA #$04                 
+80DFAD   STA $11                  
+80DFAF   JSR $E137                
+80DFB2   BCC $80DFDD              
+80DFB4   STX $4E                  
+80DFB6   LDA $11                  
+80DFB8   STA $000A                
+80DFBB   LDA $14                  
+80DFBD   CLC                      
+80DFBE   ADC #$10                 
+80DFC0   STA $000C                
+80DFC3   JSL $808A86              
+--------unidentified--------
+80DFC7  .db $A2 $11 $C9 $30 $D0 $02 $A2 $EF
+80DFCF  .db $8A $18 $65 $14 $A6 $4E $9D $14
+80DFD7  .db $01 $A5 $11 $9D $11 $01
+----------------         
+80DFDD   RTS                      
+----------------         
+--------sub start--------
+80DFDE   LDA $0D                  
+80DFE0   DEC                      
+80DFE1   BEQ $80DFF6              
+80DFE3   LDA #$01                 
+80DFE5   STA $0D                  
+80DFE7   LDA $14                  
+80DFE9   AND #$F0                 
+80DFEB   ORA #$08                 
+80DFED   STA $14                  
+80DFEF   LDA $11                  
+80DFF1   CLC                      
+80DFF2   ADC #$04                 
+80DFF4   STA $11                  
+80DFF6   RTS                      
+----------------         
+--------sub start--------
+80DFF7   LDA $0D                  
+80DFF9   CMP #$03                 
+80DFFB   BEQ $80E010              
+80DFFD   LDA #$03                 
+80DFFF   STA $0D                  
+80E001   LDA $14                  
+80E003   AND #$F0                 
+80E005   ORA #$08                 
+80E007   STA $14                  
+80E009   LDA $11                  
+80E00B   CLC                      
+80E00C   ADC #$FC                 
+80E00E   STA $11                  
+80E010   RTS                      
+----------------         
+--------sub start--------
+80E011   BIT #$03                 
+80E013   BEQ $80DFE3              
+80E015   BIT #$01                 
+80E017   BNE $80DFE3              
+80E019   BRA $80DFFD              
+--------sub start--------
+80E01B   LDA $0D                  
+80E01D   CMP #$02                 
+80E01F   BEQ $80E034              
+80E021   LDA #$02                 
+80E023   STA $0D                  
+80E025   LDA $11                  
+80E027   AND #$F0                 
+80E029   ORA #$08                 
+80E02B   STA $11                  
+80E02D   LDA $14                  
+80E02F   CLC                      
+80E030   ADC #$04                 
+80E032   STA $14                  
+80E034   RTS                      
+----------------         
+--------sub start--------
+80E035   BIT #$05                 
+80E037   BEQ $80E034              
+80E039   CMP #$05                 
+80E03B   BEQ $80E043              
+80E03D   BIT #$01                 
+80E03F   BEQ $80E01B              
+80E041   BRA $80DFDE              
+--------unidentified--------
+80E043  .db $A5 $0D $3A $F0 $D3 $80 $94
+----------------         
+--------sub start--------
+80E04A   BIT #$06                 
+80E04C   BEQ $80E034              
+80E04E   CMP #$06                 
+80E050   BEQ $80E058              
+80E052   BIT #$02                 
+80E054   BNE $80DFF7              
+80E056   BRA $80E01B              
+80E058   LDA $0D                  
+80E05A   CMP #$02                 
+80E05C   BEQ $80DFF7              
+80E05E   BRA $80E01B              
+--------sub start--------
+80E060   LDA $0D                  
+80E062   BEQ $80E075              
+80E064   STZ $0D                  
+80E066   LDA $11                  
+80E068   AND #$F0                 
+80E06A   ORA #$08                 
+80E06C   STA $11                  
+80E06E   LDA $14                  
+80E070   CLC                      
+80E071   ADC #$FC                 
+80E073   STA $14                  
+80E075   RTS                      
+----------------         
+--------sub start--------
+80E076   BIT #$09                 
+80E078   BEQ $80E075              
+80E07A   CMP #$09                 
+80E07C   BEQ $80E085              
+80E07E   BIT #$08                 
+80E080   BNE $80E060              
+80E082   JMP $DFDE                
+--------unidentified--------
+80E085  .db $A5 $0D $D0 $D7 $4C $DE $DF
+----------------         
+--------sub start--------
+80E08C   BIT #$0A                 
+80E08E   BEQ $80E075              
+80E090   CMP #$0A                 
+80E092   BEQ $80E09B              
+80E094   BIT #$08                 
+80E096   BNE $80E060              
+80E098   JMP $DFF7                
+--------unidentified--------
+80E09B  .db $A5 $0D $D0 $C1 $4C $F7 $DF $89
+80E0A3  .db $0C $F0 $04 $89 $08 $D0 $BA $4C
+80E0AB  .db $21 $E0              
+----------------         
+--------sub start--------
+80E0AD   JSR $E1CB                
+80E0B0   LDX $04                  
+80E0B2   JSR ($E0B8,X)            
+80E0B5   JMP $DEB5                
+--------data--------     
+80E0B8  
+dw $E0BE
+dw $E0C7
+dw $E0D0
+----------------         
+--------sub start--------
+80E0BE   LDA #$02                 
+80E0C0   STA $04                  
+80E0C2   LDA #$3C                 
+80E0C4   STA $0F                  
+80E0C6   RTS                      
+----------------         
+--------sub start--------
+80E0C7   DEC $0F                  
+80E0C9   BNE $80E0CF              
+80E0CB   LDA #$04                 
+80E0CD   STA $04                  
+80E0CF   RTS                      
+----------------         
+--------sub start--------
+80E0D0   STZ $03                  
+80E0D2   STZ $04                  
+80E0D4   LDA $11                  
+80E0D6   STA $000A                
+80E0D9   LDA $14                  
+80E0DB   CLC                      
+80E0DC   ADC #$10                 
+80E0DE   STA $000C                
+80E0E1   JSL $808A86              
+80E0E5   LDX #$11                 
+80E0E7   CMP #$30                 
+80E0E9   BNE $80E0ED              
+80E0EB   LDX #$EF                 
+80E0ED   TXA                      
+80E0EE   CLC                      
+80E0EF   ADC $14                  
+80E0F1   LDX $44                  
+80E0F3   STA $0114,X              
+80E0F6   LDA #$03                 
+80E0F8   STA $0100,X              
+80E0FB   STZ $44                  
+80E0FD   STZ $45                  
+80E0FF   RTS                      
+----------------         
+--------unidentified--------
+80E100  .db $22 $1E $8F $80 $60  
+----------------         
+--------sub start--------
+80E105   JSL $8088CE              
+80E109   REP #$31                 
+80E10B   LDX $4C                  
+80E10D   LDA $0011,X              
+80E110   STA $11                  
+80E112   LDA $0014,X              
+80E115   ADC #$FFFB               
+80E118   STA $14                  
+80E11A   SEP #$20                 
+80E11C   LDA $000D,X              
+80E11F   STA $0D                  
+80E121   LDA $004B,X              
+80E124   STA $4B                  
+80E126   SEP #$10                 
+80E128   JMP $E1B3                
+--------sub start--------
+80E12B   LDX #$00                 
+80E12D   JSR $E147                
+80E130   LDX #$80                 
+80E132   JSR $E147                
+80E135   CLC                      
+80E136   RTS                      
+----------------         
+--------sub start--------
+80E137   LDX #$00                 
+80E139   JSR $E143                
+80E13C   LDX #$80                 
+80E13E   JSR $E143                
+80E141   CLC                      
+80E142   RTS                      
+----------------         
+--------sub start--------
+80E143   CPX $44                  
+80E145   BEQ $80E16E              
+--------sub start--------
+80E147   LDA $0100,X              
+80E14A   DEC                      
+80E14B   BEQ $80E151              
+80E14D   CMP #$02                 
+80E14F   BNE $80E16E              
+80E151   LDA $11                  
+80E153   CLC                      
+80E154   ADC #$12                 
+80E156   SEC                      
+80E157   SBC $0111,X              
+80E15A   CMP #$26                 
+80E15C   BCS $80E16E              
+80E15E   LDA $14                  
+80E160   CLC                      
+80E161   ADC #$0C                 
+80E163   SEC                      
+80E164   SBC $0114,X              
+80E167   CMP #$1A                 
+80E169   BCS $80E16E              
+80E16B   PLA                      
+80E16C   PLA                      
+80E16D   SEC                      
+80E16E   RTS                      
+----------------         
+--------sub start--------
+80E16F   LDA $0D                  
+80E171   ASL                      
+80E172   TAX                      
+80E173   LDA $14                  
+80E175   ADC $AC65,X              
+80E178   AND #$F0                 
+80E17A   STA $40                  
+80E17C   LDA $11                  
+80E17E   ADC $AC64,X              
+80E181   AND #$F0                 
+80E183   LSR                      
+80E184   LSR                      
+80E185   LSR                      
+80E186   LSR                      
+80E187   ORA $40                  
+80E189   CMP $41                  
+80E18B   STA $41                  
+80E18D   BEQ $80E1A6              
+80E18F   LSR                      
+80E190   CLC                      
+80E191   ADC $4A                  
+80E193   TAX                      
+80E194   LDA $11                  
+80E196   AND #$10                 
+80E198   TAY                      
+80E199   LDA $AB9C,X              
+80E19C   TYX                      
+80E19D   BEQ $80E1A3              
+80E19F   LSR                      
+80E1A0   LSR                      
+80E1A1   LSR                      
+80E1A2   LSR                      
+80E1A3   AND #$0F                 
+80E1A5   RTS                      
+----------------         
+80E1A6   LDA #$00                 
+80E1A8   RTS                      
+----------------         
+--------sub start--------
+80E1A9   DEC $08                  
+80E1AB   BNE $80E1CA              
+80E1AD   LDA $4B                  
+80E1AF   EOR #$01                 
+80E1B1   STA $4B                  
+--------sub start--------
+80E1B3   LDA $0D                  
+80E1B5   STA $42                  
+80E1B7   AND #$01                 
+80E1B9   ASL                      
+80E1BA   ADC $4B                  
+80E1BC   ASL                      
+80E1BD   ADC $0B                  
+80E1BF   TAX                      
+80E1C0   LDY $AC70,X              
+80E1C3   LDA $AC71,X              
+80E1C6   JSL $8089A3              
+80E1CA   RTS                      
+----------------         
+--------sub start--------
+80E1CB   LDX $44                  
+80E1CD   LDA $11                  
+80E1CF   STA $0111,X              
+80E1D2   LDA $0D                  
+80E1D4   AND #$01                 
+80E1D6   ASL                      
+80E1D7   ADC $4B                  
+80E1D9   TAY                      
+80E1DA   LDA $14                  
+80E1DC   ADC $AB98,Y              
+80E1DF   STA $0114,X              
+80E1E2   RTS                      
+----------------         
+80E1E3   LDA $0D                  
+80E1E5   AND #$01                 
+80E1E7   ASL                      
+80E1E8   ASL                      
+80E1E9   TAX                      
+80E1EA   LDA $AB90,X              
+80E1ED   DEC                      
+80E1EE   CLC                      
+80E1EF   ADC $11                  
+80E1F1   STA $47                  
+80E1F3   LDA $AB90,X              
+80E1F6   ASL                      
+80E1F7   STA $46                  
+80E1F9   LDA $AB92,X              
+80E1FC   DEC                      
+80E1FD   CLC                      
+80E1FE   ADC $14                  
+80E200   ADC $AB93,X              
+80E203   STA $49                  
+80E205   LDA $AB92,X              
+80E208   ASL                      
+80E209   STA $48                  
+80E20B   LDA #$03                 
+80E20D   STA $00                  
+80E20F   REP #$10                 
+80E211   LDX #$0100               
+80E214   JSR $E23A                
+80E217   LDX #$0180               
+80E21A   JSR $E23A                
+80E21D   STZ $4E                  
+80E21F   LDX #$0200               
+80E222   JSR $E256                
+80E225   REP #$21                 
+80E227   TXA                      
+80E228   ADC #$0050               
+80E22B   TAX                      
+80E22C   CMP #$0980               
+80E22F   SEP #$20                 
+80E231   BCC $80E222              
+80E233   SEP #$10                 
+80E235   LDA #$01                 
+80E237   STA $00                  
+80E239   RTS                      
+----------------         
+--------sub start--------
+80E23A   LDA $0000,X              
+80E23D   BEQ $80E239              
+80E23F   CMP #$04                 
+80E241   BCS $80E239              
+80E243   CPX $44                  
+80E245   BEQ $80E239              
+80E247   STZ $4E                  
+80E249   DEC                      
+80E24A   BEQ $80E26A              
+80E24C   LDA $03                  
+80E24E   CMP #$04                 
+80E250   BNE $80E26A              
+80E252   INC $4E                  
+80E254   BRA $80E26A              
+--------sub start--------
+80E256   LDA $0000,X              
+80E259   BEQ $80E239              
+80E25B   CMP #$03                 
+80E25D   BEQ $80E239              
+80E25F   LDA $000A,X              
+80E262   CMP #$0C                 
+80E264   BEQ $80E26A              
+80E266   CMP #$3E                 
+80E268   BNE $80E239              
+80E26A   LDA $49                  
+80E26C   SEC                      
+80E26D   SBC $0014,X              
+80E270   CMP $48                  
+80E272   BCS $80E239              
+80E274   STA $0000                
+80E277   LDA $47                  
+80E279   SEC                      
+80E27A   SBC $0011,X              
+80E27D   CMP $46                  
+80E27F   BCS $80E239              
+80E281   XBA                      
+80E282   LDA $4E                  
+80E284   BNE $80E2D2              
+80E286   XBA                      
+80E287   LDY #$0001               
+80E28A   CMP #$03                 
+80E28C   BCC $80E299              
+80E28E   SEC                      
+80E28F   SBC $46                  
+80E291   CMP #$FD                 
+80E293   BCC $80E2A3              
+80E295   DEC                      
+80E296   LDY #$0003               
+80E299   INC                      
+80E29A   CLC                      
+80E29B   ADC $0011,X              
+80E29E   STA $0011,X              
+80E2A1   BRA $80E2C0              
+80E2A3   LDY #$0002               
+80E2A6   LDA $0000                
+80E2A9   CMP #$03                 
+80E2AB   BCC $80E2B8              
+80E2AD   SEC                      
+80E2AE   SBC $48                  
+80E2B0   CMP #$FD                 
+80E2B2   BCC $80E2D3              
+80E2B4   DEC                      
+80E2B5   LDY #$0000               
+80E2B8   INC                      
+80E2B9   CLC                      
+80E2BA   ADC $0014,X              
+80E2BD   STA $0014,X              
+80E2C0   LDA $000A,X              
+80E2C3   CMP #$3E                 
+80E2C5   BEQ $80E309              
+80E2C7   LDA $03                  
+80E2C9   CMP #$04                 
+80E2CB   BNE $80E2D2              
+80E2CD   TYA                      
+80E2CE   CMP $0D                  
+80E2D0   BEQ $80E2D3              
+80E2D2   RTS                      
+----------------         
+80E2D3   LDA $0009,X              
+80E2D6   BNE $80E300              
+80E2D8   LDA #$02                 
+80E2DA   STA $0000,X              
+80E2DD   LDA #$04                 
+80E2DF   STA $0002,X              
+80E2E2   STZ $0003,X              
+80E2E5   STZ $0004,X              
+80E2E8   STZ $0005,X              
+80E2EB   LDA $001D,X              
+80E2EE   BEQ $80E2F7              
+80E2F0   STZ $001D,X              
+80E2F3   STZ $003F,X              
+80E2F6   RTS                      
+----------------         
+--------unidentified--------
+80E2F7  .db $9E $1C $00 $A5 $0D $9D $0D $00
+80E2FF  .db $60                  
+----------------         
+80E300   LDA $0D                  
+80E302   STA $000D,X              
+80E305   STZ $001C,X              
+80E308   RTS                      
+----------------         
+80E309   LDA #$04                 
+80E30B   STA $0002,X              
+80E30E   STZ $0003,X              
+80E311   RTS                      
+
+80E312 $A6
+80E313  .db $02 $FC $18 $E3 $6B $1C $E3 $71
+80E31B  .db $E3 $A9 $02 $85 $02 $3A $85 $00
+80E323  .db $85 $01 $A5 $0B $F0 $07 $85 $03
+80E32B  .db $A9 $03 $85 $00 $60 $A9 $3B $85
+80E333  .db $1B $A9 $80 $85 $1A $A9 $02 $85
+80E33B  .db $30 $A8 $22 $73 $8F $80 $B0 $21
+80E343  .db $A9 $03 $9D $00 $00 $A9 $52 $9D
+80E34B  .db $0A $00 $A5 $30 $9D $0B $00 $B9
+80E353  .db $D9 $AC $9D $11 $00 $B9 $DA $AC
+80E35B  .db $9D $14 $00 $C2 $20 $7B $9D $40
+80E363  .db $00 $E2 $30 $A5 $30 $1A $1A $85
+80E36B  .db $30 $A8 $C9 $08 $D0 $CC $A6 $03
+80E373  .db $7C $76 $E3 $7E $E3 $AC $E3 $0D
+80E37B  .db $E4 $6E $E4 $A6 $04 $FC $88 $E3
+80E383  .db $22 $CE $88 $80 $60 $8C $E3 $A5
+80E38B  .db $E3 $A6 $0D $BD $E7 $AC $85 $1E
+80E393  .db $8A $0A $AA $29 $08 $85 $0E $BC
+80E39B  .db $83 $9D $BD $84 $9D $22 $A3 $89
+80E3A3  .db $80 $60 $22 $22 $A0 $81 $64 $04
+80E3AB  .db $60 $64 $44 $A2 $00 $20 $A0 $E4
+80E3B3  .db $90 $07 $A2 $80 $20 $A0 $E4 $B0
+80E3BB  .db $3E $E6 $44 $A9 $21 $20 $C2 $E4
+80E3C3  .db $A5 $45 $D0 $28 $64 $46 $A9 $01
+80E3CB  .db $8D $FC $00 $E6 $46 $A5 $46 $C9
+80E3D3  .db $14 $D0 $32 $64 $46 $C2 $10 $A6
+80E3DB  .db $40 $BD $0D $00 $3A $29 $07 $C9
+80E3E3  .db $04 $D0 $02 $A9 $05 $9D $0D $00
+80E3EB  .db $E2 $10 $80 $19 $AD $FC $00 $F0
+80E3F3  .db $D3 $C9 $02 $D0 $D1 $80 $0E $A9
+80E3FB  .db $22 $20 $C2 $E4 $AD $FC $00 $3A
+80E403  .db $D0 $03 $9C $FC $00 $A5 $44 $85
+80E40B  .db $45 $60 $64 $44 $A2 $00 $20 $A0
+80E413  .db $E4 $90 $07 $A2 $80 $20 $A0 $E4
+80E41B  .db $B0 $3D $E6 $44 $A9 $1F $20 $C2
+80E423  .db $E4 $A5 $45 $D0 $28 $64 $46 $A9
+80E42B  .db $02 $8D $FC $00 $E6 $46 $A5 $46
+80E433  .db $C9 $14 $D0 $32 $64 $46 $C2 $10
+80E43B  .db $A6 $40 $BD $0D $00 $1A $29 $07
+80E443  .db $C9 $04 $D0 $02 $A9 $03 $9D $0D
+80E44B  .db $00 $E2 $10 $80 $19 $AD $FC $00
+80E453  .db $F0 $D3 $3A $D0 $D2 $80 $0F $A9
+80E45B  .db $20 $20 $C2 $E4 $AD $FC $00 $C9
+80E463  .db $02 $D0 $03 $9C $FC $00 $A5 $44
+80E46B  .db $85 $45 $60 $64 $47 $A2 $00 $20
+80E473  .db $A0 $E4 $90 $07 $A2 $80 $20 $A0
+80E47B  .db $E4 $B0 $18 $E6 $47 $A5 $48 $D0
+80E483  .db $17 $C2 $10 $A6 $40 $A9 $02 $9D
+80E48B  .db $04 $00 $E2 $10 $A9 $14 $20 $C2
+80E493  .db $E4 $80 $05 $A9 $13 $20 $C2 $E4
+80E49B  .db $A5 $47 $85 $48 $60 $38 $BD $00
+80E4A3  .db $01 $29 $03 $F0 $19 $BD $11 $01
+80E4AB  .db $18 $69 $08 $38 $E5 $11 $C9 $10
+80E4B3  .db $B0 $0C $BD $14 $01 $69 $08 $38
+80E4BB  .db $E5 $14 $C9 $10 $B0 $00 $60 $A4
+80E4C3  .db $03 $BE $DF $AC $8E $10 $00 $BE
+80E4CB  .db $E0 $AC $8E $11 $00 $22 $7B $8D
+80E4D3  .db $80 $60  
+----------------   
+--------sub start--------
+80E4D5   LDX $02  
+80E4D7   JSR ($E4DF,X)
+80E4DA   JSL SpriteSaveDirectPage ; 8088CE  
+80E4DE   RTL
+----------------   
+--------data--------     
+80E4DF  .db $E3 $E4 $06 $E5
+----------------   
+--------sub start--------
+80E4E3   LDA #$02
+
+80E4E5   STA $02
+80E4E7   DEC 
+80E4E8   STA $01
+80E4EA   LDA $00B7
+80E4ED   CMP #$04 
+80E4EF   BNE $80E4F3  
+80E4F1   INC $0C  
+80E4F3   LDA #$C0 
+80E4F5   STA $1A  
+80E4F7   LDA #$3D 
+80E4F9   STA $1B  
+80E4FB   LDA #$AC 
+80E4FD   LDY #$EF 
+80E4FF   JSL FrameAnimationNoTimer ; $8089A3  
+80E503   STZ $0E  
+80E505   RTS
+----------------   
+--------sub start--------
+80E506   JSL FrameAnimationTimer; 8089A9  
+80E50A   RTS
+----------------   
+--------sub start--------
+80E50B   PEA #$8380   
+80E50E   PLB
+80E50F   LDX #$00 
+80E511   REP #$20 
+80E513   STZ $1160,X  
+80E516   INX
+80E517   INX
+80E518   CPX #$10 
+80E51A   BCC $80E513  
+80E51C   SEP #$20 
+80E51E   LDA #$00 
+80E520   STA $00  
+80E522   XBA
+80E523   LDY $B6 ; Level Index  
+80E525   LDX $EE6A,Y ; Items
+80E528   LDA $E6D6,Y  
+80E52B   STA $0E  
+80E52D   REP #$10 
+80E52F   LDY $EE6A,X  
+80E532   LDA $0000,Y  
+80E535   STA $0C  
+80E537   INY
+80E538   LDA $0C  
+80E53A   BEQ $80E562  
+80E53C   LDA $0000,Y  
+80E53F   AND #$E0 
+80E541   BNE $80E55A  
+80E543   LDA $00  
+80E545   LSR
+80E546   TAX
+80E547   LDA $0000,Y  
+80E54A   AND #$0F 
+80E54C   BCC $80E552  
+80E54E   ASL
+80E54F   ASL
+80E550   ASL
+80E551   ASL
+80E552   INC $00  
+80E554   ORA $1160,X  
+80E557   STA $1160,X  
+80E55A   INY
+80E55B   INY
+80E55C   INY
+80E55D   INY
+80E55E   DEC $0C  
+80E560   BNE $80E53C  
+80E562   DEC $0E  
+80E564   BNE $80E532  
+80E566   SEP #$10 
+80E568   PLB
+80E569   RTL
+
+;Load Items
+80E56A   PEA #$8380   
+80E56D   PLB
+80E56E   LDA $B7 ; Map Index  
+80E570   ASL
+80E571   LDX $B6 ; Level Index  
+80E573   ADC $EE6A,X  
+80E576   TAX
+80E577   REP #$10 
+80E579   LDY $EE6A,X 
+80E57C   LDA $0000,Y 
+80E57F   BEQ $80E5C4  
+80E581   INY
+80E582   STA $0E  
+80E584   REP #$20 
+80E586   LDA #$1040   
+80E589   STA $10  
+80E58B   LDA #$0A00   
+80E58E   STA $13  
+80E590   LDA #$0E00   
+80E593   STA $19  
+80E595   LDA #$1200   
+80E598   STA $1C  
+80E59A   SEP #$20 
+80E59C   LDA #$06 
+80E59E   STA $00  
+80E5A0   LDA #$06 
+80E5A2   STA $02  
+80E5A4   LDA #$10 
+80E5A6   STA $06  
+80E5A8   LDA #$02 
+80E5AA   STA $08  
+80E5AC   LDA #$00 
+80E5AE   XBA
+80E5AF   LDA $0000,Y  
+80E5B2   AND #$E0 
+80E5B4   LSR
+80E5B5   LSR
+80E5B6   LSR
+80E5B7   LSR
+80E5B8   TAX
+80E5B9   JSR ($E5C8,X) ;Item init?
+80E5BC   INY
+80E5BD   INY
+80E5BE   INY
+80E5BF   INY
+80E5C0   DEC $0E  
+80E5C2   BNE $80E5AC  
+80E5C4   SEP #$10 
+80E5C6   PLB
+80E5C7   RTL
+
+;ItemJumpTable:    
+80E5C8
+dw $E5D0 ;00 Big Item (hookshot, shovel, etc...)
+dw $E611 ;20 Gate Item
+dw $E64C ;40 Small Items (Gems, Fruits)
+dw $E69B ;60 Sprite Hanlder (Fish, Rocks, Etc)
+
+;Hookshot, Shovel, Etc... (can have up to 06 per screen)
+80E5D0   LDA $00  
+80E5D2   BEQ $80E610  
+80E5D4   LDA #$00 
+80E5D6   XBA
+80E5D7   LDA $0001,Y 
+80E5DA   LSR
+80E5DB   TAX
+80E5DC   LDA $1160,X  
+80E5DF   BCC $80E5E5  
+80E5E1   LSR
+80E5E2   LSR
+80E5E3   LSR
+80E5E4   LSR
+80E5E5   AND #$0F 
+80E5E7   BEQ $80E610  
+80E5E9   AND #$07 
+80E5EB   ASL
+80E5EC   LDX $10 ;$7E1040 array 
+80E5EE   STA $0B,X
+80E5F0   LDA #$02 
+80E5F2   STA $00,X
+80E5F4   LDA $0002,Y  
+80E5F7   STA $11,X
+80E5F9   LDA $0003,Y  
+80E5FC   STA $14,X
+80E5FE   LDA $0001,Y  
+80E601   STA $0D,X
+80E603   REP #$21 
+80E605   LDA $10  
+80E607   ADC #$0020   
+80E60A   STA $10  
+80E60C   SEP #$20 
+80E60E   DEC $00  
+80E610   RTS
+
+;Gate Item can have up to 06
+80E611   LDA $02 ;02 is used as counter for this routine
+80E613   BEQ $80E64B  
+80E615   LDX $13 ;$0A00 ; Used as Position increase by 0x0020 every iteration
+80E617   LDA #$02 
+80E619   STA $00,X
+80E61B   LDA $0000,Y ;Item ID ;Byte1
+80E61E   AND #$1F 
+80E620   ASL
+80E621   STA $0A,X
+80E623   LDA $0001,Y ;Upper bits used to do a jump
+80E626   AND #$F0 
+80E628   LSR
+80E629   LSR
+80E62A   LSR
+80E62B   STA $0B,X ; 0B is 2nd byte >> 3 so basically index in table << 3
+80E62D   LDA $0001,Y  
+80E630   AND #$0F 
+80E632   STA $0D,X
+80E634   LDA $0002,Y  
+80E637   STA $11,X
+80E639   LDA $0003,Y  
+80E63C   STA $14,X
+80E63E   REP #$21 
+80E640   LDA $13  
+80E642   ADC #$0020   
+80E645   STA $13  
+80E647   SEP #$20 
+80E649   DEC $02  
+80E64B   RTS
+
+;Fruits, Gems, etc... Up to 16 (0x10)
+80E64C   LDA $06  
+80E64E   BEQ $80E69A
+80E650   LDA #$00 
+80E652   XBA
+80E653   LDA $0001,Y ; IDK
+80E656   LSR
+80E657   LSR
+80E658   LSR
+80E659   TAX
+80E65A   LDA $1170,X ;Upper bit used to read something in ram?  
+80E65D   PHA
+80E65E   LDA $0001,Y  
+80E661   AND #$07 
+80E663   TAX
+80E664   PLA
+80E665   AND $E6DB,X  
+80E668   BNE $80E698  
+80E66A   LDX $19 ; $7E0E00 array
+80E66C   LDA $0001,Y ; RAM  
+80E66F   STA $0D,X
+80E671   LDA #$02 
+80E673   STA $00,X
+80E675   LDA $0000,Y ; ID
+80E678   AND #$0F 
+80E67A   STA $0B,X
+80E67C   LDA $0000,Y ; ID  
+80E67F   AND #$10 
+80E681   STA $0C,X
+80E683   LDA $0002,Y ; X  
+80E686   STA $11,X
+80E688   LDA $0003,Y ; Y
+80E68B   STA $14,X
+80E68D   REP #$21 
+80E68F   LDA $19  
+80E691   ADC #$0020 ;0x20 bytes per item
+80E694   STA $19  
+80E696   SEP #$20 
+80E698   DEC $06  
+80E69A   RTS
+
+;Fish/rock, sprites generators, Can have Up to 2
+80E69B   LDA $08  
+80E69D   BEQ $80E6D5      
+80E69F   LDX $1C ; $7E1200 array
+80E6A1   LDA #$02 
+80E6A3   STA $00,X
+80E6A5   LDA $0000,Y  
+80E6A8   AND #$1F 
+80E6AA   ASL
+80E6AB   STA $0A,X
+80E6AD   LDA $0001,Y  
+80E6B0   AND #$F0 
+80E6B2   LSR
+80E6B3   LSR
+80E6B4   LSR
+80E6B5   STA $0B,X
+80E6B7   LDA $0001,Y  
+80E6BA   AND #$0F 
+80E6BC   STA $0D,X
+80E6BE   LDA $0002,Y  
+80E6C1   STA $11,X
+80E6C3   LDA $0003,Y  
+80E6C6   STA $14,X
+80E6C8   REP #$21 
+80E6CA   LDA $1C  
+80E6CC   ADC #$0020   
+80E6CF   STA $1C  
+80E6D1   SEP #$20 
+80E6D3   DEC $08  
+80E6D5   RTS
+----------------   
+--------data--------     
+80E6D6  .db $10 $10 $1A $1A $18 $01 $02 $04
+80E6DE  .db $08 $10 $20 $40 $80  
+----------------   
+--------sub start--------
+80E6E3   ASL
+80E6E4   TAX
+80E6E5   PEA #$8380   
+80E6E8   PLB ; X = 0 db = 80 i think
+80E6E9   REP #$10 
+80E6EB   LDY $E715,X  ;E72B
+80E6EE   LDA $0000,Y  
+80E6F1   STA $0E ;usually used as length
+80E6F3   LDX #$0200   
+80E6F6   INC $00,X ; $0200 
+80E6F8   LDA $0001,Y  
+80E6FB   STA $0A,X ; $00
+80E6FD   LDA $0002,Y  
+80E700   STA $0B,X ; $00
+80E702   INY
+80E703   INY
+80E704   REP #$21 
+80E706   TXA
+80E707   ADC #$0050   
+80E70A   TAX
+80E70B   SEP #$20 
+80E70D   DEC $0E  
+80E70F   BNE $80E6F6  
+80E711   SEP #$10 
+80E713   PLB
+80E714   RTS
+----------------   
+--------data--------     
+80E715  .db $2B $E7 $2E $E7 $31 $E7
+----------------   
+--------unidentified--------
+80E71B  .db $34 $E7  
+----------------   
+--------data--------     
+80E71D  .db $37 $E7 $3A $E7 $3D $E7
+----------------   
+--------unidentified--------
+80E723  .db $44 $E7  
+----------------   
+--------data--------     
+80E725  .db $4B $E7 $58 $E7
+----------------   
+--------unidentified--------
+80E729  .db $5B $E7  
+----------------   
+--------data--------     
+80E72B  .db $01 $00 $00 $01 $02 $00 $01 $04
+80E733  .db $00  
+----------------   
+--------unidentified--------
+80E734  .db $01 $06 $00    
+----------------   
+--------data--------     
+80E737  .db $01 $08 $00 $01 $0A $00 $03 $0C
+80E73F  .db $00 $0C $02 $0C $04  
+----------------   
+--------unidentified--------
+80E744  .db $03 $0E $00 $0E $02 $0E $04
+----------------   
+--------data--------     
+80E74B  .db $06 $10 $00 $10 $02 $10 $04 $10
+80E753  .db $06 $10 $08 $10 $0A $01 $12 $00
+----------------   
+--------unidentified--------
+80E75B  .db $02 $14 $00 $14 $02  
+----------------   
+;Sprites Pointers
+;80E760    
+LvlOffset:
+db Level1Pointers-LvlOffset, Level2Pointers-LvlOffset, Level3Pointers-LvlOffset, Level4Pointers-LvlOffset, Level5Pointers-LvlOffset ;Levels Offset for pointers
+
+Level1Pointers: ; 80E765
+dw SprLEV01_Map01, SprLEV01_Map02, SprLEV01_Map03, SprLEV01_Map04, SprLEV01_Map05, SprLEV01_Map06, SprLEV01_Map07, SprLEV01_Map08
+dw SprLEV01_Map09, SprLEV01_Map10, SprLEV01_Map11, SprLEV01_Map12, SprLEV01_Map13, SprLEV01_Map14, SprLEV01_Map15, SprLEV01_Map16
+
+Level2Pointers: ; 80E765
+dw SprLEV02_Map01, SprLEV02_Map02, SprLEV02_Map03, SprLEV02_Map04, SprLEV02_Map05, SprLEV02_Map06, SprLEV02_Map07, SprLEV02_Map08
+dw SprLEV02_Map09, SprLEV02_Map10, SprLEV02_Map11, SprLEV02_Map12, SprLEV02_Map13, SprLEV02_Map14, SprLEV02_Map15, SprLEV02_Map16
+
+Level3Pointers: ;80E7A5
+dw SprLEV03_Map01, SprLEV03_Map02, SprLEV03_Map03, SprLEV03_Map04, SprLEV03_Map05, SprLEV03_Map06, SprLEV03_Map07, SprLEV03_Map08
+dw SprLEV03_Map09, SprLEV03_Map10, SprLEV03_Map11, SprLEV03_Map12, SprLEV03_Map13, SprLEV03_Map14, SprLEV03_Map15, SprLEV03_Map16
+dw SprLEV03_Map17, SprLEV03_Map18, SprLEV03_Map19, SprLEV03_Map20, SprLEV03_Map21, SprLEV03_Map22, SprLEV03_Map23, SprLEV03_Map24
+dw SprLEV03_Map25, SprLEV03_Map26
+
+Level4Pointers:
+;Level 4 :
+80E7D9 dw $EBBC, $EBC7, $EBC8, $EBEC, $EBFC, $EC02, $EC26, $EC2C, $EC32, $EC47, $EC4D, $EC4E, $EC63, $EC82, $EC9C
+80E7F7 dw $EC9D, $EC9E, $ECA4, $ECAF, $ECCE, $ECED, $ECEE, $ED03, $ED04, $ED0A, $ED1F, $EBC8, $EBEC, $EC32, $EC32
+
+Level5Pointers: ;level88
+;Level 5 :
+80E815 dw $ED29, $ED2A, $ED3F, $ED4F, $ED55, $ED74, $ED75, $ED94, $EDA9, $EDBE, $EDBF, $EDC0, $EDD0
+80E82F dw $EDDB, $EDF0, $EDFB, $EE06, $EE0C, $EE0D, $EE18, $EE19, $EE29, $EE39, $EE3A, $EE4A, $EE64
+
+;Sprites Data :
+;Level 1 :
+SprLEV01:  
+{
+.Map01 ;80E849
+db $01 $0E $00 $00 $68 $24
+.Map02 ;80E84F
+db $01 $0E $02 $01 $C8 $54
+.Map03 ;80E855
+db $02 $0C $00 $02 $60 $7C $0C $00 $02 $A0 $7C
+.Map04 ;80E860
+ db $03 $0C $00 $02 $60 $58 $0C $00 $02 $90 $58 $06 $00 $01 $50 $AA
+.Map05 ;80E870
+ db $05 
+$0C $00 $82 $20 $48
+$0C $00 $82 $D4 $40 
+$0C $00 $82 $E4 $68
+$54 $00 $00 $5D $20
+$54 $00 $00 $A2 $20
+.Map06 ;80E88A 
+db $06
+$0C $00 $01 $28 $98
+$0C $00 $01 $48 $B8
+$00 $00 $03 $B8 $78
+$00 $00 $03 $48 $68
+$00 $00 $02 $74 $74
+$00 $00 $03 $48 $48
+.Map07 ;80E8A9 
+db $01 $02 $00 $00 $D0 $40
+.Map08 ;80E8AF 
+db $02 $0E $04 $00 $B8 $74 $1A $04 $01 $40 $38
+.Map09 ;80E8BA 
+db $03 $0C $00 $02 $80 $58 $0C $00 $02 $18 $40 $0C $00 $02 $28 $B0
+.Map10 ;80E8CA 
+db $03 $0C $00 $02 $7C $60 $0E $06 $01 $A8 $84 $02 $00 $00 $38 $B0
+.Map11 ;80E8DA
+db $04 $0C $08 $02 $18 $88 $0C $08 $02 $58 $58 $0C $08 $02 $D8 $38 $0C $08 $02 $E8 $78
+.Map12 ;80E8EF 
+db $00
+.Map13 ;80E8F0 
+db $04 $0C $08 $02 $22 $48 $0C $08 $02 $40 $36 $0C $08 $02 $78 $36 $54 $00 $00 $CF $78
+.Map14 ;80E905 
+db $00
+.Map15 ;80E906 
+db $00
+
+;Unknown :
+80E907 db $00 $80 $80 $28 $00 $00 $80; ??
+80E910 db $80 $28 $00 $00 $80 $80 $28 $00 ;??
+80E918 db $00 $80 $80 ;?? 
+
+.Map16 ;80E91B
+db $03 $0C $08 $02 $68 $68 $0C $00 $02 $98 $48 $0C $00 $02 $C0 $48
+
+}
+
+SprLEV02:  
+{
+;Level 2 :
+.Map01 ;80E92B 
+db $02 $0C $08 $02 $BC $78 $0C $08 $02 $40 $78
+.Map02 ;80E936 
+db $01 $0E $00 $01 $C0 $3C
+.Map03 ;80E93C 
+db $00 
+.Map04 ;80E93D 
+db $05 $0C $00 $02 $D8 $88 $0C $08 $02 $48 $58 $00 $00 $02 $68 $98 $1A $04 $01 $40 $34 $1A $04 $03 $EC $38
+.Map05 ;80E957 
+db $03 $0C $0A $01 $28 $A8 $0C $0A $01 $58 $88 $0C $0A $02 $E8 $38
+.Map06 ;80E967 
+db $05 $06 $00 $01 $38 $98 $06 $00 $01 $78 $44 $06 $00 $00 $B8 $98 $06 $00 $00 $18 $C8 $06 $00 $00 $E8 $C8
+.Map07 ;80E981 
+db $04 $0C $0A $02 $28 $58 $0C $0A $02 $88 $58 $0C $0A $02 $A8 $38 $0C $0A $02 $B8 $38
+.Map08 ;80E996 
+db $01 $0C $02 $02 $98 $48
+.Map09 ;80E99C 
+db $02 $0C $02 $02 $80 $98 $0C $02 $02 $C8 $B8
+.Map10 ;80E9A7 
+db $02 $0C $0A $02 $78 $38 $0C $0A $02 $88 $38
+.Map11 ;80E9B2 
+db $04 $16 $04 $00 $B8 $A0 $16 $00 $00 $B8 $C0 $22 $8E $02 $48 $30 $22 $10 $02 $B8 $30
+.Map12 ;80E9C7 
+db $04 $0C $02 $02 $38 $B8 $0C $02 $02 $A8 $B8 $0C $02 $02 $98 $58 $0C $02 $02 $C8 $38
+.Map13 ;80E9DC 
+db $02 $0C $02 $02 $20 $98 $0C $02 $02 $68 $98
+.Map14 ;80E9E7 
+db $01 $34 $00 $00 $A8 $18
+.Map15 ;80E9ED 
+db $02 $0C $0C $02 $28 $90 $0C $0C $02 $E8 $38
+.Map16 ;80E9F8 
+db $03 $2E $00 $00 $10 $54 $36 $00 $00 $D8 $80 $36 $00 $01 $28 $80
+}
+
+;Level 3 :
+SprLEV03:  
+{
+.Map01 ;
+80EA08 db $02 $2C $06 $00 $80 $28 $32 $00 $00 $08 $CC ;01
+
+.Map02 ;
+80EA13 db $01 $2C $08 $00 $00 $00 ;02
+
+.Map03 ;
+80EA19 db $07 $10 $02 $00 $88 $90 $04 $00 $00 $38 $48 $04 $02 $00 $38 $A8 $2A $00 $00 $18 $28 $2A $00 $00 $18 $C8 $2A $00 $00 $E8 $28 $2A $00 $00 $E8 $C8 ;03
+
+.Map04 ;
+80EA3D db $02 $0C $08 $02 $78 $68 $0C $0A $02 $B8 $78 ;04
+
+.Map05 ;
+80EA48 db $00 ;05
+
+.Map06 ;
+80EA49 db $04 $08 $00 $01 $48 $40 $08 $02 $01 $50 $98 $08 $06 $01 $D0 $78 $2C $02 $00 $80 $18 ;06
+
+.Map07 ;
+80EA5E db $03 $0A $00 $00 $28 $88 $0A $00 $00 $D8 $88 $0A $00 $00 $80 $50 ;07
+
+.Map08 ;
+80EA6E db $00 ;08
+
+.Map09 ;
+80EA6F db $02 $0C $02 $02 $9C $84 $0C $02 $02 $74 $84
+
+.Map10 ;
+80EA7A db $04 $18 $00 $02 $35 $78 $18 $00 $00 $60 $78 $18 $00 $02 $89 $75 $18 $00 $00 $9E $78 ;09
+
+.Map11 ;
+80EA8F db $04 $0C $00 $02 $38 $68 $0C $02 $02 $58 $68 $0C $00 $02 $78 $68 $0C $02 $02 $D8 $58 ;10
+
+.Map12 ;
+80EAA4 db $01 $22 $80 $00 $80 $C0 ;11
+
+.Map13 ;
+80EAAA db $04 $0C $08 $82 $58 $48 $0C $00 $82 $98 $48 $0C $00 $82 $18 $88 $0C $00 $82 $D8 $A8 ;12
+
+.Map14 ;
+80EABF db $01 $2C $04 $00 $08 $30 ;13
+
+.Map15 ;
+80EAC5 db $08 $10 $08 $00 $38 $28 $10 $04 $00 $48 $28 $10 $08 $00 $58 $28 $10 $08 $00 $68 $28 $10 $02 $00 $78 $28 $10 $08 $00 $88 $28 $10 $08 $00 $98 $28 $2C $00 $00 $08 $30 ;14
+
+.Map16 ;
+80EAEE db $01 $0E $00 $00 $60 $1C ;15
+
+.Map17 ;
+80EAF4 db $0B $10 $04 $00 $50 $28 $10 $08 $00 $B0 $28 $10 $08 $00 $50 $38 $10 $08 $00 $50 $48 $10 $02 $00 $B0 $38 $10 $08 $00 $B0 $48 $42 $02 $04 $48 $68 $42 $02 $00 $48 $68 ;16
+       db $42 $02 $01 $98 $88 $42 $02 $02 $68 $88 $42 $02 $03 $B8 $68 ;16
+
+.Map18 ;
+80EB2C db $03 $0C $00 $02 $18 $78 $0C $00 $02 $48 $78 $0C $02 $02 $58 $B8 ;17
+
+.Map19 ;
+80EB3C db $07 $10 $02 $00 $48 $2C $10 $04 $00 $B8 $2C $42 $00 $04 $B0 $50 $42 $00 $00 $B0 $50 $42 $00 $01 $50 $A0 $42 $00 $02 $50 $50 $42 $00 $03 $B0 $A0 ;18
+
+.Map20 ;
+80EB60 db $03 $0C $04 $02 $28 $80 $0C $00 $02 $68 $5C $0C $0C $02 $A0 $5C ;19
+
+.Map21 ;
+80EB70 db $02 $0C $08 $02 $28 $80 $0C $08 $02 $88 $A0 ;20
+
+.Map22 ;
+80EB7B db $03 $0C $02 $02 $B8 $88 $0C $08 $02 $48 $70 $38 $00 $00 $E0 $90 ;21
+
+.Map23 ;
+80EB8B db $02 $22 $82 $02 $48 $30 $22 $04 $02 $B8 $30 ;22
+
+.Map24 ;
+80EB96 db $03 $0C $04 $02 $68 $78 $0C $0C $02 $D8 $38 $0C $0C $02 $78 $B8 ;23
+
+.Map25 ;
+80EBA6 db $02 $0C $02 $02 $E8 $28 $0C $02 $02 $D0 $28 ;24
+
+.Map26 ;
+80EBB1 db $02 $26 $00 $01 $6B $48 $26 $02 $00 $95 $48 ;25
+
+}
+
+;Level 4:
+----------------   
+--------data--------     
+80EBBC  .db $02 $0C $00 $02 $70 $68 $0C $02
+80EBC4  .db $02 $90 $68 $00 $07 $1A $02 $01
+80EBCC  .db $58 $68 $1A $02 $03 $88 $68 $1A
+80EBD4  .db $02 $01 $48 $90 $1A $02 $03 $78
+80EBDC  .db $90 $0C $04 $02 $D8 $28 $0C $04
+80EBE4  .db $02 $E8 $78 $0C $04 $02 $D8 $C8
+----------------   
+--------unidentified--------
+80EBEC  .db $03 $0C $04 $02 $28 $58 $0C $04
+80EBF4  .db $02 $58 $58 $0C $04 $02 $A0 $48
+80EBFC  .db $01 $4A $00 $00 $80 $48 $07 $44
+80EC04  .db $00 $01 $FF $FF $44 $00 $00 $38
+80EC0C  .db $38 $44 $02 $00 $38 $A8 $44 $04
+80EC14  .db $00 $68 $68 $44 $06 $00 $98 $38
+80EC1C  .db $44 $08 $00 $A8 $98 $44 $0A $00
+80EC24  .db $C8 $68 $01 $0C $04 $02 $80 $6C
+80EC2C  .db $01 $0C $0A $02 $68 $68 $04 $0C
+80EC34  .db $0C $02 $18 $78 $0C $0E $02 $58
+80EC3C  .db $78 $0C $0C $02 $A8 $78 $0C $0C
+80EC44  .db $02 $E8 $78 $01 $0C $00 $02 $C8
+80EC4C  .db $98 $00 $04 $0C $00 $02 $98 $58
+80EC54  .db $0C $00 $02 $98 $78 $0C $02 $02
+80EC5C  .db $D8 $58 $0C $00 $02 $D8 $78 $06
+80EC64  .db $0C $02 $02 $80 $30 $0C $02 $02
+80EC6C  .db $90 $80 $0C $02 $02 $50 $50 $0C
+80EC74  .db $02 $02 $B8 $B0 $4C $00 $01 $2C
+80EC7C  .db $38 $4C $00 $03 $D4 $B8 $05 $0C
+80EC84  .db $04 $02 $28 $28 $0C $0C $02 $18
+80EC8C  .db $98 $0C $0C $02 $E8 $C0 $06 $00
+80EC94  .db $01 $48 $68 $06 $00 $01 $B8 $68
+80EC9C  .db $00 $00 $01 $0C $0A $02 $80 $58
+80ECA4  .db $02 $0C $02 $02 $58 $98 $0C $0C
+80ECAC  .db $02 $70 $A8 $06 $0C $02 $02 $80
+80ECB4  .db $28 $0C $02 $02 $90 $68 $0C $02
+80ECBC  .db $02 $80 $C8 $0C $02 $02 $80 $A8
+80ECC4  .db $4C $00 $01 $2C $48 $4C $00 $01
+80ECCC  .db $2C $88 $06 $0C $0C $02 $68 $60
+80ECD4  .db $0C $0E $02 $A8 $48 $2A $02 $00
+80ECDC  .db $18 $28 $2A $02 $00 $E8 $28 $2A
+80ECE4  .db $02 $00 $18 $B8 $2A $02 $00 $E8
+80ECEC  .db $C8 $00 $04 $0C $0C $02 $18 $78
+80ECF4  .db $0C $0C $02 $48 $78 $0C $0C $02
+80ECFC  .db $B8 $78 $0C $0C $02 $E8 $78 $00
+80ED04  .db $01 $4A $02 $00 $C8 $98 $04 $0C
+80ED0C  .db $04 $02 $48 $38 $0C $02 $02 $B8
+80ED14  .db $38 $0C $02 $02 $68 $48 $0C $04
+80ED1C  .db $02 $98 $48 $01 $24 $00 $00 $00
+80ED24  .db $00 $00 $00 $00 $00  
+
+;Level 5 :
+
+80ED29  .db $00 $04 $0C $08 $02 $78 $98 $0C
+80ED31  .db $08 $02 $C8 $B8 $0C $00 $02 $28
+80ED39  .db $28 $0C $00 $02 $98 $28 $03 $0C
+80ED41  .db $0C $02 $D8 $28 $0C $04 $02 $68
+80ED49  .db $B8 $22 $06 $03 $90 $80
+----------------   
+--------unidentified--------
+80ED4F  .db $01 $0E $00 $00 $B8 $2C
+            $06 
+            $2A $04 $00 $18 $28
+80ED57  .db $0C $08 $02 $18 $38
+80ED5F  .db $0C $0C $02 $38 $38
+            $0C $02 $02 $28 $28
+80ED67  .db $0C $04 $02 $48 $28
+80ED6F  .db $32 $04 $00 $18 $88 
+            $00 
+            $06 
+            $0C $08 $02 $18 $C8
+80ED77  .db $0C $0C $02 $68 $B8
+80ED7F  .db $0C $08 $02 $78 $78
+            $20 $00 $01 $30 $58
+80ED87  .db $20 $00 $03 $60 $98
+80ED8F  .db $20 $00 $02 $A8 $70
+            $04 
+            $0C $08 $02 $48 $78
+80ED97  .db $0C $0A $02 $C8 $78
+80ED9F  .db $0C $00 $02 $98 $68
+            $0C $02 $02 $68 $88
+80EDA7  .db $04
+            $0C $0E $02 $B8 $58
+80EDAF  .db $0C $02 $02 $A8 $88
+            $0C $02 $02 $C8 $88
+80EDB7  .db $46 $00 $00 $40 $2A
+            $00
+80EDBF  .db $00 
+            $03
+            $2A $06 $00 $68 $28
+            $2A $06 $00 $98 $28
+80EDC7  .db $0E $02 $01 $A8 $6C
+80EDCF  .db $02 
+            $0C $0E $02 $D8 $B8
+            $0C $02 $02 $18 $C8
+80EDD7  .db  $04 $0C $08 $02
+80EDDF  .db $88 $78 $0C $08 $02 $A8 $78 $0C
+80EDE7  .db $00 $02 $78 $88 $0C $00 $02 $B8
+80EDEF  .db $88 $02 $0E $04 $00 $50 $2C $0E
+80EDF7  .db $06 $01 $B0 $2C $02 $0C $08 $02
+80EDFF  .db $38 $98 $0C $00 $02 $E8 $C8 $01
+80EE07  .db $0C $08 $02 $C8 $58 $00 $02 $0E
+80EE0F  .db $08 $00 $E8 $2C $48 $00 $00 $58
+80EE17  .db $B8 $00 $03 $0E $0A $01 $E8 $2C
+80EE1F  .db $46 $02 $01 $40 $BE $32 $02 $00
+80EE27  .db $88 $C6 $03 $22 $08 $03 $30 $C0
+80EE2F  .db $22 $8A $03 $E0 $C0 $22 $0C $00
+80EE37  .db $E0 $30 $00 $03 $0C $0C $02 $18
+80EE3F  .db $C8 $0C $0C $02 $E8 $C8 $0C $04
+80EE47  .db $00 $68 $78 $05 $0C $02 $02 $28
+80EE4F  .db $B0 $0C $02 $02 $58 $30 $0C $02
+80EE57  .db $02 $A8 $30 $0C $02 $02 $D8 $70
+80EE5F  .db $52 $00 $00 $80 $8A $01 $3A $00
+80EE67  .db $00 $98 $28    
+
+;All Items for every maps
+
+;80EE6A
+db $05, $25, $45, $79, $B5 ;Level offsets
+
+;80EE6F
+;Level1 Pointers : 
+dw $EF53, $EF58, $EF71, $EF76, $EF7B, $EF88, $EF91, $EF9E
+dw $EFA7, $EFAC, $EFB5, $EFC2, $EFCB, $EFDC, $EFE5, $EFE6
+
+dw $EFFF, $F000, $F001
+----------------   
+--------unidentified--------
+80EE95  .db $12 $F0 $17 $F0 $20 $F0 $21 $F0
+----------------   
+--------data--------     
+80EE9D  .db $26 $F0  
+----------------   
+--------unidentified--------
+80EE9F  .db $33 $F0 $3C $F0 $41 $F0 $42 $F0
+80EEA7  .db $47 $F0 $54 $F0 $5D $F0 $6A $F0
+----------------   
+--------data--------     
+80EEAF  .db $6B $F0 $6C $F0 $71 $F0
+----------------   
+--------unidentified--------
+80EEB5  .db $76 $F0 $7B $F0
+----------------   
+--------data--------     
+80EEB9  .db $8C $F0  
+----------------   
+--------unidentified--------
+80EEBB  .db $8D $F0 $9A $F0
+----------------   
+--------data--------     
+80EEBF  .db $9F $F0  
+----------------   
+--------unidentified--------
+80EEC1  .db $B8 $F0  
+----------------   
+--------data--------     
+80EEC3  .db $B9 $F0  
+----------------   
+--------unidentified--------
+80EEC5  .db $C6 $F0 $CB $F0 $D0 $F0 $D5 $F0
+80EECD  .db $DA $F0 $DF $F0 $E4 $F0 $E9 $F0
+80EED5  .db $EA $F0 $F3 $F0 $F8 $F0 $05 $F1
+80EEDD  .db $06 $F1 $0B $F1 $10 $F1
+----------------   
+--------data--------     
+80EEE3  .db $11 $F1 $16 $F1 $1F $F1
+----------------   
+--------unidentified--------
+80EEE9  .db $20 $F1 $21 $F1 $32 $F1 $33 $F1
+80EEF1  .db $3C $F1 $4D $F1 $52 $F1 $57 $F1
+80EEF9  .db $6C $F1 $75 $F1 $76 $F1 $7B $F1
+80EF01  .db $80 $F1 $8D $F1 $92 $F1 $97 $F1
+80EF09  .db $98 $F1 $A1 $F1 $AA $F1 $AF $F1
+80EF11  .db $B4 $F1 $B9 $F1 $BE $F1 $C3 $F1
+80EF19  .db $C4 $F1 $C5 $F1 $CA $F1
+
+;LEVEL 05 start ptrs
+80EF1F  .db $F1CF $ $F1D0 $ $F1D1 $
+----------------   
+--------unidentified--------
+80EF25  .db $D6 $F1 $D7 $F1 $DC $F1 $E1 $F1
+80EF2D  .db $EE $F1 $F3 $F1 $00 $F2 $05 $F2
+80EF35  .db $0A $F2 $13 $F2 $1C $F2 $2D $F2
+80EF3D  .db $4E $F2 $5B $F2 $68 $F2 $71 $F2
+80EF45  .db $76 $F2 $7B $F2 $80 $F2 $91 $F2
+80EF4D  .db $F296 $ $F2A3 $ $F2A8 $
+
+;Items Pointer Level1
+         ;NBR OBJ RAM  X   Y
+80EF53 db $01 $63 $00 $00 $00 ;00
+
+80EF58 db $06 
+$40 $00 $18 $30 
+$40 $01 $28 $30
+$40 $02 $38 $30
+$40 $03 $48 $30
+$08 $00 $A0 $28
+$63 $10 $00 $00 ;01
+
+80EF71 db $01 $0D $01 $E0 $C0 ;02
+80EF76 db $01 $08 $02 $B8 $B8 ;03
+80EF7B db $03 $08 $03 $70 $68 $23 $00 $00 $00 $23 $10 $00 $00 ;04 
+80EF88 db $02 $44 $04 $B8 $28 $08 $04 $E8 $28 ;05
+80EF91 db $03 $20 $00 $90 $01 $20 $10 $86 $02 $20 $20 $98 $02 ;06
+80EF9E db $02 $0E $05 $20 $30 $63 $20 $00 $00 ;07
+  
+80EFA7 db $01 $23 $20 $00 $00 ;08
+80EFAC db $02 $23 $30 $00 $00 $0C $06 $68 $B8 ;09
+80EFB5 db $03 $42 $05 $18 $B8 $46 $06 $18 $C8 $63 $30 $00 $00 ;10
+80EFC2 db $02 $0A $07 $80 $28 $24 $00 $00 $00 ;11
+   
+80EFCB db $04 $0D $08 $18 $C8 $42 $07 $28 $C8 $40 $08 $38 $C8 $40 $09 $48 $C8;12
+80EFDC db $02 $0B $09 $80 $28 $24 $10 $02 $00;13
+80EFE5 db $00;14
+80EFE6 db $06 $42 $0A $48 $28 $42 $0B $48 $38 $40 $0C $68 $28 $40 $0D $68 $38 $44 $0E $28 $38 $46 $0F $28 $28;15
+
+
+
+80EFFF db $00 
+80F000 db $00
+80F001 db $04 
+80F002 db $22, $80, $38, $38
+          $22, $40, $68, $38
+          $22, $20, $98, $38
+          $22, $10, $C8, $38
+
+80F012 db $01
+80F013 db $08  
+----------------   
+--------unidentified--------
+80F014  .db $00 $78 $B8    
+----------------   
+--------data--------     
+80F017  .db $02 $0E  
+----------------   
+--------unidentified--------
+80F019  .db $01 $38 $58    
+----------------   
+--------data--------     
+80F01C  .db $08  
+----------------   
+--------unidentified--------
+80F01D  .db $02 $88 $48    
+----------------   
+--------data--------     
+80F020  .db $00 $01 $08    
+----------------   
+--------unidentified--------
+80F023  .db $03 $E8 $38    
+----------------   
+--------data--------     
+80F026  .db $03 $0A $04 $18 $A8 $08 $05 $28
+80F02E  .db $48 $46 $00 $68 $88 $02 $0A
+----------------   
+--------unidentified--------
+80F035  .db $06 $B8 $C0    
+----------------   
+--------data--------     
+80F038  .db $08  
+----------------   
+--------unidentified--------
+80F039  .db $07 $D8 $C0    
+----------------   
+--------data--------     
+80F03C  .db $01 $24  
+----------------   
+--------unidentified--------
+80F03E  .db $20 $04 $00    
+----------------   
+--------data--------     
+80F041  .db $00 $01 $08    
+----------------   
+--------unidentified--------
+80F044  .db $08 $78 $68    
+----------------   
+--------data--------     
+80F047  .db $03 $0B  
+----------------   
+--------unidentified--------
+80F049  .db $09 $18 $48    
+----------------   
+--------data--------     
+80F04C  .db $26  
+----------------   
+--------unidentified--------
+80F04D  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F050  .db $0C  
+----------------   
+--------unidentified--------
+80F051  .db $0A $B8 $98    
+----------------   
+--------data--------     
+80F054  .db $02 $08  
+----------------   
+--------unidentified--------
+80F056  .db $0B $18 $28    
+----------------   
+--------data--------     
+80F059  .db $44  
+----------------   
+--------unidentified--------
+80F05A  .db $01 $28 $28    
+----------------   
+--------data--------     
+80F05D  .db $03 $40  
+----------------   
+--------unidentified--------
+80F05F  .db $02 $48 $A8    
+----------------   
+--------data--------     
+80F062  .db $44  
+----------------   
+--------unidentified--------
+80F063  .db $03 $58 $48    
+----------------   
+--------data--------     
+80F066  .db $44  
+----------------   
+--------unidentified--------
+80F067  .db $04 $18 $28    
+----------------   
+--------data--------     
+80F06A  .db $00 $00 $01 $60 $00 $00 $00 $01
+80F072  .db $08 $00 $B8 $68 $01 $0A
+----------------   
+--------unidentified--------
+80F078  .db $01 $E8 $58    
+----------------   
+--------data--------     
+80F07B  .db $04 $0C  
+----------------   
+--------unidentified--------
+80F07D  .db $02 $98 $58    
+----------------   
+--------data--------     
+80F080  .db $0C  
+----------------   
+--------unidentified--------
+80F081  .db $03 $E8 $C8    
+----------------   
+--------data--------     
+80F084  .db $09  
+----------------   
+--------unidentified--------
+80F085  .db $04 $18 $28    
+----------------   
+--------data--------     
+80F088  .db $44  
+----------------   
+--------unidentified--------
+80F089  .db $00 $C8 $C8    
+----------------   
+--------data--------     
+80F08C  .db $00 $03 $09    
+----------------   
+--------unidentified--------
+80F08F  .db $05 $68 $70    
+----------------   
+--------data--------     
+80F092  .db $0D  
+----------------   
+--------unidentified--------
+80F093  .db $06 $98 $70    
+----------------   
+--------data--------     
+80F096  .db $46  
+----------------   
+--------unidentified--------
+80F097  .db $01 $80 $74    
+----------------   
+--------data--------     
+80F09A  .db $01 $26  
+----------------   
+--------unidentified--------
+80F09C  .db $10 $00 $00    
+----------------   
+--------data--------     
+80F09F  .db $06 $42 $02 $68 $A8 $40 $03 $78
+80F0A7  .db $A8 $40 $04 $88 $A8 $42 $05 $98
+80F0AF  .db $A8 $44 $06 $98 $60 $46 $07 $78
+80F0B7  .db $60 $00 $03 $0A $07 $D8 $68 $0E
+80F0BF  .db $08 $A8 $58 $0D $09 $18 $B8 $01
+80F0C7  .db $60  
+----------------   
+--------unidentified--------
+80F0C8  .db $10 $00 $00    
+----------------   
+--------data--------     
+80F0CB  .db $01 $0A  
+----------------   
+--------unidentified--------
+80F0CD  .db $0A $E8 $98    
+----------------   
+--------data--------     
+80F0D0  .db $01 $61  
+----------------   
+--------unidentified--------
+80F0D2  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F0D5  .db $01 $0E  
+----------------   
+--------unidentified--------
+80F0D7  .db $0B $78 $68    
+----------------   
+--------data--------     
+80F0DA  .db $01 $08  
+----------------   
+--------unidentified--------
+80F0DC  .db $0C $18 $C8    
+----------------   
+--------data--------     
+80F0DF  .db $01 $0A  
+----------------   
+--------unidentified--------
+80F0E1  .db $0D $80 $68    
+----------------   
+--------data--------     
+80F0E4  .db $01 $0A  
+----------------   
+--------unidentified--------
+80F0E6  .db $0E $E8 $C8    
+----------------   
+--------data--------     
+80F0E9  .db $00 $02 $08    
+----------------   
+--------unidentified--------
+80F0EC  .db $0F $78 $88    
+----------------   
+--------data--------     
+80F0EF  .db $0A  
+----------------   
+--------unidentified--------
+80F0F0  .db $10 $88 $88    
+----------------   
+--------data--------     
+80F0F3  .db $01 $46  
+----------------   
+--------unidentified--------
+80F0F5  .db $08 $18 $A8    
+----------------   
+--------data--------     
+80F0F8  .db $03 $0D  
+----------------   
+--------unidentified--------
+80F0FA  .db $11 $D8 $B8    
+----------------   
+--------data--------     
+80F0FD  .db $09  
+----------------   
+--------unidentified--------
+80F0FE  .db $12 $68 $78    
+----------------   
+--------data--------     
+80F101  .db $09  
+----------------   
+--------unidentified--------
+80F102  .db $13 $18 $98    
+----------------   
+--------data--------     
+80F105  .db $00 $01 $0B    
+----------------   
+--------unidentified--------
+80F108  .db $14 $88 $C8    
+----------------   
+--------data--------     
+80F10B  .db $01 $27  
+----------------   
+--------unidentified--------
+80F10D  .db $00 $10 $00    
+----------------   
+--------data--------     
+80F110  .db $00 $01 $24 $40 $08 $00 $02 $24
+80F118  .db $30 $06 $00 $2B $10 $00 $00 $00
+80F120  .db $00 $04 $09    
+----------------   
+--------unidentified--------
+80F123  .db $00 $18 $28    
+----------------   
+--------data--------     
+80F126  .db $09  
+----------------   
+--------unidentified--------
+80F127  .db $01 $E8 $28    
+----------------   
+--------data--------     
+80F12A  .db $44  
+----------------   
+--------unidentified--------
+80F12B  .db $00 $78 $30    
+----------------   
+--------data--------     
+80F12E  .db $44  
+----------------   
+--------unidentified--------
+80F12F  .db $01 $88 $30    
+----------------   
+--------data--------     
+80F132  .db $00 $02 $21    
+----------------   
+--------unidentified--------
+80F135  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F138  .db $29  
+----------------   
+--------unidentified--------
+80F139  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F13C  .db $04 $44  
+----------------   
+--------unidentified--------
+80F13E  .db $02 $18 $78    
+----------------   
+--------data--------     
+80F141  .db $40  
+----------------   
+--------unidentified--------
+80F142  .db $03 $78 $38    
+----------------   
+--------data--------     
+80F145  .db $42  
+----------------   
+--------unidentified--------
+80F146  .db $04 $58 $C8    
+----------------   
+--------data--------     
+80F149  .db $46  
+----------------   
+--------unidentified--------
+80F14A  .db $05 $18 $A8    
+----------------   
+--------data--------     
+80F14D  .db $01 $2B  
+----------------   
+--------unidentified--------
+80F14F  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F152  .db $01 $24  
+----------------   
+--------unidentified--------
+80F154  .db $50 $0A $00    
+----------------   
+--------data--------     
+80F157  .db $05 $24  
+----------------   
+--------unidentified--------
+80F159  .db $60 $0C $00    
+----------------   
+--------data--------     
+80F15C  .db $22  
+----------------   
+--------unidentified--------
+80F15D  .db $01 $38 $28    
+----------------   
+--------data--------     
+80F160  .db $22  
+----------------   
+--------unidentified--------
+80F161  .db $01 $68 $28    
+----------------   
+--------data--------     
+80F164  .db $22  
+----------------   
+--------unidentified--------
+80F165  .db $01 $98 $28    
+----------------   
+--------data--------     
+80F168  .db $22  
+----------------   
+--------unidentified--------
+80F169  .db $01 $C8 $28    
+----------------   
+--------data--------     
+80F16C  .db $02 $21  
+----------------   
+--------unidentified--------
+80F16E  .db $10 $00 $00    
+----------------   
+--------data--------     
+80F171  .db $0D  
+----------------   
+--------unidentified--------
+80F172  .db $02 $18 $28    
+----------------   
+--------data--------     
+80F175  .db $00 $01 $21    
+----------------   
+--------unidentified--------
+80F178  .db $20 $00 $00    
+----------------   
+--------data--------     
+80F17B  .db $01 $24  
+----------------   
+--------unidentified--------
+80F17D  .db $70 $0E $00    
+----------------   
+--------data--------     
+80F180  .db $03 $62  
+----------------   
+--------unidentified--------
+80F182  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F185  .db $2B  
+----------------   
+--------unidentified--------
+80F186  .db $30 $00 $00    
+----------------   
+--------data--------     
+80F189  .db $2B  
+----------------   
+--------unidentified--------
+80F18A  .db $01 $00 $00    
+----------------   
+--------data--------     
+80F18D  .db $01 $24  
+----------------   
+--------unidentified--------
+80F18F  .db $80 $10 $00    
+----------------   
+--------data--------     
+80F192  .db $01 $24  
+----------------   
+--------unidentified--------
+80F194  .db $90 $12 $00    
+----------------   
+--------data--------     
+80F197  .db $00 $02 $2B    
+----------------   
+--------unidentified--------
+80F19A  .db $31 $00 $00    
+----------------   
+--------data--------     
+80F19D  .db $09  
+----------------   
+--------unidentified--------
+80F19E  .db $03 $A8 $C8    
+----------------   
+--------data--------     
+80F1A1  .db $02 $24  
+----------------   
+--------unidentified--------
+80F1A3  .db $90 $14 $00    
+----------------   
+--------data--------     
+80F1A6  .db $08  
+----------------   
+--------unidentified--------
+80F1A7  .db $04 $C8 $28    
+----------------   
+--------data--------     
+80F1AA  .db $01 $21  
+----------------   
+--------unidentified--------
+80F1AC  .db $30 $00 $00    
+----------------   
+--------data--------     
+80F1AF  .db $01 $2A  
+----------------   
+--------unidentified--------
+80F1B1  .db $10 $00 $00    
+----------------   
+--------data--------     
+80F1B4  .db $01 $2A  
+----------------   
+--------unidentified--------
+80F1B6  .db $00 $00 $48    
+----------------   
+--------data--------     
+80F1B9  .db $01 $21  
+----------------   
+--------unidentified--------
+80F1BB  .db $40 $00 $00    
+----------------   
+--------data--------     
+80F1BE  .db $01 $2B  
+----------------   
+--------unidentified--------
+80F1C0  .db $20 $00 $00 $00 $00 $01 $2B $02
+80F1C8  .db $00 $00 $01 $2B $03 $00 $00
+----------------   
+--------data--------     
+80F1CF  .db $00 $00 $01 $08 $00 $48 $A8 $00
+80F1D7  .db $01 $64  
+----------------   
+--------unidentified--------
+80F1D9  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F1DC  .db $01 $24  
+----------------   
+--------unidentified--------
+80F1DE  .db $A0 $16 $00    
+----------------   
+--------data--------     
+80F1E1  .db $03 $08  
+----------------   
+--------unidentified--------
+80F1E3  .db $01 $D8 $C8    
+----------------   
+--------data--------     
+80F1E6  .db $23  
+----------------   
+--------unidentified--------
+80F1E7  .db $40 $00 $00    
+----------------   
+--------data--------     
+80F1EA  .db $0D  
+----------------   
+--------unidentified--------
+80F1EB  .db $02 $E8 $28    
+----------------   
+--------data--------     
+80F1EE  .db $01 $42  
+----------------   
+--------unidentified--------
+80F1F0  .db $00 $18 $B8    
+----------------   
+--------data--------     
+80F1F3  .db $03 $23  
+----------------   
+--------unidentified--------
+80F1F5  .db $50 $00 $00    
+----------------   
+--------data--------     
+80F1F8  .db $09  
+----------------   
+--------unidentified--------
+80F1F9  .db $03 $A8 $28    
+----------------   
+--------data--------     
+80F1FC  .db $09  
+----------------   
+--------unidentified--------
+80F1FD  .db $04 $A8 $38    
+----------------   
+--------data--------     
+80F200  .db $01 $40  
+----------------   
+--------unidentified--------
+80F202  .db $01 $58 $C8    
+----------------   
+--------data--------     
+80F205  .db $01 $24  
+----------------   
+--------unidentified--------
+80F207  .db $B0 $18 $00    
+----------------   
+--------data--------     
+80F20A  .db $02 $08  
+----------------   
+--------unidentified--------
+80F20C  .db $05 $68 $78    
+----------------   
+--------data--------     
+80F20F  .db $0D  
+----------------   
+--------unidentified--------
+80F210  .db $06 $B8 $C8    
+----------------   
+--------data--------     
+80F213  .db $02 $42  
+----------------   
+--------unidentified--------
+80F215  .db $02 $18 $78    
+----------------   
+--------data--------     
+80F218  .db $40  
+----------------   
+--------unidentified--------
+80F219  .db $03 $18 $88    
+----------------   
+--------data--------     
+80F21C  .db $04 $09  
+----------------   
+--------unidentified--------
+80F21E  .db $07 $78 $98    
+----------------   
+--------data--------     
+80F221  .db $09  
+----------------   
+--------unidentified--------
+80F222  .db $08 $B8 $98    
+----------------   
+--------data--------     
+80F225  .db $0D  
+----------------   
+--------unidentified--------
+80F226  .db $09 $58 $B8    
+----------------   
+--------data--------     
+80F229  .db $46  
+----------------   
+--------unidentified--------
+80F22A  .db $04 $98 $88    
+----------------   
+--------data--------     
+80F22D  .db $08 $24  
+----------------   
+--------unidentified--------
+80F22F  .db $C0 $1A $00    
+----------------   
+--------data--------     
+80F232  .db $24  
+----------------   
+--------unidentified--------
+80F233  .db $D0 $1C $00    
+----------------   
+--------data--------     
+80F236  .db $24  
+----------------   
+--------unidentified--------
+80F237  .db $E0 $1E $00    
+----------------   
+--------data--------     
+80F23A  .db $0A  
+----------------   
+--------unidentified--------
+80F23B  .db $0A $80 $28    
+----------------   
+--------data--------     
+80F23E  .db $42  
+----------------   
+--------unidentified--------
+80F23F  .db $05 $28 $28    
+----------------   
+--------data--------     
+80F242  .db $42  
+----------------   
+--------unidentified--------
+80F243  .db $06 $D8 $28    
+----------------   
+--------data--------     
+80F246  .db $44  
+----------------   
+--------unidentified--------
+80F247  .db $07 $18 $28    
+----------------   
+--------data--------     
+80F24A  .db $40  
+----------------   
+--------unidentified--------
+80F24B  .db $08 $E8 $28    
+----------------   
+--------data--------     
+80F24E  .db $03 $42  
+----------------   
+--------unidentified--------
+80F250  .db $09 $18 $B0    
+----------------   
+--------data--------     
+80F253  .db $42  
+----------------   
+--------unidentified--------
+80F254  .db $0A $E8 $98    
+----------------   
+--------data--------     
+80F257  .db $40  
+----------------   
+--------unidentified--------
+80F258  .db $0B $18 $38    
+----------------   
+--------data--------     
+80F25B  .db $03 $2C  
+----------------   
+--------unidentified--------
+80F25D  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F260  .db $08  
+----------------   
+--------unidentified--------
+80F261  .db $0B $B8 $98    
+----------------   
+--------data--------     
+80F264  .db $08  
+----------------   
+--------unidentified--------
+80F265  .db $0C $C8 $98    
+----------------   
+--------data--------     
+80F268  .db $02 $44  
+----------------   
+--------unidentified--------
+80F26A  .db $0C $B8 $B8    
+----------------   
+--------data--------     
+80F26D  .db $0B  
+----------------   
+--------unidentified--------
+80F26E  .db $0D $28 $38    
+----------------   
+--------data--------     
+80F271  .db $01 $08  
+----------------   
+--------unidentified--------
+80F273  .db $0E $D8 $48    
+----------------   
+--------data--------     
+80F276  .db $01 $2D  
+----------------   
+--------unidentified--------
+80F278  .db $00 $00 $00    
+----------------   
+--------data--------     
+80F27B  .db $01 $08  
+----------------   
+--------unidentified--------
+80F27D  .db $0F $C8 $B8    
+----------------   
+--------data--------     
+80F280  .db $04 $42  
+----------------   
+--------unidentified--------
+80F282  .db $0D $18 $C8    
+----------------   
+--------data--------     
+80F285  .db $40  
+----------------   
+--------unidentified--------
+80F286  .db $0E $18 $B8    
+----------------   
+--------data--------     
+80F289  .db $42  
+----------------   
+--------unidentified--------
+80F28A  .db $0F $B8 $28    
+----------------   
+--------data--------     
+80F28D  .db $40  
+----------------   
+--------unidentified--------
+80F28E  .db $10 $B8 $38    
+----------------   
+--------data--------     
+80F291  .db $01 $24  
+----------------   
+--------unidentified--------
+80F293  .db $F0 $20 $00    
+----------------   
+--------data--------     
+80F296  .db $03 $08  
+----------------   
+--------unidentified--------
+80F298  .db $10 $88 $58    
+----------------   
+--------data--------     
+80F29B  .db $08  
+----------------   
+--------unidentified--------
+80F29C  .db $11 $88 $98    
+----------------   
+--------data--------     
+80F29F  .db $46  
+----------------   
+--------unidentified--------
+80F2A0  .db $11 $C8 $58 $01 $21 $50 $00 $00
+80F2A8  .db $00  
+----------------   
+
+
+;A = 8bit, XY = 16bits
+;80F2A9 / 0072A9
+AntiPiracy:
+{
+LDA #$70;80F2A9     
+PHA ;80F2AB     
+PLB ;80F2AC     Pull bank (#$70)
+REP #$10;80F2AD     XY is now 16bit
+LDX #$7F00    ;80F2AF     $707F00
+.loopZero
+LDA #$00;80F2B2
+.loop    
+STA $0000,X   ;80F2B4     $707F00
+CMP $0000,X   ;80F2B7     
+BNE .return   ;80F2BA
+CLC ;80F2BC     
+ADC #$11;80F2BD     ADD #$11
+BNE .loop     ;80F2BF     
+REP #$21;80F2C1     A in 16bit, set Carry
+TXA ;80F2C3     
+ADC #$FF00    ;80F2C4     ADD #$FF00
+TAX ;80F2C7     
+SEP #$20;80F2C8     A in 8bit
+BPL .loopZero ;80F2CA     
+LDA #$80;80F2CC     
+STA $2100     ;80F2CE     Set Force Blank
+BRA $80F2D1   ;80F2D1     Infinite Branching
+.return 
+SEP #$30;80F2D3     
+RTS ;80F2D5     
+}
+
+80F2D6   LDX #$00              
+80F2D8   LDA $83F9C2,X
+80F2DC   STA $7F0000,X
+80F2E0   INX
+80F2E1   CPX #$80
+80F2E3   BCC $F2D8
+80F2E5   PHB
+80F2E6   REP #$30 
+80F2E8   LDX #$0000 
+80F2EB   LDY #$0080 
+80F2EE   LDA #$7F7F 
+80F2F1   MVN $7F,$7F
+80F2F4   SEP #$30
+80F2F6   PLB
+80F2F7   RTS
+
+
+80F2F8      $20 $27 $85 $A9 $04 $85
+80F2FE  .db $80 $A9 $00 $20 $7D $AD $A9 $03
+80F306  .db $22 $67 $86 $80 $20 $CF $83 $A9
+80F30E  .db $04 $22 $67 $86 $80 $20 $CF $83
+80F316  .db $A9 $01 $85 $AE $20 $53 $95 $A9
+80F31E  .db $F0 $22 $42 $81 $80 $A9 $F0 $22
+80F326  .db $42 $81 $80 $A9 $01 $85 $AE $20
+80F32E  .db $67 $95 $A9 $01 $22 $42 $81 $80
+80F336  .db $A5 $AF $D0 $F6 $60 $5B $A5 $03
+80F33E  .db $48 $A5 $02 $48 $60  
+ 
+80F343   TCD ; Set it on $1100 or $1110
+80F344   LDA $01  
+80F346   BNE $80F34F  
+80F348   LDA $03  
+80F34A   PHA
+80F34B   LDA $02  
+80F34D   PHA
+80F34E   RTS
+----------------   
+80F34F   DEC $01  
+80F351   RTS
+----------------   
+--------sub start--------
+80F352   STA $01  
+80F354   PLA
+80F355   STA $02  
+80F357   PLA
+80F358   STA $03  
+80F35A   RTS
+----------------   
+--------unidentified--------
+80F35B  .db $20 $D3 $95 $6B $20 $2A $AF $6B
+80F363  .db $20 $7D $AD $6B $20 $9C $AF $6B
+80F36B  .db $20 $9C $AF $6B $20 $42 $85 $6B
+
+80F374 - 80FFAF
+NULL DATA
+
+80FFB0   JMP VectorReset
+80FFB4   JMP VectorNMI  
+80FFB8   JMP VectorIRQ
+
+VectorIRQ:
+{
+80FFBC  .db $5C $09 $85 $80 $47 $4F $4F $46
+80FFC4  .db $20 $54 $52 $4F $4F $50 $20 $20
+80FFCC  .db $20 $20 $20 $20 $20 $20 $20 $20
+80FFD4  .db $20 $30 $00 $09 $00 $01 $08 $00
+80FFDC  .db $2F $A5 $D0 $5A $20 $50 $72 $6F
+80FFE4  .db $BC $FF $BC $FF $BC $FF
+}
+----------------   
+--------data--------     
+80FFEA  .db $B4 $FF  
+----------------   
+--------unidentified--------
+80FFEC  .db $BC $FF  
+----------------   
+--------data--------     
+80FFEE  .db $B8 $FF  
+----------------   
+--------unidentified--------
+80FFF0  .db $20 $4D $2E $20 $BC $FF $BC $FF
+80FFF8  .db $BC $FF $BC $FF $B0 $FF $BC $FF

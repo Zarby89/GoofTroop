@@ -1,0 +1,20 @@
+List of Songs : 
+10 = Capcom
+11 = To the south
+12 = Illusion
+13 = Lose my way
+14 = Sea Robbber
+15 = Let's Start
+16 = Break
+17 = Map
+18 = Go On?
+19 = The End
+1A = Goofy or Max?
+1B = Fight Fight!
+1C = Satisfied!
+1D = Flashback
+1E = Hamlet
+1F = Fight a Battle
+20 = Staff Roll
+21 = Game Over
+22 = Rest

@@ -116,8 +116,8 @@
 82812A   STA $0014,X              
 82812D   SEP #$10                 
 82812F   RTS                      
-----------------         
---------sub start--------
+
+;Show Message?
 828130   LDA #$01 ;A:0001
 828132   XBA                      
 828133   LDA #$00 ;A:0100            
@@ -143,10 +143,10 @@
 dw $815C ;Unknown?? a sort of init routine i guess
 dw $8221 
 dw $88CE
-dw $0B08
-dw $8B91          
+dw $8B08
+dw $8B91 ;Message routine ! 0x08
    
-SpriteRelatedRoutine:; ??
+PlayerRelatedRoutine:; ??
 ;DP = 0100 here
 ;DB = 83
 82815C   LDA #$02
@@ -169,13 +169,13 @@ SpriteRelatedRoutine:; ??
 82817F   INC $0E                  
 828181   LDA $1A4B                
 828184   STA.b $010C                  
-828186   LDA.b $014C                  
+828186   LDA.b $014C
 828188   STZ.b $0110                  
-82818A   STA.b $0111                  
+82818A   STA.b $0111 ; Player X Position
 82818C   STZ.b $0112                  
 82818E   LDA.b $014D                  
 828190   STZ.b $0113                  
-828192   STA.b $0114                  
+828192   STA.b $0114 ; Player Y Position
 828194   STZ.b $0115                  
 828196   STZ.b $0116                  
 828198   STZ.b $0117                  
@@ -985,14 +985,14 @@ dw $861A ;Bell2?
 8288AC   LDA #$0A ;Bell SFX
 8288AE   JSL PlaySFX ;$809A53
 8288B2   RTS                      
-----------------         
+       
 8288B3   JSL $8089DE ;?
 8288B7   LDA $08 ;$0108
 8288B9   CMP #$70                 
 8288BB   BNE $8288CD              
 8288BD   LDA #$04                 
 8288BF   STA $04                  
---------sub start--------
+
 8288C1   LDA $0A                  
 8288C3   LSR                      
 8288C4   INC                      
@@ -1000,22 +1000,22 @@ dw $861A ;Bell2?
 8288C7   AND $1A4F                
 8288CA   STA $1A4F                
 8288CD   RTS                      
-----------------         
---------sub start--------
+
+
+
+;unrelated to bell i think
 8288CE   LDX $03                  
 8288D0   JSR ($88DC,X)            
 8288D3   JSL $808A25              
 8288D7   JSL $8088CE              
-8288DB   RTS                      
-----------------         
---------data--------     
-8288DC  .db $E6 $88              
-----------------         
---------unidentified--------
-8288DE  .db $BE $89              
-----------------         
---------data--------     
-8288E0  .db $F4 $89 $43 $8A $87 $8A
+8288DB   RTS    
+
+8288DC
+dw $88E6
+dw $89BE
+dw $89F4
+dw $8A43
+dw $8A87
 ----------------         
 --------sub start--------
 8288E6   LDX $04                  
@@ -1319,8 +1319,12 @@ dw $861A ;Bell2?
 828B95   LDX $30                  
 828B97   JMP ($8B9A,X)            
 --------data--------     
-828B9A  .db $A4 $8B $FF $8B $2E $8C $64 $8C
-828BA2  .db $73 $8C              
+828B9A 
+dw $8BA4
+dw $8BFF
+dw $8C2E
+dw $8C64
+dw $8C73              
 ----------------         
 828BA4   LDA $31                  
 828BA6   ORA #$20                 
@@ -1376,7 +1380,7 @@ dw $861A ;Bell2?
 828C1B   LDA $32                  
 828C1D   AND #$0E                 
 828C1F   LDX $00B6                
-828C22   ADC $8BE800,X            
+828C22   ADC $8BE800,X ;Load Message Pointers !
 828C26   TAX                      
 828C27   LDA $8BE800,X            
 828C2B   JMP $8C9B                
@@ -1748,7 +1752,7 @@ dw $8FE6 ;0x06 Small Key
 dw $8FEB ;0x08 Boss Key
 dw $8FD9 ;0x0A Shovel 
 dw $8FDF ;0x0C Bell   
-dw $8FF0 ;0x0E Plank  
+dw $8FF0 ;0x0E Plank 
     
 ;Using Item Table    
 828FC2
@@ -1802,6 +1806,7 @@ ItemUseBossKey:
 828FFE   LDA #$80 ;Get Stored in $016E (compared with bit7 of door array)
 829000   JSR $9B3A ;Check if we are unlocking a door <- complicated routine
 829003   BRA $828FF9
+
 ItemUsePlank:
 829005   JSR $9CA5
 829008   BRA $828FF9
@@ -2500,8 +2505,9 @@ dw $9031 ;1E
 829587   STA $41  ;change item slot used?  
 829589   STZ $3F ;013F ?
 82958B   RTS                      
-----------------         
---------sub start--------
+
+
+;Routine setting OAM Priorities depending on player position
 82958C   LDA $00B6                
 82958F   CMP #$02                 
 829591   BCC $8295D5              
@@ -2586,22 +2592,22 @@ dw $9031 ;1E
 82962A   RTS                      
 ----------------         
 --------sub start--------
-82962B   LDA $53                  
-82962D   BEQ $829669              
-82962F   LDA $56                  
-829631   LSR                      
-829632   TAX                      
-829633   LDA $23                  
+82962B   LDA $53 ;$0153 ? is player carrying something
+82962D   BEQ $829669 ;Nop ?
+82962F   LDA $56 ;Player ? (Always 02)
+829631   LSR 
+829632   TAX 
+829633   LDA $23 ; Player Animation Frame?
 829635   CLC                      
-829636   ADC $B887,X              
-829639   TAY                      
-82963A   LDA #$00                 
-82963C   LDX $B887,Y              
-82963F   BPL $829642              
-829641   DEC                      
-829642   XBA                      
-829643   TXA                      
-829644   REP #$20                 
+829636   ADC $B887,X ; $99, [$00]
+829639   TAY ;$00
+82963A   LDA #$00
+82963C   LDX $B887,Y ; [$99], $00
+82963F   BPL $829642 
+829641   DEC ;$98?
+829642   XBA ;$00??
+829643   TXA ;0099
+829644   REP #$20                
 829646   LDX $0E                  
 829648   BEQ $82964E              
 82964A   EOR #$FFFF               
@@ -2677,7 +2683,7 @@ dw $9031 ;1E
 8296D0   INX                      
 8296D1   INX                      
 8296D2   CPX #$08                 
-8296D4   BCC $8296A3 ;Repeat this code 8 time or until it has value expected above
+8296D4   BCC $8296A3 ;Repeat this code 4 time or until it has value expected above
 8296D6   STY $00B8 ;<- set the transition index to use to transition
 8296D9   LDA #$01
 8296DB   STA $00AC                
@@ -2700,7 +2706,7 @@ dw $9031 ;1E
 8296FA   CLC                      
 8296FB   ADC $B878,Y              
 8296FE   STA $000C                
-829701   JSL $808A86              
+829701   JSL $808A86 ;Related to tilemap collision
 829705   CMP #$30                 
 829707   BNE $82971B              
 829709   DEY                      
@@ -3021,8 +3027,9 @@ dw $9031 ;1E
 829AE6  .db $14 $F0 $08 $88 $80 $05 $E0 $28
 829AEE  .db $F0 $01 $C8 $98 $18 $65 $2F $85
 829AF6  .db $2F $60              
-----------------         
---------sub start--------
+
+
+
 829AF8   LDA $65                  
 829AFA   BIT #$CC                 
 829AFC   BEQ $829B39              
@@ -3049,13 +3056,13 @@ dw $9031 ;1E
 829B22   STA $6A                  
 829B24   AND #$F0                 
 829B26   SEP #$10                 
-829B28   CMP #$90                 
-829B2A   BNE $829B39              
+829B28   CMP #$90    ;we are in DP 0100 p1 and 180 p2
+829B2A   BNE $829B39 ;This is the routine where it check if tile is 0x90 on any key
 829B2C   LDA $6A                  
 829B2E   STA $32                  
 829B30   INC $00AC                
 829B33   LDA #$08                 
-829B35   STA $02                  
+829B35   STA $02 ;display messagebox routine
 829B37   PLA                      
 829B38   PLA                      
 829B39   RTS                      
@@ -3063,7 +3070,7 @@ dw $9031 ;1E
 ;Check if we need to unlock a door
 CollisionWithLockedDoor:
 {
-829B3A   STA $6E ;$016E <- #$80 (offseted YLowpos?)
+829B3A   STA $6E ;$016E <- Check if door is big key?
 829B3C   LDA $47 ;p1 direction facing without moving same as above
 829B3E   ASL 
 829B3F   TAX 
@@ -3081,7 +3088,7 @@ CollisionWithLockedDoor:
 829B54   ADC $B969,X ;Add Direction Offset              
 829B57   CMP #$00E0  ;Check if X difference is smaller than 0xE0              
 829B5A   BCS $829B71 ;If it's bigger then CLC and RTS             
-829B5C   AND #$00F8               
+829B5C   AND #$00F8 
 829B5F   ASL                      
 829B60   ASL                      
 829B61   ADC $68 ; ??? Tilemap data??
@@ -3133,14 +3140,14 @@ KeyUsedOnLockedDoor:
 829BB6   SEP #$10 
 829BB8   PLB ;Set DataBank back to $83
 829BB9   TAY
-829BBA   LDA $68 ;? 4th byte modified
+829BBA   LDA $68 ;? 4th byte unmodified
 829BBC   AND #$80                 
 829BBE   CMP $6E ;?? ;$016E ?? if bit7 is set we compare with that 
 829BC0   BNE $829B73 ; CLC : Return             
 829BC2   LDA $80B8,Y ;Bitmask table ;Only the 4 lowest values are possible (00, 02, 04, 08)
 829BC5   ORA $1144,X ;Keep currently unlocked doors
 829BC8   STA $1144,X ;Save new unlocked door with the previously unlocked doors             
-829BCB   JSL $82C3B4 ;Unknown Yet
+829BCB   JSL $82C3B4 ;Update Tilemap
 829BCF   JSR $9C82 ;Place Plank Routine?? :thinking:
 829BD2   LDA #$0C ;Placing Plank/Block Hitting a wall
 829BD4   JSL PlaySFX ;$809A53
@@ -3165,14 +3172,14 @@ KeyUsedOnLockedDoor:
 829BF7   REP #$10                 
 829BF9   LDX #$0E00               
 829BFC   LDA $0000,X              
-829BFF   BEQ $829C12              
-829C01   REP #$21                 
+829BFF   BEQ $829C12 ;Item == 0 continue;
+829C01   REP #$21 
 829C03   TXA                      
-829C04   ADC #$0020               
+829C04   ADC #$0020 ;Otherwise increase pos +0x0020
 829C07   TAX                      
-829C08   CMP #$1000               
+829C08   CMP #$1000 ;have we reached the limit of item to check?
 829C0B   SEP #$20                 
-829C0D   BCC $829BFC              
+829C0D   BCC $829BFC ;branch if not
 829C0F   SEP #$10                 
 829C11   RTS                      
 ----------------         
@@ -3254,7 +3261,7 @@ RTS
 829CA4   RTS                      
 ----------------         
 ;Using Plank Routine
-829CA5   LDX $1A46 ;Are we placing a plank?
+829CA5   LDX $1A46 ;Which Hole are we looking at
 829CA8   BEQ $829CE7 ;No - Return
 829CAA   LDY $47 ;P1 Direction (looking)
 829CAC   LDA $11 ;P1 X Pos Low Byte
@@ -3268,9 +3275,9 @@ RTS
 829CBC   LDA $B92B,X ;Plank ID we're trying to place ?
 829CBF   STA $68                  
 829CC1   INX                      
-829CC2   LDY $B930,X ; ?? ;01
-829CC5   LDA $1178,Y ; ?? Unknown ram < P1 Related probably
-829CC8   BNE $829CDE ;Return?
+829CC2   LDY $B930,X ; RAM ;01
+829CC5   LDA $1178,Y ; ?? check if the plank at that position has been placed
+829CC8   BNE $829CDE ;Return? ;There's already a plank there return
 829CCA   LDA $6C ;Load X Position
 829CCC   SEC
 829CCD   SBC $B92B,X ;Remove Offset from X     
@@ -3293,16 +3300,16 @@ RTS
 829CE9   JSR $9C82                
 829CEC   LDY $B930,X              
 829CEF   LDA #$FF                 
-829CF1   STA $1178,Y              
+829CF1   STA $1178,Y ;Set (S)RAM              
 --------sub start--------
 829CF4   TXY                      
 829CF5   REP #$30                 
-829CF7   LDX $B92D,Y              
+829CF7   LDX $B92D,Y ;byte 3 and 4 
 829CFA   LDA #$0000               
-829CFD   STA $1400,X              
-829D00   STA $1420,X              
+829CFD   STA $1400,X ;Set tilemap collision
+829D00   STA $1420,X ;Set tilemap collision             
 829D03   SEP #$30                 
-829D05   LDA $B92F,Y              
+829D05   LDA $B92F,Y ;Tile to DMA
 829D08   JSL $808667              
 829D0C   SEC                      
 829D0D   RTS                      
@@ -3324,14 +3331,14 @@ RTS
 829D2A   RTL                      
 ----------------
 ;IF Byte Above == 0 then go here
-829D2B   LDY $B91D,X              
-829D2E   LDX $B92B,Y              
+829D2B   LDY $B91D,X ;Load the holes information
+829D2E   LDX $B92B,Y ;offset
 829D31   STX $1A46 ;
-829D34   LDA $B92B,X              
+829D34   LDA $B92B,X ;count             
 829D37   STA $0E                  
 829D39   INX                      
-829D3A   LDY $B930,X              
-829D3D   LDA $1178,Y ; No clue what is that RAM ? player1 related probably
+829D3A   LDY $B930,X ;byte 5
+829D3D   LDA $1178,Y ; save ram for planks
 829D40   BEQ $829D49              
 829D42   STX $22                  
 829D44   JSR $9CF4 ; TODO 
@@ -3345,23 +3352,23 @@ RTS
 829D52   RTL                      
 ----------------         
 --------sub start--------
-829D53   LDA $00AC                
-829D56   BNE $829D72              
-829D58   LDA $0D80                
-829D5B   BEQ $829D65              
-829D5D   LDA #$0D                 
+829D53   LDA $00AC 
+829D56   BNE $829D72  ;branch if we are transitioning           
+829D58   LDA $0D80  ;hookshot related? byte 0 is hookshot being used?
+829D5B   BEQ $829D65 ; check whatever is in 0D80              
+829D5D   LDA #$0D 
 829D5F   XBA                      
 829D60   LDA #$80                 
 829D62   JSR $9D73                
-829D65   LDA $0DC0                
+829D65   LDA $0DC0 
 829D68   BEQ $829D72              
 829D6A   LDA #$0D                 
 829D6C   XBA                      
 829D6D   LDA #$C0                 
 829D6F   JSR $9D73                
 829D72   RTL                      
-----------------         
---------sub start--------
+
+;Routine for the hookshot?
 829D73   TCD                      
 829D74   LDX $2E                  
 829D76   REP #$21                 
@@ -3424,10 +3431,14 @@ dw $9ED1
 829DEA   JSL $80DA6E              
 829DEE   BCS $829DF1              
 829DF0   RTS                      
-----------------         
---------unidentified--------
-829DF1  .db $64 $38 $20 $27 $9F $A9 $06 $85
-829DF9  .db $02 $4C $74 $9F      
+
+
+829DF1   STZ $38 
+829DF3   JSR $9F27
+829DF6   LDA #$06
+829DF8   STA $02
+829DFA   JMP $9F74 
+
 ;Hookshot Related?       
 829DFD   LDX $03                  
 829DFF   JSR ($9E7F,X)            
@@ -3448,7 +3459,7 @@ dw $9ED1
 ----------------         
 829E2B   JSR $9FDF                
 829E2E   BCS $829E57              
-829E30   JSL $80DA6E              
+829E30   JSL $80DA6E ;hookshot check collision with sprites?
 829E34   BCS $829E55              
 829E36   JSR $A120                
 829E39   BCS $829E5A              
@@ -3465,12 +3476,12 @@ dw $9ED1
 829E4E   LDA #$07 ;Switch (unsure about that one)
 829E50   JSL PlaySFX ;$809A53
 829E54   RTS                      
-----------------         
-829E55   STZ $38                  
+         
+829E55   STZ $38 
 829E57   JSR $9F27                
 829E5A   LDA #$04                 
 829E5C   STA $02                  
-829E5E   JSR $9F74                
+829E5E   JSR $9F74
 829E61   LDA $03                  
 829E63   AND #$02                 
 829E65   REP #$20                 
@@ -3490,7 +3501,11 @@ dw $9ED1
 829E7E   RTS                      
 ----------------         
 --------data--------     
-829E7F  .db $87 $9E $9F $9E $87 $9E $9F $9E
+829E7F  
+dw $9E87
+dw $9E9F
+dw $9E87
+dw $9E9F
 ----------------         
 --------sub start--------
 829E87   REP #$21                 
@@ -3579,11 +3594,10 @@ dw $9ED1
 829F22   STA $14                  
 829F24   SEP #$20                 
 829F26   RTS                      
-----------------         
---------sub start--------
-829F27   LDX #$1D                 
-829F29   LDA $38                  
-829F2B   BEQ $829F46              
+
+829F27   LDX #$1D ;stun sound
+829F29   LDA $38                 
+829F2B   BEQ $829F46 ;Branch if not collided with wall
 829F2D   AND #$F0                 
 829F2F   CMP #$B0                 
 829F31   BEQ $829F73              
@@ -3594,14 +3608,16 @@ dw $9ED1
 829F3B   LDY $00B6                
 829F3E   CPY #$02                 
 829F40   BNE $829F4D              
-829F42   LDA #$17                 
-829F44   BRA $829F4E              
-829F46   LDA $1C                  
+829F42   LDA #$17 ;wall cllnk sound
+829F44   BRA $829F4E 
+
+829F46   LDA $1C ; ? stunnable ?
 829F48   BEQ $829F52              
-829F4A   DEC                      
+829F4A   DEC 
 829F4B   BNE $829F42              
 829F4D   TXA ;1D? ;Stun with hookshot
 829F4E   JSL PlaySFX ;$809A53
+
 829F52   LDX $0A                  
 829F54   BEQ $829F58              
 829F56   LDX #$20                 
@@ -3677,7 +3693,7 @@ dw $9ED1
 829FFB   TAX                      
 829FFC   STX $36                  
 829FFE   SEP #$20                 
-82A000   LDA $1400,X              
+82A000   LDA $1400,X ;check if hook collide with wall
 82A003   STA $38                  
 82A005   SEP #$10                 
 82A007   BPL $82A01A              
@@ -3706,7 +3722,7 @@ dw $9ED1
 82A026   LDX $1A48 ;838977 offset where to look next
 82A029   BEQ $82A053
 82A02B   LDY $1A47
-82A02E   LDA $8977,X
+82A02E   LDA $8977,X 
 82A031   DEC                      
 82A032   BEQ $82A055 ;Branch if there's only 1 set of hooks found
 82A034   LDA $1180,Y 
@@ -3762,42 +3778,42 @@ dw $9ED1
 ;Compare if Hookshot position are matching?
 82A0A4   LDA $3C                  
 82A0A6   SEC                      
-82A0A7   SBC $8978,X ;Byte01 X1
+82A0A7   SBC $8978,X ;Byte01 X1 CHECKED
 82A0AA   CMP #$0C                 
 82A0AC   BCS $82A0CC              
 82A0AE   LDA $3E                  
 82A0B0   SEC                      
-82A0B1   SBC $8979,X ;Byte02 Y1
+82A0B1   SBC $8979,X ;Byte02 Y1 CHECKED
 82A0B4   CMP #$0C                 
 82A0B6   BCS $82A0CC              
 82A0B8   LDA $11                  
 82A0BA   SEC                      
-82A0BB   SBC $897A,X ;Byte03 X2
+82A0BB   SBC $897A,X ;Byte03 X2 CHECKED
 82A0BE   CMP #$0C                 
 82A0C0   BCS $82A0CC              
 82A0C2   LDA $14                  
 82A0C4   SEC                      
-82A0C5   SBC $897B,X ;Byte04 Y2
+82A0C5   SBC $897B,X ;Byte04 Y2 CHECKED
 82A0C8   CMP #$0C                 
 82A0CA   BCC $82A0F5
 82A0CC   LDA $11                  
 82A0CE   SEC                      
-82A0CF   SBC $8978,X ;Byte01 X1
+82A0CF   SBC $8978,X ;Byte01 X1 CHECKED
 82A0D2   CMP #$0C                 
 82A0D4   BCS $82A0F4              
 82A0D6   LDA $14                  
 82A0D8   SEC                      
-82A0D9   SBC $8979,X ;Byte02 Y1
+82A0D9   SBC $8979,X ;Byte02 Y1 CHECKED
 82A0DC   CMP #$0C                 
 82A0DE   BCS $82A0F4              
 82A0E0   LDA $3C                  
 82A0E2   SEC                      
-82A0E3   SBC $897A,X ;Byte03 X2
+82A0E3   SBC $897A,X ;Byte03 X2 CHECKED
 82A0E6   CMP #$0C                 
 82A0E8   BCS $82A0F4              
 82A0EA   LDA $3E                  
 82A0EC   SEC                      
-82A0ED   SBC $897B,X ;Byte04 Y2
+82A0ED   SBC $897B,X ;Byte04 Y2 CHECKED 
 82A0F0   CMP #$0C                 
 82A0F2   BCC $82A0F5              
 82A0F4   RTS                      
@@ -3807,13 +3823,13 @@ dw $9ED1
 82A0F8   STA $34                  
 82A0FA   AND #$01                 
 82A0FC   BEQ $82A107              
-82A0FE   LDA $897A,X              
+82A0FE   LDA $897A,X ;CHECKED
 82A101   SEC                      
-82A102   SBC $8978,X              
+82A102   SBC $8978,X ;CHECKED
 82A105   BRA $82A10E              
-82A107   LDA $897B,X              
+82A107   LDA $897B,X ;CHECKED
 82A10A   SEC                      
-82A10B   SBC $8979,X              
+82A10B   SBC $8979,X ;CHECKED
 82A10E   LDY #$04                 
 82A110   CMP #$60                 
 82A112   BEQ $82A116              
@@ -3824,36 +3840,36 @@ dw $9ED1
 82A11B   STA $0000                
 82A11E   CLC                      
 82A11F   RTS                      
-----------------         
---------sub start--------
+
+;subroutine for the items (Fruits, Gems) - Check for hookshot collision!
 82A120   LDA #$08                 
 82A122   STA $2F                  
 82A124   REP #$10                 
-82A126   LDX #$0E00               
-82A129   LDA $009F                
-82A12C   AND #$01                 
-82A12E   BEQ $82A133              
-82A130   LDX #$0E20               
-82A133   LDA $0000,X              
-82A136   DEC                      
-82A137   BNE $82A15F              
-82A139   REP #$21                 
-82A13B   LDA $0011,X              
-82A13E   ADC #$0007               
-82A141   SEC                      
-82A142   SBC $11                  
-82A144   CMP #$000E               
-82A147   BCS $82A15F              
-82A149   LDA $0014,X              
+82A126   LDX #$0E00 ; Load Item 1 RAM (Fruits, Gems)
+82A129   LDA $009F ; Frame Counter?
+82A12C   AND #$01 ; on frame on two
+82A12E   BEQ $82A133 
+82A130   LDX #$0E20 ; Load from Item 2 that one one frame on 2 ?
+82A133   LDA $0000,X ; Load Item State
+82A136   DEC
+82A137   BNE $82A15F ; Branch if item <= 1
+82A139   REP #$21 
+82A13B   LDA $0011,X ; Load X Position
+82A13E   ADC #$0007 ; +7             
+82A141   SEC 
+82A142   SBC $11 ; remove $11 ?
+82A144   CMP #$000E 
+82A147   BCS $82A15F ; if X doesn't match?
+82A149   LDA $0014,X ; Load Y Position
 82A14C   ADC #$0007               
 82A14F   SEC                      
-82A150   SBC $14                  
-82A152   CMP #$000E               
-82A155   BCS $82A15F              
-82A157   SEP #$20                 
-82A159   LDA $17                  
-82A15B   CMP #$06                 
-82A15D   BCC $82A170              
+82A150   SBC $14 ; remove $14 ?                  
+82A152   CMP #$000E 
+82A155   BCS $82A15F  ; if X doesn't match?              
+82A157   SEP #$20 
+82A159   LDA $17 ; $17 ?
+82A15B   CMP #$06 ; ?
+82A15D   BCC $82A170 
 82A15F   REP #$21                 
 82A161   TXA                      
 82A162   ADC #$0040               
@@ -3864,14 +3880,20 @@ dw $9ED1
 82A16C   SEP #$10                 
 82A16E   CLC                      
 82A16F   RTS                      
-----------------         
---------unidentified--------
-82A170  .db $A9 $02 $9D $00 $00 $A9 $04 $9D
-82A178  .db $02 $00 $A9 $02 $9D $03 $00 $A5
-82A180  .db $0A $9D $05 $00 $9E $17 $00 $86
-82A188  .db $3A $E2 $11 $60      
-----------------         
---------sub start--------
+
+82A172 STA $0000,X ; Set State to $17?
+82A175 LDA #$04 
+82A177 STA $0002,X 
+82A17A LDA #$02
+82A17C STA $0003,X
+82A17F LDA $0A
+82A181 STA $0005,X
+82A184 STZ $0017,X
+82A187 STX $3A
+82A189 SEP #$11
+82A18B RTS
+
+
 82A18C   LDA $47                  
 82A18E   ASL                      
 82A18F   ASL                      
@@ -3960,39 +3982,39 @@ dw $9ED1
 82A233   BNE $82A1F4              
 82A235   SEP #$10                 
 82A237   RTS                      
-----------------         
---------sub start--------
-82A238   LDA $0A00                
+
+;Main routine for gate items
+82A238   LDA $0A00 ;00               
 82A23B   BEQ $82A245              
 82A23D   LDA #$0A                 
 82A23F   XBA                      
 82A240   LDA #$00                 
 82A242   JSR $A287 ;Check for Block/Door00?
-82A245   LDA $0A20                
+82A245   LDA $0A20 ;01               
 82A248   BEQ $82A252
 82A24A   LDA #$0A
 82A24C   XBA
 82A24D   LDA #$20
 82A24F   JSR $A287
-82A252   LDA $0A40
+82A252   LDA $0A40 ;02
 82A255   BEQ $82A25F              
 82A257   LDA #$0A                 
 82A259   XBA                      
 82A25A   LDA #$40                 
 82A25C   JSR $A287                
-82A25F   LDA $0A60                
+82A25F   LDA $0A60 ;03               
 82A262   BEQ $82A26C              
 82A264   LDA #$0A                 
 82A266   XBA                      
 82A267   LDA #$60                 
 82A269   JSR $A287                
-82A26C   LDA $0A80                
+82A26C   LDA $0A80 ;04               
 82A26F   BEQ $82A279              
 82A271   LDA #$0A                 
 82A273   XBA                      
 82A274   LDA #$80                 
 82A276   JSR $A287                
-82A279   LDA $0AA0                
+82A279   LDA $0AA0 ;05               
 82A27C   BEQ $82A286              
 82A27E   LDA #$0A                 
 82A280   XBA                      
@@ -4000,32 +4022,28 @@ dw $9ED1
 82A283   JSR $A287                
 82A286   RTL                      
 
-82A287   TCD ;Set DataBank to $0A'ID'
+
+82A287   TCD
 82A288   LDX $0A ;0A0A ID of events ?
 82A28A   JMP ($A28D,X)            
     
 82A28D 
-dw $A2AB ;0x00              
-dw $A30A ;0x02            
-dw $A3B5 ;0x04
-dw $A559 ;0x06
-dw $A5AB ;0x08
-dw $A6D4 ;0x0A
-----------------         
---------unidentified--------
-82A299  .db $10 $A7 $47 $A7 $E9 $A7 $0C $A8
-82A2A1  .db $88 $A8              
-----------------         
---------data--------     
-82A2A3  .db $96 $A9              
-----------------         
---------unidentified--------
-82A2A5  .db $DA $AA $7A $AB      
-----------------         
---------data--------     
-82A2A9  .db $FF $AB              
-
-
+dw $A2AB ;0x00 ; Push 1 block door - only used one, not used by editor
+dw $A30A ;0x01 ; kill all enemies
+dw $A3B5 ;0x02 ; statue shooting fire
+dw $A559 ;0x03 ; kill all enemies
+dw $A5AB ;0x04 ; All Block on Stars tiles?
+dw $A6D4 ;0x05 ; Not Placed in any room related to sprite
+dw $A710 ;0x06 ; Diggeable Hole
+dw $A747 ;0x07 ; Moving Wall (castle)
+dw $A7E9 ;0x08 ; Not Placed in any room ???
+dw $A80C ;0x09 ; Spikes Walls check if you are touching a wall basically and do damage
+dw $A888 ;0x0A ; Secret Waterfall      
+dw $A996 ;0x0B ; Related to lava/torches?
+dw $AADA ;0x0C ; Pressure switch activated with 
+dw $AB7A ;0x0D ; Holes Routine
+dw $ABFF ;0x0E ; Not Placed in any room
+           
 82A2AB   LDX $02 ;$0A02?
 82A2AD   JMP ($A2B0,X)            
 
@@ -4038,9 +4056,9 @@ dw $A305
 
 82A2B6   LDA #$02                 
 82A2B8   STA $02                  
-82A2BA   LDA $0B                  
-82A2BC   ASL                      
-82A2BD   TAX                      
+82A2BA   LDA $0B ;high nibble of 2nd byte >> 3 
+82A2BC   ASL ;*2
+82A2BD   TAX ; which is *4 basically 
 82A2BE   LDA $C275,X              
 82A2C1   STA $1E                  
 82A2C3   LDA $C276,X              
@@ -4056,7 +4074,7 @@ dw $A305
 
 
 82A2DA   REP #$10                 
-82A2DC   LDX $11 ;$0A11 (Byte3)  
+82A2DC   LDX $11 ;$0A11 (Byte3) ;XY Pos are used as tilemap pos
 82A2DE   LDA $1400,X ;Tilemap Collision
 82A2E1   SEP #$10
 82A2E3   CMP #$A0 ;Check if it's A0 (A0 = starblock)
@@ -4077,24 +4095,74 @@ dw $A305
 
 82A305   JSL $808F3B              
 82A309   RTS                      
-----------------         
---------unidentified--------
-82A30A  .db $A6 $02 $7C $0F $A3 $15 $A3 $3E
-82A312  .db $A3 $88 $A3 $A9 $02 $85 $02 $A5
-82A31A  .db $0B $4A $65 $0B $85 $1C $64 $1D
-82A322  .db $A6 $0B $BD $81 $C2 $85 $1F $BD
-82A32A  .db $82 $C2 $A8 $4A $4A $4A $AA $98
-82A332  .db $29 $07 $A8 $BD $44 $11 $39 $B8
-82A33A  .db $80 $D0 $2C $60 $AD $FB $00 $C5
-82A342  .db $1F $D0 $42 $A6 $0B $BD $82 $C2
-82A34A  .db $A8 $4A $4A $4A $AA $98 $29 $07
-82A352  .db $A8 $BD $44 $11 $19 $B8 $80 $9D
-82A35A  .db $44 $11 $A6 $1C $BD $8F $C2 $30
-82A362  .db $2A $A9 $21 $22 $53 $9A $80 $A6
-82A36A  .db $1C $BD $8D $C2 $8D $13 $00 $BD
-82A372  .db $8E $C2 $8D $14 $00 $BD $8F $C2
-82A37A  .db $29 $7F $8D $0A $00 $22 $B4 $C3
-82A382  .db $82 $22 $3B $8F $80 $60 $C6 $0F
+
+82A30A   LDX $02
+82A30C   JMP ($A30F,X)
+82A30F
+dw $A315
+dw $A33E
+dw $A388
+
+82A315   LDA #$02   
+82A317   STA $02    
+82A319   LDA $0B    
+82A31B   LSR A      
+82A31C   ADC $0B    
+82A31E   STA $1C    
+82A320   STZ $1D    
+82A322   LDX $0B    
+82A324   LDA $C281,X
+82A327   STA $1F ;1F?
+82A329   LDA $C282,X
+82A32C   TAY        
+82A32D   LSR A      
+82A32E   LSR A      
+82A32F   LSR A      
+82A330   TAX        
+82A331   TYA        
+82A332   AND #$07   
+82A334   TAY        
+82A335   LDA $1144,X
+82A338   AND $80B8,Y
+82A33B   BNE $A369  
+82A33D   RTS
+
+
+82A33E   LDA $00FB ;Boss Related? oh i think that's enemy killed count !!
+82A341   CMP $1F ;Check if 1F is matching that what
+82A343   BNE $A387   
+82A345   LDX $0B     
+82A347   LDA $C282,X 
+82A34A   TAY         
+82A34B   LSR A       
+82A34C   LSR A       
+82A34D   LSR A       
+82A34E   TAX         
+82A34F   TYA         
+82A350   AND #$07    
+82A352   TAY         
+82A353   LDA $1144,X 
+82A356   ORA $80B8,Y 
+82A359   STA $1144,X 
+82A35C   LDX $1C     
+82A35E   LDA $C28F,X 
+82A361   BMI $A38D   
+82A363   LDA #$21    
+82A365   JSL $809A53
+82A369   LDX $1C     
+82A36B   LDA $C28D,X 
+82A36E   STA $0013   
+82A371   LDA $C28E,X 
+82A374   STA $0014   
+82A377   LDA $C28F,X 
+82A37A   AND #$7F    
+82A37C   STA $000A   
+82A37F   JSL $82C3B4 
+82A383   JSL $808F3B 
+82A387   RTS         
+
+
+82A388  .db $C6 $0F
 82A38A  .db $F0 $DD $60 $A9 $04 $85 $02 $A9
 82A392  .db $78 $85 $0F $22 $8E $8F $80 $B0
 82A39A  .db $17 $A9 $0E $9D $0A $00 $A9 $03
@@ -4105,43 +4173,60 @@ dw $A305
 82A3B5   LDX $02                  
 82A3B7   JMP ($A3BA,X)            
 --------data--------     
-82A3BA  .db $BE $A3 $DC $A3      
+82A3BA
+dw $A3BE 
+dw $A3DC     
 ----------------         
 82A3BE   LDA #$02                 
 82A3C0   STA $02                  
 82A3C2   STZ $1D                  
-82A3C4   LDA $0D                  
+82A3C4   LDA $0D ; lower half of 2nd item byte
 82A3C6   BNE $82A3DB              
-82A3C8   LDA $0B                  
-82A3CA   CMP #$10                 
+82A3C8   LDA $0B ; higher half of 2nd item byte >> 3
+82A3CA   CMP #$10 ; So basically checking if 2nd byte == 0x80
 82A3CC   BNE $82A3D8              
 82A3CE   LDA $1144                
-82A3D1   BIT #$01                 
+82A3D1   BIT #$01 ; if bit0 is not setted
 82A3D3   BEQ $82A3D8              
-82A3D5   JSR $A4E3                
+82A3D5   JSR $A4E3 ; Open the Door !                
 82A3D8   JSR $A48F                
 82A3DB   RTS                      
-----------------         
-82A3DC   LDA $0D                  
-82A3DE   BNE $82A410              
+
+
+82A3DC   LDA $0D  ; lower half of 2nd item byte
+82A3DE   BNE $82A410 
 82A3E0   JSR $A4B2                
-82A3E3   BCS $82A3F2              
-82A3E5   LDA $0B                  
-82A3E7   LSR                      
-82A3E8   EOR #$0F                 
-82A3EA   AND $00FC                
-82A3ED   STA $00FC                
+82A3E3   BCS $82A3F2 ;branch If there's a block under it
+82A3E5   LDA $0B ; higher half of 2nd item byte >> 3                  
+82A3E7   LSR     ; >> 4                 
+82A3E8   EOR #$0F
+82A3EA   AND $00FC
+82A3ED   STA $00FC ;store which statue has been covered yet
 82A3F0   BRA $82A410              
---------unidentified--------
-82A3F2  .db $A9 $00 $85 $03 $C2 $10 $A6 $16
-82A3FA  .db $F0 $0F $BD $03 $00 $D0 $0A $A9
-82A402  .db $06 $9D $02 $00 $A2 $00 $00 $86
-82A40A  .db $16 $E2 $10 $4C $C4 $A4
+
+;IF There's a block under that item
+82A3F2   LDA #$00   
+82A3F4   STA $03    
+82A3F6   REP #$10   
+82A3F8   LDX $16    
+82A3FA   BEQ $A40B  
+82A3FC   LDA $0003,X
+82A3FF   BNE $A40B  
+82A401   LDA #$06   
+82A403   STA $0002,X
+82A406   LDX #$0000 
+82A409   STX $16    
+82A40B   SEP #$10   
+82A40D   JMP $A4C4  
+
 ----------------         
 82A410   LDX $03                  
 82A412   JMP ($A415,X)            
 --------data--------     
-82A415  .db $1B $A4 $32 $A4 $4A $A4
+82A415 
+dw $A41B
+dw $A432 
+dw $4A4A
 ----------------         
 82A41B   LDA #$02                 
 82A41D   STA $03                  
@@ -4149,14 +4234,14 @@ dw $A305
 82A423   AND #$0F                 
 82A425   ASL                      
 82A426   TAX                      
-82A427   LDA $C29F,X              
-82A42A   STA $1E                  
+82A427   LDA $C29F,X ;??             
+82A42A   STA $1E ;set random timer between5 values?
 82A42C   LDA $C2A0,X              
 82A42F   STA $1F                  
 82A431   RTS                      
 ----------------         
 82A432   REP #$20                 
-82A434   DEC $1E                  
+82A434   DEC $1E ; usually used as timer/counter
 82A436   SEP #$20                 
 82A438   BNE $82A449              
 82A43A   LDA #$04                 
@@ -4227,21 +4312,38 @@ dw $A305
 --------sub start--------
 82A4B2   REP #$10                 
 82A4B4   LDX $1B                  
-82A4B6   LDA $1420,X              
-82A4B9   CMP #$A2                 
-82A4BB   BEQ $82A4C1              
-82A4BD   SEP #$10                 
-82A4BF   CLC                      
-82A4C0   RTS                      
-----------------         
---------unidentified--------
-82A4C1  .db $E2 $11 $60 $A5 $0B $4A $0D $FC
-82A4C9  .db $00 $8D $FC $00 $C9 $0F $D0 $23
-82A4D1  .db $AD $44 $11 $29 $01 $D0 $0B $A9
-82A4D9  .db $01 $0C $44 $11 $A9 $20 $22 $53
-82A4E1  .db $9A $80 $C2 $20 $A9 $0E $00 $8D
-82A4E9  .db $13 $00 $E2 $20 $9C $0A $00 $22
-82A4F1  .db $B4 $C3 $82 $60      
+82A4B6   LDA $1420,X ;if tile under == 0xA2 ?              
+82A4B9   CMP #$A2
+82A4BB   BEQ $82A4C1
+82A4BD   SEP #$10
+82A4BF   CLC
+82A4C0   RTS
+
+82A4C1   SEP #$11
+82A4C3   RTS
+
+82A4C6   LSR A      
+82A4C7   ORA $00FC  
+82A4CA   STA $00FC  
+82A4CD   CMP #$0F   
+82A4CF   BNE $A4F4  
+82A4D1   LDA $1144  
+82A4D4   AND #$01 ;if door is not already open
+82A4D6   BNE $A4E3 
+82A4D8   LDA #$01   
+82A4DA   TSB $1144 ;set sram
+82A4DD   LDA #$20   
+82A4DF   JSL $809A53 ;Play Sfx
+
+82A4E3   REP #$20   
+82A4E5   LDA #$000E 
+82A4E8   STA $0013  
+82A4EB   SEP #$20   
+82A4ED   STZ $000A  
+82A4F0   JSL $82C3B4 ;do tile update ?
+82A4F4   RTS              
+
+
 ----------------         
 --------sub start--------
 82A4F5   JSR $A531                
@@ -4295,7 +4397,10 @@ dw $A305
 82A559   LDX $02                  
 82A55B   JMP ($A55E,X)            
 --------data--------     
-82A55E  .db $64 $A5 $78 $A5 $A6 $A5
+82A55E
+dw $A564 ;0x00 Init kill all enemies
+dw $A578 ;0x02 Main kill all enemies
+dw $A5A6 ;0x04 JSL + RTS
 ----------------         
 82A564   LDA #$02                 
 82A566   STA $02                  
@@ -4331,12 +4436,12 @@ dw $A305
 82A5AA   RTS                      
 
 ;Another Jumptable :grimacing:
-82A5AB   LDX $02 ;2 = count i think?
+82A5AB   LDX $02 ;2 = state i think?
 82A5AD   JMP ($A5B0,X)            
 
     
 82A5B0
-dw $A5BB ;0x00
+dw $A5BB ;0x00 Init
 dw $A629 ;0x02
 dw $A6CA ;0x04
 dw $A6CF ;0x06
@@ -4344,62 +4449,68 @@ dw $A6CF ;0x06
 82A5B8
 SEP #$10
 RTS
-        
-82A5BB   LDA #$02                 
-82A5BD   STA $02                  
-82A5BF   LDA $11 ;is used to set Rom location
+        ;Can we safely change the bank to be something different ?
+82A5BB   LDA #$02 
+82A5BD   STA $02 ; Increase State to 02
+82A5BF   LDA $11 ; (X value of Item)
 82A5C1   STA $0B                  
 82A5C3   TAX                      
 82A5C4   REP #$10                 
-82A5C6   LDY $C2DD,X              
-82A5C9   LDA $0000,Y              
-82A5CC   STA $19                  
-82A5CE   INY                      
-82A5CF   STY $1E ;Set the position in ROM to read star tiles from! also door? 
+82A5C6   LDY $C2DD,X ;Load Pointer of star tiles ;can that be changed?
+82A5C9   LDA $0000,Y ;Load byte 00 of that star tiles pointer (count)
+82A5CC   STA $19 ; star tiles count
+82A5CE   INY ; Increase Y
+82A5CF   STY $1E ; Pointer of star tile for the 1st byte of data (position)
 82A5D1   LDA $19 
-82A5D3   BMI $82A5F6              
-82A5D5   AND #$0F                 
-82A5D7   STA $18                  
+82A5D3   BMI $82A5F6 ; Branch IF block count 7bit is setted
+82A5D5   AND #$0F 
+82A5D7   STA $18 ; Store in alternate counter
+.loopSwitches                 
 82A5D9   REP #$21                 
-82A5DB   LDA $0000,Y              
-82A5DE   ADC #$5800               
-82A5E1   STA $0010                
-82A5E4   PHY                      
+82A5DB   LDA $0000,Y ; Load position of the SWITCH TILES (DRAWN AUTOMATICALLY!!)
+82A5DE   ADC #$5800 ; Add Tileoffset              
+82A5E1   STA $0010 ; Store it in $0010
+82A5E4   PHY ; Keep Y
 82A5E5   SEP #$30                 
 82A5E7   LDA #$04                 
-82A5E9   JSL $808D7B              
---------unidentified--------
-82A5ED  .db $C2 $10 $7A $C8 $C8 $C6 $18 $D0
-82A5F5  .db $E3                  
-----------------         
-82A5F6   LDA $19                  
-82A5F8   AND #$0F                 
+82A5E9   JSL $808D7B ; Setting a DMA in $1800 (seems to be tile16x16 transfer)???
+
+82A5ED   REP #$10
+82A5EF   PLY
+82A5F0   INY 
+82A5F1   INY 
+82A5F2   DEC $18 
+82A5F4   BNE .loopSwitches ;to $82A5D9
+
+; Continue the startile/switch tile
+82A5F6   LDA $19 ; Load tiles count
+82A5F8   AND #$0F ; And 0F to prevent getting the minus bit
 82A5FA   STA $19                  
-82A5FC   ASL                      
-82A5FD   REP #$31                 
-82A5FF   AND #$00FF               
-82A602   ADC $1E ;block location?
-82A604   STA $1C ;door pointer location?
-82A606   TAX                      
-82A607   SEP #$20                 
-82A609   LDA #$00                 
-82A60B   XBA                      
-82A60C   LDA $0000,X              
-82A60F   BMI $82A5B8              
-82A611   PHA                      
-82A612   LSR                      
-82A613   LSR                      
-82A614   LSR                      
-82A615   TAX                      
-82A616   LDY $1144,X              
-82A619   PLA                      
-82A61A   AND #$07                 
-82A61C   TAX                      
-82A61D   TYA                      
-82A61E   AND $80B8,X              
+82A5FC   ASL ; tiles count*2 
+82A5FD   REP #$31
+82A5FF   AND #$00FF
+82A602   ADC $1E ;+  1st byte of position of 1st star tile (A is now on 1st byte of door data)
+82A604   STA $1C ; 1st byte of door data (door RAM) (pointer)
+82A606   TAX 
+82A607   SEP #$20
+82A609   LDA #$00
+82A60B   XBA 
+82A60C   LDA $0000,X ; Load first byte of door data (door RAM) / 8X is not saved so return
+82A60F   BMI $82A5B8 ; Branch if bit 7 is setted  ; SEP #$10, RTS ?
+82A611   PHA ; Store Door RAM
+82A612   LSR 
+82A613   LSR
+82A614   LSR ; Door RAM >> 3?
+82A615   TAX 
+82A616   LDY $1144,X ;Door opened bit array (2 per level)
+82A619   PLA ; Restore Door RAM
+82A61A   AND #$07
+82A61C   TAX 
+82A61D   TYA
+82A61E   AND $80B8,X ;Bitmask table [$01 $02 $04 $08 $10 $20 $40 $80]
 82A621   SEP #$10                 
-82A623   BEQ $82A628              
-82A625   JMP $A6A9                
+82A623   BEQ $82A628 ; Return
+82A625   JMP $A6A9 ; RAM is setted already so open the door!             
 82A628   RTS                      
 
 ;4 Blocks ?
@@ -4473,48 +4584,129 @@ RTS
 ----------------         
 82A6CF   JSL $808F3B              
 82A6D3   RTS                      
-----------------         
+
+
+
+;Not Placed in any ROOMS
 82A6D4   LDX $02                  
 82A6D6   JMP ($A6D9,X)            
---------data--------     
-82A6D9  .db $DF $A6 $F8 $A6 $0B $A7
+    
+82A6D9
+dw $A6DF 
+dw $A6F8
+dw $A70B
 ----------------         
 82A6DF   LDA #$02                 
 82A6E1   STA $02                  
-82A6E3   STA $01                  
-82A6E5   DEC                      
-82A6E6   STA $00                  
+82A6E3   STA $01
+82A6E5   DEC 
+82A6E6   STA $00 
 82A6E8   LDY #$BC                 
 82A6EA   LDA #$C3                 
-82A6EC   JSL $8089A3              
-82A6F0   LDA #$3B                 
-82A6F2   STA $1B                  
-82A6F4   LDA #$80                 
-82A6F6   STA $1A                  
-82A6F8   JSL $8089A9              
-82A6FC   LDA $08                  
-82A6FE   CMP #$50                 
-82A700   BNE $82A706              
-82A702   LDA #$04                 
-82A704   STA $02                  
-82A706   JSL $8088CE              
+82A6EC   JSL FrameAnimationNoTimer ; $8089A3   
+82A6F0   LDA #$3B
+82A6F2   STA $1B
+82A6F4   LDA #$80
+82A6F6   STA $1A
+
+82A6F8   JSL FrameAnimationAlt ; $8089A9
+82A6FC   LDA $08
+82A6FE   CMP #$50
+82A700   BNE $82A706
+82A702   LDA #$04
+82A704   STA $02
+82A706   JSL SpriteSaveDirectPage ; 8088CE
 82A70A   RTS                      
 ----------------         
-82A70B   JSL $808F3B              
+82A70B   JSL KillItem ; $808F3B               
 82A70F   RTS                      
-----------------         
---------unidentified--------
-82A710  .db $A6 $0B $BD $D6 $C3 $85 $0D $BC
-82A718  .db $D5 $C3 $B9 $D5 $C3 $85 $0F $C8
-82A720  .db $C2 $31 $B9 $D5 $C3 $AA $69 $00
-82A728  .db $50 $8D $10 $00 $9E $00 $14 $9E
-82A730  .db $20 $14 $E2 $30 $A5 $0D $C8 $C8
-82A738  .db $5A $22 $7B $8D $80 $7A $C6 $0F
-82A740  .db $D0 $DE $22 $3B $8F $80 $60 $A6
+
+;Set Dig Hole ... oO
+82A710   LDX $0B ; Upper half of byte1 (RAM/PARAM)
+82A712   LDA $C3D6,X ;01
+82A715   STA $0D
+82A717   LDY $C3D5,X ;04
+82A71A   LDA $C3D5,Y ;01 
+82A71D   STA $0F 
+82A71F   INY
+82A720   REP #$31
+82A722   LDA $C3D5,Y ;8201
+82A725   TAX
+82A726   ADC #$5000
+82A729   STA $0010
+82A72C   STZ $1400,X ;7E1482
+82A72F   STZ $1420,X ;7E14A2 ;do something with collision map set it to be digged
+82A732   SEP #$30
+82A734   LDA $0D
+82A736   INY
+82A737   INY
+82A738   PHY
+82A739   JSL $808D7B ; Set a DMA for tile16 too (digged hole tile)
+82A73D   PLY
+82A73E   DEC $0F
+82A740   BNE $82A720 
+82A742   JSL KillItem ; $808F3B
+82A746   RTS
+
+
+82A747    LDX $02
+82A749    JSR ($A760,X)
+82A74C    JSR $A789
+82A74F    REP #$21
+82A751    LDA $11
+82A753    SBC #$01AF
+82A756    EOR #$00FF  
+82A759    INC
+82A75A    STA $0074
+82A75D    SEP #$20
+82A75F    RTS
+
+82A760 ; Moving Wall (castle wall?), 0x26
+dw $A766 ; 0x00 ; Check Transition
+dw $A770 ; 0x02 ; Update code?
+dw $A788 ; 0x04 ; RTS
+
+82A766    LDA $00AC ; Transition happening
+82A769    BNE $A76F ; Branch if we are transitionning
+82A76B    LDA #$02 
+82A76D    STA $02 ; Increase object state when transition is over
+82A76F    RTS
+
+82A770    REP #$20
+82A772    LDA $10 ; X sub pixel position i think?
+82A774    CLC
+82A775    ADC #$0020 ; Speed of the moving wall !
+82A778    STA $10 ; $1020?
+82A77A    SEP #$20
+82A77C    LDA #$B0
+82A77E    CMP $11
+82A780    BCS $82A788
+82A782    STA $11
+82A784    LDA #$04
+82A786    STA $02 ; Advance to the next state
+82A788    RTS
+
+
+
+82A789    LDX #$00
+82A78B    JSR $A790
+82A790    LDA $0100,X
+82A793    AND #$03
+82A795    BEQ $A7B3
+82A797    LDA $11
+82A799    CLC
+82A79A    ADC #$06
+82A79C    CMP $0111,X
+82A79F    BCC $A7B3
+82A7B3    RTS
+
+
+
+82A747  $A6
 82A748  .db $02 $FC $60 $A7 $20 $89 $A7 $C2
 82A750  .db $21 $A5 $11 $E9 $AF $01 $49 $FF
 82A758  .db $00 $1A $8D $74 $00 $E2 $20 $60
-82A760  .db $66 $A7 $70 $A7 $88 $A7 $AD $AC
+82A760  .db $
 82A768  .db $00 $D0 $04 $A9 $02 $85 $02 $60
 82A770  .db $C2 $20 $A5 $10 $18 $69 $20 $00
 82A778  .db $85 $10 $E2 $20 $A9 $B0 $C5 $11
@@ -4535,22 +4727,65 @@ RTS
 82A7F0  .db $0B $A8 $0B $A8 $A9 $02 $85 $02
 82A7F8  .db $BD $DF $C3 $8D $10 $00 $BD $E0
 82A800  .db $C3 $8D $11 $00 $A9 $04 $22 $7B
-82A808  .db $8D $80 $60 $60 $AD $00 $01 $3A
-82A810  .db $D0 $05 $A2 $00 $20 $1F $A8 $AD
-82A818  .db $80 $01 $3A $D0 $6A $A2 $80 $A0
-82A820  .db $01 $BD $11 $01 $C9 $19 $90 $16
-82A828  .db $A0 $03 $C9 $E7 $B0 $34 $A0 $02
-82A830  .db $BD $14 $01 $C9 $2A $90 $13 $A0
-82A838  .db $00 $C9 $CC $B0 $19 $60 $BD $14
-82A840  .db $01 $C9 $60 $90 $1D $C9 $80 $B0
-82A848  .db $19 $60 $BD $11 $01 $C9 $50 $90
-82A850  .db $11 $C9 $B0 $B0 $0D $60 $BD $11
-82A858  .db $01 $C9 $60 $90 $05 $C9 $A0 $B0
-82A860  .db $01 $60 $BD $1D $01 $F0 $08 $9E
+82A808  .db $8D $80 $60 $60
+
+
+82A80C    LDA $0100 ; ???
+82A80F    DEC ;-1 but not stored
+82A810    BNE $A817
+82A812    LDX #$00
+82A814    JSR $A81F
+82A817    LDA $0180
+82A81A    DEC
+82A81B    BNE $A887 ;RTS...
+   
+82A81D    LDX #$80
+82A81F    LDY #$01
+82A821    LDA $0111,X ; Check X Position
+82A824    CMP #$19
+82A826    BCC $A83E
+82A828    LDY #$032
+82A82A    CMP #$E7
+82A82C    BCS $A862
+82A82E    LDY #$02
+82A830    LDA $0114,X ; Check Y Position
+82A833    CMP #$2A
+82A835    BCC $A84A
+82A837    LDY #$00
+82A839    CMP #$CC
+82A83B    BCS $A856
+82A83D    RTS
+
+82A83E    LDA $0114, X
+82A841    CMP #$60
+82A843    BCC $A862
+82A845    CMP #$80
+82A847    BCC $A862
+82A849    RTS
+
+82A84A    LDA $0111, X
+82A84D    CMP #$50
+82A84F    BCC $A862
+82A851    CMP #$B0
+82A853    BCC $A862
+82A855    RTS
+
+
+82A856    LDA $0111,X
+82A859    CMP #$60   
+82A85B    BCC $A862  
+82A85D    CMP #$A0   
+82A85F    BCS $A862  
+82A861    RTS        
+
+
+82A862  $BD $1D $01 $F0 $08 $9E
 82A868  .db $1D $01 $9E $3F $01 $80 $07 $9E
 82A870  .db $1C $01 $98 $9D $0D $01 $FE $00
 82A878  .db $01 $A9 $04 $9D $02 $01 $9E $03
 82A880  .db $01 $9E $04 $01 $9E $05 $01 $60
+
+
 82A888  .db $A6 $02 $7C $8D $A8 $93 $A8 $F7
 82A890  .db $A8 $27 $A9 $A5 $0B $F0 $3F $AD
 82A898  .db $45 $11 $29 $80 $D0 $08 $A9 $15
@@ -4585,40 +4820,38 @@ RTS
 82A980  .db $C9 $48 $F0 $0F $C2 $21 $8A $69
 82A988  .db $40 $00 $AA $C9 $80 $0D $E2 $20
 82A990  .db $90 $DF $18 $E2 $10 $60
-----------------         
+   
 82A996   LDX $0B                  
-82A998   JMP ($A99B,X)            
---------unidentified--------
-82A99B  .db $A3 $A9              
-----------------         
---------data--------     
-82A99D  .db $A3 $A9              
-----------------         
---------unidentified--------
-82A99F  .db $A3 $A9 $63 $AA      
+82A998   JMP ($A99B,X)
+dw $A9A3              
+dw $A9A3              
+dw $A9A3 
+dw $AA63  
 ----------------         
 82A9A3   LDX $02                  
 82A9A5   JMP ($A9A8,X)            
---------data--------     
-82A9A8  .db $AC $A9 $DD $A9      
+    
+82A9A8
+dw $A9AC
+dw $A9DD
 ----------------         
 82A9AC   LDA #$02                 
 82A9AE   STA $02                  
 82A9B0   REP #$20                 
 82A9B2   LDX $0B                  
-82A9B4   LDA $C3ED,X              
+82A9B4   LDA $C3ED,X  ;Tile related?             
 82A9B7   STA $11                  
 82A9B9   SEP #$20                 
 82A9BB   LDY $0D                  
-82A9BD   LDA ($11),Y              
-82A9BF   TAY                      
-82A9C0   INC                      
-82A9C1   STA $14                  
-82A9C3   STA $15                  
-82A9C5   LDA ($11),Y              
-82A9C7   STA $17                  
-82A9C9   STA $16                  
-82A9CB   TAX                      
+82A9BD   LDA ($11),Y 
+82A9BF   TAY 
+82A9C0   INC 
+82A9C1   STA $14 
+82A9C3   STA $15 
+82A9C5   LDA ($11),Y 
+82A9C7   STA $17 
+82A9C9   STA $16 
+82A9CB   TAX 
 82A9CC   LDA $C3F9,X              
 82A9CF   STA $1C,X                
 82A9D1   DEX                      
@@ -4632,7 +4865,7 @@ RTS
 82A9DD   LDX $03                  
 82A9DF   JMP ($A9E2,X)            
 --------data--------     
-82A9E2  .db $E4 $A9              
+82A9E2  .db $A9E4            
 ----------------         
 82A9E4   LDA $14                  
 82A9E6   STA $15                  
@@ -4702,49 +4935,165 @@ RTS
 82AABB  .db $D0 $02 $A9 $00 $95 $11 $80 $0E
 82AAC3  .db $A9 $00 $80 $06 $A9 $01 $80 $02
 82AACB  .db $A9 $02 $22 $1F $8E $80 $E6 $0E
-82AAD3  .db $E6 $0E $C6 $0F $10 $C1 $60 $A6
-82AADB  .db $02 $7C $DF $AA $E7 $AA $EF $AA
-82AAE3  .db $26 $AB $60 $AB $A9 $02 $85 $02
-82AAEB  .db $A2 $13 $80 $61 $C2 $10 $A2 $00
-82AAF3  .db $02 $BD $00 $00 $F0 $1C $C9 $03
-82AAFB  .db $F0 $18 $BD $11 $00 $38 $E9 $40
-82AB03  .db $C9 $10 $B0 $0E $BD $14 $00 $38
-82AB0B  .db $E9 $90 $C9 $10 $B0 $04 $A9 $04
-82AB13  .db $85 $02 $C2 $21 $8A $69 $50 $00
-82AB1B  .db $AA $C9 $80 $09 $E2 $20 $90 $D1
-82AB23  .db $E2 $10 $60 $A9 $06 $85 $02 $A9
-82AB2B  .db $07 $22 $53 $9A $80 $22 $8E $8F
-82AB33  .db $80 $B0 $12 $A9 $0E $9D $0A $00
-82AB3B  .db $A9 $03 $9D $00 $00 $C2 $20 $A9
-82AB43  .db $C8 $00 $9D $28 $00 $E2 $30 $A9
-82AB4B  .db $78 $85 $0F $A2 $14 $A9 $48 $8D
-82AB53  .db $10 $00 $A9 $5A $8D $11 $00 $8A
-82AB5B  .db $22 $7B $8D $80 $60 $C6 $0F $D0
-82AB63  .db $15 $A9 $C8 $8D $13 $00 $A9 $00
-82AB6B  .db $8D $14 $00 $9C $0A $00 $22 $B4
-82AB73  .db $C3 $82 $22 $3B $8F $80 $60 $A6
-82AB7B  .db $02 $7C $7F $AB $83 $AB $91 $AB
-82AB83  .db $A9 $02 $85 $02 $64 $1B $64 $1D
-82AB8B  .db $A9 $96 $85 $0F $80 $28 $AD $00
-82AB93  .db $01 $C9 $04 $F0 $34 $AD $80 $01
-82AB9B  .db $C9 $04 $F0 $2D $C6 $0F $D0 $29
-82ABA3  .db $A9 $96 $85 $0F $64 $1E $64 $1F
-82ABAB  .db $20 $CD $AB $A5 $1B $1A $C9 $03
-82ABB3  .db $90 $02 $A9 $00 $85 $1B $A9 $30
-82ABBB  .db $85 $1E $85 $1F $20 $CD $AB $A5
-82ABC3  .db $1B $18 $69 $05 $A8 $22 $B0 $AD
-82ABCB  .db $80 $60 $A6 $1B $BC $69 $C4 $B9
-82ABD3  .db $69 $C4 $85 $1C $C2 $30 $A5 $1E
-82ABDB  .db $BE $6A $C4 $9D $00 $14 $9D $02
-82ABE3  .db $14 $9D $20 $14 $9D $22 $14 $9D
-82ABEB  .db $40 $14 $9D $42 $14 $9D $60 $14
-82ABF3  .db $9D $62 $14 $C8 $C8 $C6 $1C $D0
-82ABFB  .db $DF $E2 $30 $60      
+82AAD3  .db $E6 $0E $C6 $0F $10 $C1 $60 
+
+82AADA    LDX $02
+82AADC    JMP ($AADF,X)
+
+82AADF
+dw AAE7
+dw AAEF
+dw AB26
+dw AB60
+
+
+82AAE7    LDA #$02 
+82AAE9    STA $02  
+82AAEB    LDX #$13 
+82AAED    BRA $AB50
+
+82AAEF    REP #$10
+82AAF1    LDX #$0200
+82AAF4    LDA $0000,X
+82AAF7    BEQ $AB15
+82AAF9    CMP #$03
+82AAFB    BEQ $AB15
+82AAFD    LDA $0011,X
+82AB00    SEC
+82AB01    SBC #$40
+82AB03    CMP #$10
+82AB05    BCS $AB15
+
+82AB50    LDA #$48
+82AB52    STA $0010
+82AB55    LDA #$5A
+82AB57    STA $0011
+82AB5A    TXA
+82AB5B    JSL $808D7B
+82AB5F    RTS
+
+
+82AB07    LDA $0014, X
+82AB0B    SBC #$90
+82AB0D    CMP #$10
+82AB0F    BCS $AB15
+82AB11    LDA #$04
+82AB13    STA $02
+
+82AB15    REP #$21
+82AB17    TXA
+82AB18    ADC #$0050
+82AB1B    TAX
+82AB1C    CMP #$0980
+82AB1F    SEP #$20
+82AB21    BCC $AAF4
+82AB23    SEP #$10
+82AB25    RTS
+
+
+82AB26    LDA #$06   
+82AB28    STA $02    
+82AB2A    LDA #$07   
+82AB2C    JSL $809A53
+82AB30    JSL $808F8E
+82AB34    BCS $AB48  
+82AB36    LDA #$0E   
+82AB38    STA $000A,X
+82AB3B    LDA #$03   
+82AB3D    STA $0000,X
+82AB40    REP #$20   
+82AB42    LDA #$00C8 
+82AB45    STA $0028,X
+82AB48    SEP #$30   
+82AB4A    LDA #$78   
+82AB4C    STA $0F    
+82AB4E    LDX #$14   
+82AB50    LDA #$48   
+82AB52    STA $0010  
+82AB55    LDA #$5A   
+82AB57    STA $0011  
+82AB5A    TXA        
+82AB5B    JSL $808D7B
+82AB5F    RTS        
+
+82AB60    DEC $0F    
+82AB62    BNE $AB79  
+82AB64    LDA #$C8   
+82AB66    STA $0013  
+82AB69    LDA #$00   
+82AB6B    STA $0014  
+82AB6E    STZ $000A  
+82AB71    JSL $82C3B4     
+82AB75    JSL $808F3B
+82AB79    RTS  
+
+
+82AB7A LDX $02
+82AB7C JMP ($AB7F,X)
+
+82AB7F
+dw $AB83
+dw $AB91
+
+82AB83    LDA #$02
+82AB85    STA $02    
+82AB87    STZ $1B    
+82AB89    STZ $1D    
+82AB8B    LDA #$96   
+82AB8D    STA $0F    
+82AB8F    BRA $ABB9  
+
+82AB91    LDA $0100  
+82AB94    CMP #$04   
+82AB96    BEQ $ABCC  
+82AB98    LDA $0180  
+82AB9B    CMP #$04   
+82AB9D    BEQ $ABCC  
+82AB9F    DEC $0F    
+82ABA1    BNE $ABCC  
+82ABCC    RTS        
+
+82ABB9    LDA #$30   
+82ABBB    STA $1E    
+82ABBD    STA $1F    
+82ABBF    JSR $ABCD  
+82ABC2    LDA $1B    
+82ABC4    CLC        
+82ABC5    ADC #$05   
+82ABC7    TAY        
+82ABC8    JSL $80ADB0
+82ABCC    RTS
+
+82ABCD    LDX $1B    
+82ABCF    LDY $C469,X
+82ABD2    LDA $C469,Y
+82ABD5    STA $1C    
+82ABD7    REP #$30   
+82ABD9    LDA $1E    
+82ABDB    LDX $C46A,Y
+82ABDE    STA $1400,X
+82ABE1    STA $1402,X
+82ABE4    STA $1420,X
+82ABE7    STA $1422,X
+82ABEA    STA $1440,X
+82ABED    STA $1442,X
+82ABF0    STA $1460,X
+82ABF3    STA $1462,X
+82ABF6    INY        
+82ABF7    INY        
+82ABF8    DEC $1C    
+82ABFA    BNE $ABDB  
+82ABFB    SEP #$30
+82ABFD    RTS
+     
 ----------------         
 82ABFF   LDX $02                  
 82AC01   JMP ($AC04,X)            
 --------data--------     
-82AC04  .db $0A $AC $24 $AC $80 $AD
+82AC04  
+dw $AC0A
+dw $AC24
+dw $AD80
 ----------------         
 82AC0A   LDA $00B1                
 82AC0D   BNE $82AC12              
@@ -4765,19 +5114,21 @@ RTS
 82AC27   LDX $03                  
 82AC29   JMP ($AC2C,X)            
 --------data--------     
-82AC2C  .db $38 $AC $64 $AC $B2 $AC $0C $AD
-----------------         
---------unidentified--------
-82AC34  .db $78 $AD $7C $AD      
-----------------         
+82AC2C
+dw $AC38
+dw $AC64
+dw $ACB2 
+dw $AD0C
+dw $AD78
+dw $AD7C
+   
 82AC38   LDX $1D                  
 82AC3A   JMP ($AC3D,X)            
---------unidentified--------
-82AC3D  .db $41 $AC              
-----------------         
---------data--------     
-82AC3F  .db $4A $AC              
-----------------         
+
+82AC3D  
+dw $AC41
+dw $AC4A            
+  
 82AC41   STZ $03                  
 82AC43   LDA #$02                 
 82AC45   STA $1D                  
@@ -4800,11 +5151,10 @@ RTS
 82AC64   LDX $10                  
 82AC66   JMP ($AC69,X)            
 --------unidentified--------
-82AC69  .db $6D $AC              
-----------------         
---------data--------     
-82AC6B  .db $8B $AC              
-----------------         
+82AC69  
+dw $AC6D             
+dw $AC8B           
+   
 82AC6D   ASL                      
 82AC6E   TAX                      
 82AC6F   LDA #$02                 
@@ -4845,7 +5195,11 @@ RTS
 82ACB2   LDX $04                  
 82ACB4   JMP ($ACB7,X)            
 --------data--------     
-82ACB7  .db $BF $AC $CA $AC $DF $AC $E9 $AC
+82ACB7 
+dw $ACBF
+dw $ACCA 
+dw $ACDF
+dw $ACE9
 ----------------         
 82ACBF   LDA #$02                 
 82ACC1   STA $04                  
@@ -4889,12 +5243,12 @@ RTS
 82AD0C   LDX $04                  
 82AD0E   JMP ($AD11,X)            
 --------unidentified--------
-82AD11  .db $19 $AD              
-----------------         
---------data--------     
-82AD13  .db $2E $AD $3A $AD $47 $AD
-----------------         
---------unidentified--------
+82AD11  
+dw $AD19             
+dw $AD2E 
+dw $AD3A
+dw $AD47
+
 82AD19  .db $A9 $03              
 ----------------         
 82AD1B   STA $19                  
@@ -4992,8 +5346,8 @@ RTS
 82ADD6   STZ $0084                
 82ADD9   STZ $0085                
 82ADDC   RTS                      
-----------------         
---------sub start--------
+
+;Main routine for the Collectible Items (Gems, Fruits)
 82ADDD   LDA $0E00                
 82ADE0   BEQ $82ADEA              
 82ADE2   LDA #$0E                 
@@ -5091,32 +5445,38 @@ RTS
 82AEA8   LDA #$E0                 
 82AEAA   JSR $AEAE                
 82AEAD   RTL                      
-----------------         
---------sub start--------
+
+
+;Main subroutine for the Collectible Items (Gems, Fruits)
 82AEAE   TCD                      
-82AEAF   LDX $02                  
+82AEAF   LDX $02 ;Object state
 82AEB1   JMP ($AEB4,X)            
---------data--------     
-82AEB4  .db $BC $AE $F3 $AE $22 $AF $81 $AF
-----------------         
+   
+82AEB4
+dw $AEBC ;0x00 Init?
+dw $AEF3 ;0x02 Init2
+dw $AF22 ;0x04 Red Gem
+dw $AF81 ;0x06 Blue Gem
+
+;0x00 Init
 82AEBC   LDA #$02                 
-82AEBE   STA $02                  
+82AEBE   STA $02 ; Increase state to 2                  
 82AEC0   DEC                      
-82AEC1   STA $00                  
-82AEC3   STA $01                  
-82AEC5   STA $17                  
-82AEC7   LDA #$34                 
-82AEC9   STA $1B                  
-82AECB   LDA $0B                  
-82AECD   ASL                      
+82AEC1   STA $00 ; Set $00 to 1                  
+82AEC3   STA $01 ; Set $01 to 1                       
+82AEC5   STA $17 ; Set $17 whatever that is
+82AEC7   LDA #$34 ; ?
+82AEC9   STA $1B ; ?
+82AECB   LDA $0B ; ID
+82AECD   ASL 
 82AECE   ADC #$C9                 
 82AED0   TAY                      
 82AED1   LDA #$C4                 
 82AED3   ADC #$00                 
-82AED5   JSL $8089A3              
-82AED9   LDA $0D                  
+82AED5   JSL FrameAnimationNoTimer ;$8089A3 
+82AED9   LDA $0D ; RAM
 82AEDB   INC                      
-82AEDC   BNE $82AEF2              
+82AEDC   BNE $82AEF2 ; return              
 82AEDE   LDA #$02                 
 82AEE0   STA $03                  
 82AEE2   STA $00                  
@@ -5126,73 +5486,86 @@ RTS
 82AEEA   STA $1F                  
 82AEEC   LDA #$06 ;Moving in menu
 82AEEE   JSL PlaySFX ;$809A53
-82AEF2   RTS                      
-----------------         
-82AEF3   LDA $03                  
-82AEF5   BEQ $82AF1D              
+82AEF2   RTS   
+
+;0x02 Init2  
+82AEF3   LDA $03
+82AEF5   BEQ $82AF1D  ;if item has not been collected yet
 82AEF7   REP #$21                 
 82AEF9   LDA $1E                  
-82AEFB   SBC #$002F               
+82AEFB   SBC #$002F 
 82AEFE   STA $1E                  
-82AF00   LDA $16                  
+82AF00   LDA $16 ; ?                  
 82AF02   CLC                      
 82AF03   ADC $1E                  
-82AF05   STA $16                  
+82AF05   STA $16 ; ?                 
 82AF07   SEP #$20                 
 82AF09   BPL $82AF1D              
 82AF0B   LDA #$01                 
-82AF0D   STA $00                  
+82AF0D   STA $00 
 82AF0F   STA $17                  
 82AF11   LDA #$02                 
-82AF13   STZ $1E                  
-82AF15   STA $1F                  
+82AF13   STZ $1E 
+82AF15   STA $1F 
 82AF17   DEC $0F                  
 82AF19   BNE $82AF1D              
 82AF1B   STZ $03                  
-82AF1D   JSL $8088CE              
-82AF21   RTS                      
-GrabFruit:
-{      
+82AF1D   JSL SpriteSaveDirectPage ; 8088CE                
+82AF21   RTS   
+
+
+; 0x04 Red Gem   
 82AF22   LDA $03                  
-82AF24   BNE $82AF1D              
+82AF24   BNE $82AF1D  ;if item has not been collected yet              
 82AF26   LDA #$06                 
-82AF28   STA $02                  
-82AF2A   LDA $0B                  
-82AF2C   CMP #$06                 
-82AF2E   BEQ $82AF70              
+82AF28   STA $02 ;kill the sprite next frame!
+82AF2A   LDA $0B ;Low bits ID
+82AF2C   CMP #$06 
+82AF2E   BEQ $82AF70 ;We grabbed item 06 (blue gem)
 82AF30   LDA #$1C ;Grabbing a collectable item
 82AF32   JSL PlaySFX ;$809A53
 82AF36   LDX $05                  
-82AF38   STZ $013F,X              
+82AF38   STZ $013F,X ;?? almost always 1 not sure what it does
 82AF3B   LDA $0B ;Contains Collected fruit id ?
-82AF3D   LSR                      
-82AF3E   TAY                      
+82AF3D   LSR 
+82AF3E   TAY 
 82AF3F   LDA $011D,X ;P1 Hearts
 82AF42   CLC                      
 82AF43   ADC $C4BE,Y ;Fruit Count Table
 82AF46   CMP #$07                 
-82AF48   BCS $82AF4E ;If new heart count < 7
+82AF48   BCS $82AF4E ;If new heart count > 7
 82AF4A   STA $011D,X ;Add Hearts
 82AF4D   RTS
-}
-----------------         
-82AF4E   SBC #$07                 
-82AF50   STA $011D,X              
+
+
+;Reach more than 8 hearts
+82AF4E   SBC #$07 ;remove 7 hearts
+82AF50   STA $011D,X 
 82AF53   LDA $0157,X              
 82AF56   INC                      
-82AF57   CMP #$0B                 
+82AF57   CMP #$0B ;if you reach 11 lives
 82AF59   BCS $82AF65              
 82AF5B   STA $0157,X              
 82AF5E   LDA #$10 ;Winning like (red jewel)
 82AF60   JSL PlaySFX ;$809A53
 82AF64   RTS                      
-----------------         
---------unidentified--------
-82AF65  .db $A9 $0A $9D $57 $01 $A9 $06 $9D
-82AF6D  .db $1D $01 $60 $AD $CC $00 $C9 $09
-82AF75  .db $B0 $03 $EE $CC $00 $A9 $2E $22
-82AF7D  .db $53 $9A $80 $60      
-----------------         
+
+82AF65 LDA #$0A
+82AF67 STA $0157,X
+82AF6A LDA #$06
+82AF6C STA $011D,X
+82AF6F RTS
+
+;Blue GEM
+82AF70 LDA $00CC ; Load Continue
+82AF73 CMP #$09 ; Check if we already have 9
+82AF75 BCS $AF7A
+82AF77 INC $00CC ;Otherwise increase Continues by 1
+82AF7A LDA #$2E
+82AF7C JSL PlaySFX ;$809A53
+82AF80 RTS
+
+;Routine 4 ? not sure what this is
 82AF81   LDA $0A                  
 82AF83   STZ $0A                  
 82AF85   BNE $82AF9B              
@@ -5207,55 +5580,60 @@ GrabFruit:
 82AF92   LDA $80B8,Y              
 82AF95   ORA $1170,X              
 82AF98   STA $1170,X              
-82AF9B   JSL $808F3B              
+82AF9B   JSL KillItem ;$808F3B              
 82AF9F   RTS                      
-----------------         
---------sub start--------
-82AFA0   LDA $1040                
+
+;Hookshot, Shovel, Etc items main routine
+82AFA0   LDA $1040 ;00
 82AFA3   BEQ $82AFAD              
 82AFA5   LDA #$10                 
 82AFA7   XBA                      
 82AFA8   LDA #$40                 
 82AFAA   JSR $AFEF                
-82AFAD   LDA $1060                
+82AFAD   LDA $1060 ;01
 82AFB0   BEQ $82AFBA              
 82AFB2   LDA #$10                 
 82AFB4   XBA                      
 82AFB5   LDA #$60                 
 82AFB7   JSR $AFEF                
-82AFBA   LDA $1080                
+82AFBA   LDA $1080 ;02
 82AFBD   BEQ $82AFC7              
 82AFBF   LDA #$10                 
 82AFC1   XBA                      
 82AFC2   LDA #$80                 
 82AFC4   JSR $AFEF                
-82AFC7   LDA $10A0                
+82AFC7   LDA $10A0 ;03
 82AFCA   BEQ $82AFD4              
 82AFCC   LDA #$10                 
 82AFCE   XBA                      
 82AFCF   LDA #$A0                 
 82AFD1   JSR $AFEF                
-82AFD4   LDA $10C0                
+82AFD4   LDA $10C0 ;04
 82AFD7   BEQ $82AFE1              
 82AFD9   LDA #$10                 
 82AFDB   XBA                      
 82AFDC   LDA #$C0                 
 82AFDE   JSR $B121                
-82AFE1   LDA $10E0                
+82AFE1   LDA $10E0 ;05
 82AFE4   BEQ $82AFEE              
 82AFE6   LDA #$10                 
 82AFE8   XBA                      
 82AFE9   LDA #$E0                 
 82AFEB   JSR $B121                
-82AFEE   RTL                      
-----------------         
---------sub start--------
+82AFEE   RTL       
+              
+;Hookshot, Shovel, Etc items main subroutine
+
 82AFEF   TCD                      
 82AFF0   LDX $02                  
 82AFF2   JMP ($AFF5,X)            
---------data--------     
-82AFF5  .db $FD $AF $FB $B0 $4C $B0 $00 $B1
-----------------         
+   
+82AFF5
+dw $AFFD ;0x00 Init?
+dw $B0FB ;0x02 Init2?
+dw $B04C ;0x04
+dw $B100 ;0x06 Kill?
+      
 82AFFD   LDA $11                  
 82AFFF   CLC                      
 82B000   ADC #$F8                 
@@ -5277,7 +5655,7 @@ GrabFruit:
 82B020   STA $1400,X              
 82B023   STA $1420,X              
 82B026   SEP #$30                 
---------sub start--------
+; IF Slot 04 or 05 is used 
 82B028   LDA #$02                 
 82B02A   STA $02                  
 82B02C   DEC                      
@@ -5295,33 +5673,37 @@ GrabFruit:
 82B044   LDA $C4DA,X              
 82B047   JSL $8089A3              
 82B04B   RTS                      
-----------------         
+
+;0x02 INIT2?       
 82B04C   LDA #$06                 
 82B04E   STA $02                  
 82B050   LDX $05                  
-82B052   LDY $0142,X              
-82B055   STZ $013F,X              
-82B058   LDA $0140,X              
-82B05B   BEQ $82B065              
-82B05D   LDA $0141,X              
-82B060   BEQ $82B065              
-82B062   LDY $0143,X              
-82B065   STY $04                  
-82B067   LDA $0B                  
+82B052   LDY $0142,X ; Player Item
+82B055   STZ $013F,X ; Player Item Related
+82B058   LDA $0140,X ; Player Item Count            
+82B05B   BEQ $82B065 ; branch IF we do not have an item
+
+82B05D   LDA $0141,X ; What item slot is used
+82B060   BEQ $82B065 
+82B062   LDY $0143,X ; Check Item2
+
+82B065   STY $04 ;Put it in $04
+82B067   LDA $0B 
 82B069   INC                      
 82B06A   INC                      
 82B06B   TAY                      
-82B06C   LDA $00BD                
-82B06F   CMP #$03                 
-82B071   BEQ $82B086              
-82B073   LDA $0142,X              
-82B076   BEQ $82B0A2              
-82B078   LDA $0140,X              
+82B06C   LDA $00BD ; Playout Count
+82B06F   CMP #$03 
+82B071   BEQ $82B086 ; branch IF 2 player
+82B073   LDA $0142,X ; item1
+82B076   BEQ $82B0A2 ; branch if we do not have item1
+82B078   LDA $0140,X 
 82B07B   BNE $82B086              
 82B07D   LDA #$02                 
 82B07F   STA $0140,X              
 82B082   STZ $04                  
-82B084   BRA $82B090              
+82B084   BRA $82B090    
+;2 player?          
 82B086   LDA $0141,X              
 82B089   BEQ $82B0A2              
 82B08B   LDA $0140,X              
@@ -5332,7 +5714,8 @@ GrabFruit:
 82B097   STA $015C,X              
 82B09A   LDA $B6ED,Y              
 82B09D   STA $015D,X              
-82B0A0   BRA $82B0B2              
+82B0A0   BRA $82B0B2      
+
 82B0A2   TYA                      
 82B0A3   STA $0142,X              
 82B0A6   LDA $B6EC,Y              
@@ -5378,10 +5761,13 @@ GrabFruit:
 82B0F1   ASL                      
 82B0F2   ORA $1160,X              
 82B0F5   STA $1160,X              
-82B0F8   JSR $B028                
+82B0F8   JSR $B028
+;0x04
 82B0FB   JSL $8088DF              
 82B0FF   RTS                      
-----------------         
+
+;0x06
+KillItem:      
 82B100   REP #$30                 
 82B102   LDX $18                  
 82B104   LDA $7FF800,X            
@@ -5402,10 +5788,11 @@ GrabFruit:
 82B122   LDX $02                  
 82B124   JMP ($B127,X)            
 --------data--------     
-82B127  .db $28 $B0 $20 $B1      
-----------------         
---------unidentified--------
-82B12B  .db $14 $B1 $14 $B1      
+82B127  
+dw $B028
+dw $B120 ; RTS     
+dw $B114 ; Kill
+dw $B114 ; Kill    
 ----------------         
 --------sub start--------
 82B12F   JSL $80B8A0              
@@ -5429,26 +5816,28 @@ GrabFruit:
 82B154   TCD                      
 82B155   JMP $80B9C5              
 --------data--------     
-82B159  .db $6F $B1 $80 $B2 $44 $B3
-----------------         
---------unidentified--------
-82B15F  .db $F1 $B3              
-----------------         
---------data--------     
-82B161  .db $DA $B7 $BF $B8 $AB $B9
-----------------         
---------unidentified--------
-82B167  .db $D4 $BB              
-----------------         
---------data--------     
-82B169  .db $3B $BD $DA $BD $BE $BF
+82B159 
+dw $B16F ;0x00
+dw $B280 ;0x02
+dw $B344 ;0x04 ending?
+dw $B3F1 ;0x06 option menu            
+dw $B7DA ;0x08
+dw $B8BF ; game over
+dw $B9AB ;intro
+dw $BBD4               
+dw $BD3B
+dw $BDDA ;password?
+dw $BFBE ;credits ?
 ----------------         
 --------sub start--------
 82B16F   LDX $02                  
 82B171   JSR ($B177,X)            
 82B174   JMP $B24C                
 --------data--------     
-82B177  .db $7D $B1 $8A $B1 $E2 $B1
+82B177
+dw $B17D
+dw $B18A
+dw $B1E2
 ----------------         
 --------sub start--------
 82B17D   LDA #$02                 
@@ -5520,8 +5909,8 @@ GrabFruit:
 82B1FF   STA $00A9                
 82B202   INC $00A8                
 82B205   RTS                      
-----------------         
---------sub start--------
+
+
 82B206   STZ $14                  
 82B208   STZ $15                  
 82B20A   LDA #$02                 
@@ -5535,8 +5924,8 @@ GrabFruit:
 82B21B   DEC $28                  
 82B21D   BPL $82B20E              
 82B21F   RTS                      
-----------------         
---------sub start--------
+
+
 82B220   REP #$31                 
 82B222   LDA $28                  
 82B224   ADC #$0005               
@@ -5564,12 +5953,14 @@ GrabFruit:
 82B247   BNE $82B23A              
 82B249   SEP #$30                 
 82B24B   RTS                      
-----------------         
+      
 82B24C   LDX $30                  
 82B24E   JMP ($B251,X)            
---------data--------     
-82B251  .db $55 $B2 $5D $B2      
-----------------         
+ 
+82B251  
+dw $B255
+dw $B25D
+     
 82B255   LDA #$05                 
 82B257   STA $31                  
 82B259   LDA #$02                 
@@ -5591,8 +5982,8 @@ GrabFruit:
 82B27A   STA $28                  
 82B27C   JMP $B220                
 82B27F   RTS                      
-----------------         
---------sub start--------
+
+
 82B280   LDX $02                  
 82B282   JSR ($B295,X)            
 82B285   REP #$21                 
@@ -5603,11 +5994,12 @@ GrabFruit:
 82B290   XBA                      
 82B291   STA $0078                
 82B294   RTS                      
-----------------         
---------data--------     
-82B295  .db $9B $B2 $B1 $B2 $0E $B3
-----------------         
---------sub start--------
+
+82B295
+dw $B29B
+dw $B2B1
+dw $B30E
+
 82B29B   LDA #$02                 
 82B29D   STA $02                  
 82B29F   STZ $3F                  
@@ -5618,12 +6010,12 @@ GrabFruit:
 82B2AB   BNE $82B2A3              
 82B2AD   JSR $B31E                
 82B2B0   RTS                      
-----------------         
---------sub start--------
+
+
 82B2B1   LDA $0049                
-82B2B4   AND #$C0                 
-82B2B6   ORA $0048                
-82B2B9   BIT #$D0                 
+82B2B4   AND #$C0 ; A, X
+82B2B6   ORA $0048  
+82B2B9   BIT #$D0 ; B, Y , Start
 82B2BB   BEQ $82B2E4              
 82B2BD   LDX #$60                 
 82B2BF   LDA $3F                  
@@ -5646,16 +6038,17 @@ GrabFruit:
 82B2DF   LDA #$04                 
 82B2E1   STA $02                  
 82B2E3   RTS                      
-----------------         
-82B2E4   LDA $0048                
-82B2E7   BIT #$0C                 
+
+
+82B2E4   LDA $0048 
+82B2E7   BIT #$0C ;Up Down
 82B2E9   BEQ $82B2F3              
 82B2EB   LDA $3F                  
 82B2ED   EOR #$01                 
 82B2EF   STA $3F                  
 82B2F1   BRA $82B2FE              
-82B2F3   LDA $0048                
-82B2F6   BIT #$03                 
+82B2F3   LDA $0048 
+82B2F6   BIT #$03 ; Left Right
 82B2F8   BEQ $82B304              
 82B2FA   DEC $3F                  
 82B2FC   DEC $3F                  
@@ -5666,8 +6059,8 @@ GrabFruit:
 82B308   STA $3F                  
 82B30A   JSR $B31E                
 82B30D   RTS                      
-----------------         
---------sub start--------
+
+
 82B30E   LDA $3D                  
 82B310   BNE $82B31B              
 82B312   LDA $3F                  
@@ -5676,8 +6069,8 @@ GrabFruit:
 82B318   INC $00A8                
 82B31B   DEC $3D                  
 82B31D   RTS                      
-----------------         
---------sub start--------
+
+
 82B31E   LDA #$03                 
 82B320   STA $3D                  
 82B322   LDY #$C0                 
@@ -5686,7 +6079,8 @@ GrabFruit:
 82B328   CMP $3F                  
 82B32A   BNE $82B32E              
 82B32C   LDX #$20                 
---------sub start--------
+
+
 82B32E   LDA #$1F                 
 82B330   STA $3E                  
 82B332   LDA $8AE520,X            
@@ -5698,50 +6092,57 @@ GrabFruit:
 82B33F   DEC $3D                  
 82B341   BPL $82B324              
 82B343   RTS                      
-----------------         
---------sub start--------
+
+
 82B344   LDX $02                  
 82B346   JMP ($B349,X)            
---------data--------     
-82B349  .db $4F $B3 $6C $B3      
-----------------         
---------unidentified--------
-82B34D  .db $58 $B3              
-----------------         
-82B34F   LDA #$02                 
-82B351   STA $02                  
-82B353   STZ $0F                  
+
+82B349  
+dw $B34F
+dw $B36C
+dw $B358
+
+     
+82B34F   LDA #$02
+82B351   STA $02
+82B353   STZ $0F
 82B355   STZ $3F                  
 82B357   RTS                      
-----------------         
---------unidentified--------
-82B358  .db $A9 $02 $8D $A8 $00 $22 $74 $85
-82B360  .db $80 $60              
-----------------         
+
+82B358   LDA #$02
+82B35A   STA $00A8
+82B35D   JSL $808574
+82B361   RTS       
+
+
 82B362   LDA #$03                 
 82B364   STA $00A8                
 82B367   JSL $808574              
 82B36B   RTS                      
-----------------         
+    
 82B36C   LDA $0048                
-82B36F   BIT #$10                 
-82B371   BNE $82B358              
-82B373   AND #$C0                 
-82B375   ORA $0049                
-82B378   BIT #$C0                 
-82B37A   BNE $82B362              
+82B36F   BIT #$10 ; Start
+82B371   BNE $82B358 
+82B373   AND #$C0 ;B, Y
+82B375   ORA $0049 ; + A, X, L, R
+82B378   BIT #$C0 ;check if any button a,x,l,r,b,y are pressed
+82B37A   BNE $82B362 ; if not any button press set A8 to 03
 82B37C   LDX $03                  
 82B37E   JMP ($B381,X)            
---------data--------     
-82B381  .db $89 $B3 $A2 $B3 $CD $B3 $E5 $B3
-----------------         
+   
+82B381 
+dw $B389
+dw $B3A2 
+dw $B3CD 
+dw $B3E5
+     
 82B389   LDA #$02                 
 82B38B   STA $03                  
 82B38D   LDA $00B2                
 82B390   ASL                      
 82B391   TAX                      
 82B392   REP #$20                 
-82B394   LDA $8BE847,X            
+82B394   LDA $8BE847,X ;Load Message Pointer !! (Intro)
 82B398   STA $12                  
 82B39A   LDA #$4E44               
 82B39D   STA $14                  
@@ -5985,9 +6386,9 @@ GrabFruit:
 82B83D   BIT #$01                 
 82B83F   BEQ $82B84D              
 82B841   LDA $0049                
-82B844   AND #$C0                 
+82B844   AND #$C0 ;A, X
 82B846   ORA $0048                
-82B849   BIT #$D0                 
+82B849   BIT #$D0 
 82B84B   BNE $82B860              
 82B84D   LDA $00BD                
 82B850   BIT #$02                 
@@ -6525,9 +6926,9 @@ GrabFruit:
 ----------------         
 82BE6D   JSR $BF95                
 82BE70   LDA $0049                
-82BE73   AND #$C0                 
+82BE73   AND #$C0 ; A, X
 82BE75   ORA $0048                
-82BE78   BIT #$D0                 
+82BE78   BIT #$D0 ; B, Y, START
 82BE7A   BEQ $82BE7F              
 82BE7C   JMP $BF0A                
 82BE7F   LDA $0048                
@@ -6599,7 +7000,7 @@ GrabFruit:
 82BF0E   LDY #$05                 
 82BF10   STY $36                  
 82BF12   LDX #$00                 
-82BF14   LDA $30,X                
+82BF14   LDA $30,X ; Password Check
 82BF16   CMP $C67A,Y              
 82BF19   BNE $82BF39              
 82BF1B   INY                      
@@ -6857,10 +7258,10 @@ GrabFruit:
 82C235   LDA $B7                  
 82C237   ASL                      
 82C238   LDX $B6                  
-82C23A   ADC $F303,X              
+82C23A   ADC $F303,X ; Transitions
 82C23D   TAY                      
 82C23E   REP #$11                 
-82C240   LDX $F303,Y              
+82C240   LDX $F303,Y ; Transitions              
 82C243   LDA $0000,X              
 82C246   BNE $82C24B              
 82C248   JMP $C2CB                
@@ -6927,8 +7328,8 @@ GrabFruit:
 82C2C9   BNE $82C251              
 82C2CB   SEP #$10                 
 82C2CD   RTL                      
-----------------         
---------sub start--------
+
+;Sprite Read routine
 82C2CE   PEA #$8380               
 82C2D1   PLB                      
 82C2D2   LDA $B7                  
@@ -6944,23 +7345,23 @@ GrabFruit:
 82C2E6   STA $00                  
 82C2E8   LDX #$0200               
 82C2EB   LDA #$03                 
-82C2ED   STA $00,X                
-82C2EF   LDA $0000,Y              
-82C2F2   STA $0A,X                
-82C2F4   LDA $0001,Y              
-82C2F7   STA $0B,X                
-82C2F9   LDA $0002,Y              
-82C2FC   AND #$7F                 
-82C2FE   STA $0D,X                
-82C300   LDA $0002,Y              
-82C303   AND #$80                 
+82C2ED   STA $00,X
+82C2EF   LDA $0000,Y
+82C2F2   STA $0A,X ;ID
+82C2F4   LDA $0001,Y
+82C2F7   STA $0B,X ;Param
+82C2F9   LDA $0002,Y
+82C2FC   AND #$7F
+82C2FE   STA $0D,X ;Unknown
+82C300   LDA $0002,Y
+82C303   AND #$80
 82C305   ASL                      
 82C306   ROL                      
 82C307   STA $0C,X                
 82C309   LDA $0003,Y              
-82C30C   STA $11,X                
+82C30C   STA $11,X ;Store X Position in $11
 82C30E   LDA $0004,Y              
-82C311   STA $14,X                
+82C311   STA $14,X ;Store Y position in $14
 82C313   REP #$21                 
 82C315   TXA                      
 82C316   ADC #$0050               
@@ -6985,24 +7386,24 @@ GrabFruit:
 82C335   TAX
 82C336   LDY $C461,X
 82C339   BEQ $82C3B0 ;Return
-82C33B   LDA $C4D7,Y
+82C33B   LDA $C4D7,Y 
 82C33E   REP #$31                 
-82C340   AND #$00FF               
-82C343   ADC #$C4D8               
+82C340   AND #$00FF    $0E     $0A RAM     
+82C343   ADC #$C4D8 ;  $01 $4E $03 $04 $03               
 82C346   TAY                      
 82C347   SEP #$20                 
-82C349   LDA $0000,Y              
-82C34C   BEQ $82C3B0              
-82C34E   STA $0E                  
-82C350   LDA #$D0                 
-82C352   STA $0C                  
+82C349   LDA $0000,Y ; $01
+82C34C   BEQ $82C3B0 ; Return if byte00 = 00
+82C34E   STA $0E
+82C350   LDA #$D0
+82C352   STA $0C
 82C354   INY                      
 82C355   STZ $0B                  
-82C357   LDA $0002,Y              
+82C357   LDA $0002,Y 
 82C35A   STA $0A                  
 82C35C   LDA #$00                 
 82C35E   XBA                      
-82C35F   LDA $0003,Y              
+82C35F   LDA $0003,Y 
 82C362   AND #$7F                 
 82C364   LSR                      
 82C365   LSR                      
@@ -7014,7 +7415,7 @@ GrabFruit:
 82C36F   AND #$07                 
 82C371   TAX                      
 82C372   PLA                      
-82C373   AND $8380B8,X            
+82C373   AND $8380B8,X ;Bitmask
 82C377   BEQ $82C38B              
 82C379   STY $22                  
 82C37B   LDX $0000,Y              
@@ -7143,75 +7544,48 @@ GrabFruit:
 --------unidentified--------
 82C45D  .db $21 $00 $20 $00      
 ----------------         
---------data--------     
+
+;Locked Doors Values per map? (contains 1byte pointer)
 82C461  .db $05 $15 $25 $3F $5D 
+
 82C466  .db $00 $00 $00 $00 $00 $01 $00 $00 $02 $00 $00 $00 $03 $00 $00 $00
+
 82C477  .db $00 $00 $00 $00 $00 $00 $00 $00 $04 $00 $05 $00 $06 $00 $07 $00 
-  
-82C486  .db $00 $00 $00          
-----------------         
---------unidentified--------
-82C489  .db $08 $00              
-----------------         
---------data--------     
-82C48B  .db $00                  
-----------------         
---------unidentified--------
-82C48C  .db $00 $00              
-----------------         
---------data--------     
-82C48E  .db $00                  
-----------------         
---------unidentified--------
-82C48F  .db $00                  
-----------------         
---------data--------     
-82C490  .db $00                  
-----------------         
---------unidentified--------
-82C491  .db $00 $09 $0A $00 $00 $00 $0B $00
-82C499  .db $0C $00 $0D $00 $00 $0E $00
-----------------         
---------data--------     
-82C4A0  .db $00 $00 $00          
-----------------         
---------unidentified--------
-82C4A3  .db $00 $00 $00 $00 $00 $00 $00 $00
-82C4AB  .db $00 $00 $00 $00 $00 $00 $00 $00
-82C4B3  .db $00 $00 $00 $00 $00 $00 $00 $00
-82C4BB  .db $00 $00 $00          
-----------------         
---------data--------     
-82C4BE  .db $00 $00 $00          
-----------------         
---------unidentified--------
-82C4C1  .db $00 $00 $00 $00 $00 $00 $00 $00
-82C4C9  .db $00 $0F $00 $00 $00 $00 $00 $00
-82C4D1  .db $00 $10 $00 $00 $00 $00 
+
+82C486  .db $00 $00 $00 $08 $00 $00 $00 $00 $00 $00 $00 $00 $09 $0A $00 $00 $00 $0B $00 $0C $00 $0D $00 $00 $0E $00
+
+82C4A0  .db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 
+
+82C4BE  .db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $0F $00 $00 $00 $00 $00 $00 $00 $10 $00 $00 $00 $00 
 
 
-;Unknown Table Yet, loaded with level/map
+;Locked Doors table 1 byte pointer $00 if no door
 82C4D7  .db $00 $10 $15 $1A              
-----------------         
---------unidentified--------
+
 82C4DB  .db $1F $24 $29 $2E $33 $38 $3D $42
-82C4E3  .db $47 $4C $51 $56 $5B $01 $0E $00
-82C4EB  .db $00 $00              
-----------------         
---------data--------     
-82C4ED  .db $01 $4E $03 $04 $00 $01 $0E $00
-82C4F5  .db $00 $82              
-----------------         
---------unidentified--------
-82C4F7  .db $01 $0E $00 $00 $02 $01 $0E $00
-82C4FF  .db $00 $03 $01 $4E $03 $04 $03 $01
-82C507  .db $0E $00 $00 $84 $01 $0E $00 $00
-82C50F  .db $01 $01 $4E $03 $04 $04 $01 $00
-82C517  .db $01 $02 $05 $01 $8E $02 $04 $07
-82C51F  .db $01 $4E $03 $04 $08 $01 $C0 $01
-82C527  .db $02 $09 $01 $0E $00 $00 $8D $01
-82C52F  .db $0E $00 $00 $02 $01 $0E $02 $00
-82C537  .db $86                  
+82C4E3  .db $47 $4C $51 $56 $5B 
+                            ;BOSS if 8x
+           ;NBR ADDR    DIR RAM
+82C4E8  .db $01 $0E $00 $00 $00 ; 01 edgehog small locked door level 00 map 05
+82C4ED  .db $01 $4E $03 $04 $00 ; 02 edgehog small locked door (otherside) level 00 map 08
+82C4F7  .db $01 $0E $00 $00 $82 ; 03 Boss Door level 00 map 0C
+82C4F1  .db $01 $0E $00 $00 $02 ; 04 small locked door level 01 map 08
+82C4FC  .db $01 $0E $00 $00 $03 ; 05 small locked door canons level 01 map 0A
+82C501  .db $01 $4E $03 $04 $03 ; 06 small locked door canons (otherside) level 01 map 0C
+82C506  .db $01 $0E $00 $00 $84 ; 07 Boss Door level 01 map 0E
+82C50B  .db $01 $0E $00 $00 $01 ; 08 small locked door right side level 02 map 04
+82C510  .db $01 $4E $03 $04 $04 ; 09 small locked door left wall level 02 map 0C
+82C515  .db $01 $00 $01 $02 $05 ; 0A small locked door bottom wall level 02 map 0D
+82C51A  .db $01 $8E $02 $04 $07 ; 0B small gate locked door bottom wall level 02 map 11
+82C51F  .db $01 $4E $03 $04 $08 ; 0C small locked door bottom wall level 02 map 13
+82C524  .db $01 $C0 $01 $02 $09 ; 0D small locked door left wall level 02 map 15
+82C529  .db $01 $0E $00 $00 $8D ; 0E Boss Door level 02 map 18
+82C52E  .db $01 $0E $00 $00 $02 ; 0F small locked door top wall level 04 map 0C
+82C533  .db $01 $0E $02 $00 $86 ; 10 Boss Door level 04 map 14
+
+
+
+
 ----------------         
    
 82C538 ;Block/Liftable Objects Data   
@@ -7240,7 +7614,13 @@ db $00
 82C622 ;02
 db $00
 82C623 ;03
-db $05 $1A $18 $05 $1A $24 $05 $18 $88 $01 $18 $88 $03 $18 $B4 $03
+db $05
+;TT TILEPOS
+$1A $18 $05 
+$1A $24 $05
+$18 $88 $01
+$18 $88 $03
+$18 $B4 $03
   
 82C633 ;04
 db $05 $1A $8C $02 $1A $B0 $02 $1A $30 $03 $1A $30 $04 $1A $B4 $02 
@@ -7500,545 +7880,14 @@ db $0B $00 $04 $02 $00 $04 $06 $00 $08 $06 $08 $0C $06 $08 $10 $06 $08 $14 $06 $
 
 
 82CD32  .db $5B $A5 $03 $48 $A5 $02 $48 $60 $68
-82CD3B  .db $85 $02 $68 $85 $03 $60 $4E $69
-82CD43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CD4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CD53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CD5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CD63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CD6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CD73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CD7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82CD83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82CD8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82CD93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82CD9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82CDA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82CDAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82CDB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82CDBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82CDC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CDCB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CDD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CDDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CDE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CDEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CDF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CDFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82CE03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82CE0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82CE13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82CE1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82CE23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82CE2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82CE33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82CE3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82CE43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CE4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CE53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CE5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CE63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CE6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CE73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CE7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82CE83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82CE8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82CE93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82CE9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82CEA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82CEAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82CEB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82CEBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82CEC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CECB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CED3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CEDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CEE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CEEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CEF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CEFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82CF03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82CF0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82CF13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82CF1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82CF23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82CF2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82CF33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82CF3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82CF43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CF4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CF53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CF5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CF63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CF6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CF73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CF7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82CF83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82CF8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82CF93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82CF9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82CFA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82CFAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82CFB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82CFBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82CFC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82CFCB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82CFD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82CFDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82CFE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82CFEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82CFF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82CFFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D003  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D00B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D013  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D01B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D023  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D02B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D033  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D03B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D043  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D04B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D053  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D05B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D063  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D06B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D073  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D07B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D083  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D08B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D093  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D09B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D0A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D0AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D0B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D0BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D0C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D0CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D0D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D0DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D0E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D0EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D0F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D0FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D103  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D10B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D113  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D11B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D123  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D12B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D133  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D13B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D143  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D14B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D153  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D15B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D163  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D16B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D173  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D17B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D183  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D18B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D193  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D19B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D1A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D1AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D1B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D1BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D1C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D1CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D1D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D1DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D1E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D1EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D1F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D1FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D203  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D20B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D213  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D21B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D223  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D22B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D233  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D23B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D243  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D24B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D253  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D25B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D263  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D26B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D273  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D27B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D283  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D28B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D293  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D29B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D2A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D2AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D2B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D2BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D2C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D2CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D2D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D2DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D2E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D2EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D2F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D2FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D303  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D30B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D313  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D31B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D323  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D32B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D333  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D33B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D343  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D34B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D353  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D35B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D363  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D36B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D373  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D37B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D383  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D38B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D393  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D39B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D3A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D3AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D3B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D3BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D3C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D3CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D3D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D3DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D3E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D3EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D3F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D3FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D403  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D40B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D413  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D41B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D423  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D42B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D433  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D43B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D443  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D44B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D453  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D45B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D463  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D46B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D473  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D47B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D483  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D48B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D493  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D49B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D4A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D4AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D4B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D4BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D4C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D4CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D4D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D4DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D4E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D4EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D4F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D4FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D503  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D50B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D513  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D51B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D523  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D52B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D533  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D53B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D543  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D54B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D553  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D55B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D563  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D56B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D573  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D57B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D583  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D58B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D593  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D59B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D5A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D5AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D5B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D5BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D5C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D5CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D5D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D5DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D5E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D5EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D5F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D5FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D603  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D60B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D613  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D61B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D623  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D62B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D633  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D63B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D643  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D64B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D653  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D65B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D663  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D66B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D673  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D67B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D683  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D68B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D693  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D69B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D6A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D6AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D6B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D6BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D6C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D6CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D6D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D6DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D6E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D6EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D6F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D6FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D703  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D70B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D713  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D71B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D723  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D72B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D733  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D73B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D743  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D74B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D753  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D75B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D763  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D76B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D773  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D77B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D783  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D78B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D793  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D79B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D7A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D7AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D7B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D7BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D7C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D7CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D7D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D7DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D7E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D7EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D7F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D7FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D803  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D80B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D813  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D81B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D823  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D82B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D833  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D83B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D843  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D84B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D853  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D85B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D863  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D86B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D873  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D87B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D883  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D88B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D893  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D89B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D8A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D8AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D8B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D8BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D8C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D8CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D8D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D8DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D8E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D8EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D8F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D8FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D903  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D90B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D913  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D91B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D923  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D92B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D933  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D93B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D943  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D94B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D953  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D95B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D963  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D96B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D973  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D97B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82D983  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82D98B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82D993  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82D99B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82D9A3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82D9AB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82D9B3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82D9BB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82D9C3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82D9CB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82D9D3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82D9DB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82D9E3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82D9EB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82D9F3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82D9FB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DA03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DA0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DA13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DA1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DA23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DA2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DA33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DA3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DA43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DA4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DA53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DA5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DA63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DA6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DA73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DA7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DA83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DA8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DA93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DA9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DAA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DAAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DAB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DABB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DAC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DACB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DAD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DADB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DAE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DAEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DAF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DAFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DB03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DB0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DB13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DB1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DB23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DB2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DB33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DB3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DB43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DB4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DB53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DB5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DB63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DB6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DB73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DB7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DB83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DB8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DB93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DB9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DBA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DBAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DBB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DBBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DBC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DBCB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DBD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DBDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DBE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DBEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DBF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DBFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DC03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DC0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DC13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DC1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DC23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DC2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DC33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DC3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DC43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DC4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DC53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DC5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DC63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DC6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DC73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DC7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DC83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DC8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DC93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DC9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DCA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DCAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DCB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DCBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DCC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DCCB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DCD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DCDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DCE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DCEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DCF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DCFB  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DD03  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DD0B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DD13  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DD1B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DD23  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DD2B  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DD33  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DD3B  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DD43  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DD4B  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DD53  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DD5B  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DD63  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DD6B  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DD73  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DD7B  .db $72 $61 $20 $20 $20 $20 $20 $57
-82DD83  .db $41 $4C $54 $20 $44 $49 $53 $4E
-82DD8B  .db $45 $59 $20 $20 $20 $20 $20 $20
-82DD93  .db $47 $4F $4F $46 $20 $54 $52 $4F
-82DD9B  .db $4F $50 $20 $20 $20 $20 $31 $39
-82DDA3  .db $39 $33 $20 $43 $41 $50 $43 $4F
-82DDAB  .db $4D $20 $41 $6C $6C $72 $69 $67
-82DDB3  .db $68 $74 $20 $72 $65 $73 $65 $72
-82DDBB  .db $76 $65 $64 $20 $20 $20 $4E $69
-82DDC3  .db $6E $74 $65 $6E $64 $6F $20 $64
-82DDCB  .db $61 $73 $68 $69 $20 $20 $20 $31
-82DDD3  .db $39 $39 $33 $2F $30 $34 $2F $32
-82DDDB  .db $31 $20 $20 $20 $20 $20 $50 $72
-82DDE3  .db $6F $67 $72 $61 $6D $65 $64 $20
-82DDEB  .db $62 $79 $20 $20 $20 $20 $4D $2E
-82DDF3  .db $20 $53 $68 $69 $6E $6F $68 $61
-82DDFB  .db $72 $61 $20 $20 $20  
-----------------         
---------data--------     
+82CD3B  .db $85 $02 $68 $85 $03 $60  
+
+82CD41 - 82DDFF
+NULL DATA
+
+
+
+
 82DE00  .db $00 $31 $02 $1A $0A $05 $08 $1A
 82DE08  .db $09 $05 $01 $05 $81 $06 $01 $12
 82DE10  .db $00 $0F $02 $6F $0A $01 $08 $1B
@@ -8058,8 +7907,7 @@ db $0B $00 $04 $02 $00 $04 $06 $00 $08 $06 $08 $0C $06 $08 $10 $06 $08 $14 $06 $
 82DE80  .db $01 $14 $09 $0A $01 $03 $04 $01
 82DE88  .db $06 $04 $04 $08 $06 $02 $02 $05
 82DE90  .db $0A $0C $02 $08 $82 $04 $00 $00
-----------------         
---------unidentified--------
+
 82DE98  .db $00 $00 $00 $00 $00 $00 $00 $00
 82DEA0  .db $00 $00 $00 $00 $00 $00 $00 $00
 82DEA8  .db $00 $00 $00 $00 $00 $00 $00 $00
